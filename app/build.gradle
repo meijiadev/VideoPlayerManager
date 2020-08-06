@@ -1,25 +1,99 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.1"
-
+// 使用 JDK 1.8
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "com.example.videoplayermanager"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 仅保留两种架构的 so 库
+        ndk {
+            // armeabi：已经淘汰（0%）
+            // armeabi-v7a：曾经主流的架构平台（20%）
+            // arm64-v8a：目前主流架构平台（80%）
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+        // 开启 Dex 分包
+        multiDexEnabled true
+
+        buildConfigField "String", "BUILD_TIME", "\"" + getDate() + "\""
+        javaCompileOptions {
+            annotationProcessorOptions {
+                // EventBus Apt 索引类生成位置
+                arguments = [eventBusIndex: applicationId + '.MyEventBusIndex']
+            }
+        }
+        lintOptions {
+            checkReleaseBuilds false
+            abortOnError false
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("boolean", "LOG_DEBUG", "false")
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("boolean", "LOG_DEBUG", "true")
         }
     }
+    //.proto 文件地址
+    sourceSets{
+        main{
+            proto{
+                srcDir 'src/main/proto'
+                include '**/*.proto'
+            }
+
+            java{
+                srcDir 'src/main/java'
+            }
+
+        }
+    }
+}
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+    plugins {
+        javalite {
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+    generateProtoTasks {
+
+
+        all().each { task ->
+            task.builtins {
+                remove java
+            }
+            task.plugins {
+                javalite {}
+            }
+        }
+    }
+}
+
+static String getDate() {
+    Date date = new Date()
+    return date.format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT+8"))
 }
 
 dependencies {
@@ -29,5 +103,32 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'com.google.protobuf:protobuf-java:3.4.0'
+    implementation 'com.google.protobuf:protoc:3.4.0'
+    implementation 'com.shuyu:GSYVideoPlayer:7.1.4'
+    // ButterKnife 注解库：https://github.com/JakeWharton/butterknife
+    implementation 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    //万能适配器
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
+
+    implementation 'me.jessyan:retrofit-url-manager:1.4.0'
+    implementation 'com.google.code.gson:gson:2.8.5'   //gson解析
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0' //retrofit2.0
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0' //配合Rxjava 使用
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0' //ConverterFactory的Gson:
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.8' //rxjava
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'//rxandroid 线程调度
+
+    // 权限请求框架：https://github.com/getActivity/XXPermissions
+    implementation 'com.hjq:xxpermissions:6.0'
+
+    // EventBus 事件总线：https://github.com/greenrobot/EventBus
+    implementation "org.greenrobot:eventbus:3.1.1"
+    annotationProcessor 'org.greenrobot:eventbus-annotation-processor:3.1.1'
+
+    // 本地异常捕捉框架：https://github.com/Ereza/CustomActivityOnCrash
+    implementation 'cat.ereza:customactivityoncrash:2.2.0'
 
 }
