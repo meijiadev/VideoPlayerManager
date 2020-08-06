@@ -1,7 +1,10 @@
 # VideoPlayerManager
 一款视频播放器，支持边播边缓存、预缓存. 
 #对MVP进行了封装 
-用到了第三方库：
+   
+   
+   用到了第三方库：
+   
     implementation 'com.google.protobuf:protobuf-java:3.4.0'
     implementation 'com.google.protobuf:protoc:3.4.0'
     implementation 'com.shuyu:GSYVideoPlayer:7.1.4'
