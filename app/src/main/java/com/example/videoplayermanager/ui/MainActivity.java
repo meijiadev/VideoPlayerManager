@@ -1,6 +1,10 @@
-package com.example.videoplayermanager;
+package com.example.videoplayermanager.ui;
 
-import com.example.videoplayermanager.base.BaseActivity;
+import android.view.View;
+import android.widget.Button;
+
+import com.example.videoplayermanager.R;
+import com.example.videoplayermanager.base.BaseMvpActivity;
 import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.presenter.MainPresenter;
@@ -10,8 +14,16 @@ import com.hjq.permissions.XXPermissions;
 
 import java.util.List;
 
-public class MainActivity extends BaseActivity<MainPresenter>implements MainContract.View, OnPermission {
+import butterknife.BindView;
+import butterknife.OnClick;
+
+public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainContract.View, OnPermission {
     private String [] permission=new String[]{ Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE};
+    @BindView(R.id.bt_error)
+    Button btError;
+
+    private String s;
+
     @Override
     protected MainPresenter bindPresenter() {
         mPresenter=new MainPresenter();
@@ -34,6 +46,10 @@ public class MainActivity extends BaseActivity<MainPresenter>implements MainCont
     }
 
 
+    @OnClick(R.id.bt_error)
+    public void onViewClicked(View view){
+        Logger.d("权限请求成功"+s.equals("oooo"));
+    }
     /**
      * 请求权限
      */

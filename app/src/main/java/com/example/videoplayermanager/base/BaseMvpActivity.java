@@ -10,6 +10,7 @@ import android.view.WindowManager;
 
 import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.EventBusManager;
+
 import com.example.videoplayermanager.other.Logger;
 
 import androidx.annotation.Nullable;
@@ -19,12 +20,14 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * desc:正常Activity基类
- * time:2020/08/07
+ * desc: Mvp模式Activity的基类
+ * @param <P> 泛型是实现了IBasePresenter的类
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompatActivity implements IBaseView {
+    protected P mPresenter;
     private Unbinder mButterKnife;
     protected boolean isStatusBarEnabled;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +38,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         mButterKnife= ButterKnife.bind(this);
         EventBusManager.register(this);
         ActivityStackManager.getInstance().onCreated(this);
+        mPresenter=bindPresenter();
+        mPresenter.attachView(this);
         initView();
         initData();
         if (isStatusBarEnabled){
@@ -71,7 +76,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * 初始化mPresenter
+     */
+    protected abstract P bindPresenter();
 
     /**
      * 获取布局
@@ -123,8 +131,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mPresenter.detachView();
         if (mButterKnife!=null)
-            mButterKnife.unbind();
+        mButterKnife.unbind();
         EventBusManager.unregister(this);
         ActivityStackManager.getInstance().onDestroyed(this);
         Logger.e("-------------"+this.getClass().getSimpleName());

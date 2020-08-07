@@ -5,8 +5,10 @@ import android.app.Application;
 import android.content.Context;
 
 import com.example.videoplayermanager.other.EventBusManager;
-import com.example.videoplayermanager.other.GlobalParameter;
+import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.ProxyCacheManager;
+import com.example.videoplayermanager.ui.CrashActivity;
+import com.example.videoplayermanager.ui.SplashActivity;
 import com.shuyu.gsyvideoplayer.cache.CacheFactory;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -45,7 +47,8 @@ public class MyApplication extends Application {
                 .trackActivities(true)
                 .minTimeBetweenCrashesMs(2000)
                 // 重启的 Activity
-                .restartActivity(MainActivity.class)
+                .restartActivity(SplashActivity.class)
+                .errorActivity(CrashActivity.class)
                 // 设置监听器
                 //.eventListener(new YourCustomEventListener())
                 .apply();

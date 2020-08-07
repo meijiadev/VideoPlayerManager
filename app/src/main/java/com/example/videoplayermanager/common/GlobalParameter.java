@@ -1,6 +1,8 @@
-package com.example.videoplayermanager.other;
+package com.example.videoplayermanager.common;
 
 import android.os.Environment;
+
+import com.example.videoplayermanager.other.Logger;
 
 import java.io.File;
 

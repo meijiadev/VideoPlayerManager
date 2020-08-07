@@ -2,6 +2,7 @@ package com.example.videoplayermanager.other;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.videoplayermanager.MyApplication;
+import com.example.videoplayermanager.common.GlobalParameter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +62,7 @@ public class VideoPreLoader {
      */
     private  void realPreload(String url){
         HttpURLConnection connection;
-        HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context,GlobalParameter.getDownloadFile());
+        HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context, GlobalParameter.getDownloadFile());
         String mUrl=httpProxyCacheServer.getProxyUrl(url);
         Logger.e("---------:"+mUrl);
         if (mUrl.contains("http")){
