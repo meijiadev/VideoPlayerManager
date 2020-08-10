@@ -1,6 +1,8 @@
 # VideoPlayerManager
 一款视频播放器，支持边播边缓存、预缓存. 
 
+增加开机自启动，崩溃重启
+
 -对MVP进行了封装 
 
 -基于protobuf的数据结构
