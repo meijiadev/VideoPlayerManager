@@ -4,11 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MainActivity">
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/videoRecycler"
+    tools:context=".ui.VideoActivity">
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"/>
-
+>
+        <com.example.videoplayermanager.widget.ListGSYVideoPlayer
+            android:id="@+id/videoPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

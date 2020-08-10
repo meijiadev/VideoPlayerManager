@@ -43,7 +43,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
         initView();
         initData();
         if (isStatusBarEnabled){
-            initState(this);
+            initState();
         }
     }
 
@@ -58,7 +58,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
     /**
      * 沉浸式状态栏（已适配 ）
      */
-    private  void initState(Activity activity) {
+    private  void initState() {
         Logger.e("启动沉浸式状态栏");
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();

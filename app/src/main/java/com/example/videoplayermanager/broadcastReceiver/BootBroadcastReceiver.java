@@ -11,7 +11,7 @@ import com.example.videoplayermanager.ui.SplashActivity;
  * desc：接收开机广播自动进入app
  * time:2020/08/07
  */
-public class BootReceiver extends BroadcastReceiver {
+public class BootBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

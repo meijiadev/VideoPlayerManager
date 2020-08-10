@@ -18,8 +18,13 @@ public class VideoPreLoader {
 
     private static VideoPreLoader videoPreLoader;
 
+    /**
+     * 下载线程
+     */
+    private Thread downloadThread;
 
-    static VideoPreLoader getInstance() {
+
+    public static VideoPreLoader getInstance() {
         if (videoPreLoader==null){
             videoPreLoader=new VideoPreLoader();
         }
@@ -34,26 +39,20 @@ public class VideoPreLoader {
      * 制定下载队列中的视频
      * @param urls
      */
-    void setPreLoadUrls(List<String> urls){
-        new Thread(()->{
-            for (int i=0;i<urls.size();i++){
-                realPreload(urls.get(i));
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+    public void setPreLoadUrls(List<String> urls){
+        if (downloadThread==null){
+            downloadThread= new Thread(()->{
+                for (int i=0;i<urls.size();i++){
+                    realPreload(urls.get(i));
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
-    }
-
-    public void addPreloadUrl(String url){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                realPreload(url);
-            }
-        }).start();
+            });
+        }
+        downloadThread.start();
     }
 
     /**
@@ -87,5 +86,11 @@ public class VideoPreLoader {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void onDestroy(){
+        videoPreLoader=null;
+        downloadThread=null;
+
     }
 }
