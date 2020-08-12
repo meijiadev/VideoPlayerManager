@@ -131,4 +131,9 @@ dependencies {
     // 本地异常捕捉框架：https://github.com/Ereza/CustomActivityOnCrash
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
 
+    //oksocket的tcp连接库
+    api 'com.tonystark.android:socket:latest.release'
+
+    implementation 'com.hjq:xtoast:5.5'
+
 }

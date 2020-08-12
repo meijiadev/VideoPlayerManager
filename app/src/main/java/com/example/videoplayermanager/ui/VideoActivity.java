@@ -12,6 +12,8 @@ import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.base.BaseActivity;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.VideoResourcesManager;
+import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
+import com.example.videoplayermanager.tcp.TcpClient;
 import com.example.videoplayermanager.widget.ListGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
@@ -20,11 +22,11 @@ import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class VideoActivity extends BaseActivity {
+public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.VideosIndex {
     @BindView(R.id.videoPlayer)
     ListGSYVideoPlayer videoPlayer;
-
     OrientationUtils orientationUtils;
+    private TcpClient tcpClient;
 
 
     @Override
@@ -35,6 +37,7 @@ public class VideoActivity extends BaseActivity {
     @Override
     protected void initView() {
         setStatusBarEnabled(true);
+        videoPlayer.setVideosIndex(this::currentVideosIndex);  //注册监听播放视频的索引
     }
 
     @Override
@@ -62,6 +65,7 @@ public class VideoActivity extends BaseActivity {
             }
         });
         videoPlayer.startPlayLogic();
+        tcpClient=TcpClient.getInstance(context, ClientMessageDispatcher.getInstance());
     }
 
     @Override
@@ -94,5 +98,12 @@ public class VideoActivity extends BaseActivity {
         //释放所有
         videoPlayer.setVideoAllCallBack(null);
         super.onBackPressed();
+    }
+
+    @Override
+    public void currentVideosIndex(int index) {
+        if (tcpClient!=null){
+            tcpClient.setIndex(index);
+        }
     }
 }

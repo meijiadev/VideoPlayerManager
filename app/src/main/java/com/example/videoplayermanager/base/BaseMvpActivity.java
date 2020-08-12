@@ -1,6 +1,7 @@
 package com.example.videoplayermanager.base;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.EventBusManager;
 
@@ -27,7 +29,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
     protected P mPresenter;
     private Unbinder mButterKnife;
     protected boolean isStatusBarEnabled;
-
+    protected Context context;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +37,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
         if (getLayoutId()>0){
             setContentView(getLayoutId());
         }
+        context= MyApplication.context;
         mButterKnife= ButterKnife.bind(this);
         EventBusManager.register(this);
         ActivityStackManager.getInstance().onCreated(this);

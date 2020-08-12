@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.service.GuardService;
 import com.example.videoplayermanager.ui.SplashActivity;
 
 /**
@@ -24,6 +25,10 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
             it.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             context.startActivity(it);
             Logger.e("Boot开机自启动！");
+
+            //启动服务
+            Intent serviceIntent=new Intent(context, GuardService.class);
+            context.startService(serviceIntent);
         }else {
             Logger.e("接收的非开机广播");
         }

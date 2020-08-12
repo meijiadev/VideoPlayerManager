@@ -26,7 +26,6 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
     //视频代理
     protected HttpProxyCacheServer proxy;
 
-
     protected File mCacheDir;
 
     protected boolean mCacheFile;

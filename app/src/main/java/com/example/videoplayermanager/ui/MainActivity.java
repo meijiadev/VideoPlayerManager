@@ -13,6 +13,7 @@ import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.http.HttpManager;
 import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.other.NetWorkUtil;
 import com.example.videoplayermanager.other.VideoPreLoader;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.presenter.MainPresenter;
@@ -101,40 +102,44 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public void hasPermission(List<String> granted, boolean isAll) {
         Logger.d("权限请求成功");
-        HttpManager.getInstance().getHttpServer().requestVideoList().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
-                subscribe(new Observer<VideoMessage>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.e("-----onSubscribe","");
-                    }
-
-                    @Override
-                    public void onNext(VideoMessage videoList) {
-                        Log.e("-----onNext","");
-                        videos=videoList.getTrailers();
-                        videoListAdapter.setNewData(videos);
-                        videoModels.clear();
-                        for (VideoMessage.TrailersBean trailersBean:videos){
-                            VideoModel videoModel=new VideoModel(trailersBean.getHightUrl(),trailersBean.getMovieName());
-                            videoModels.add(videoModel);
-                            urls.add(trailersBean.getHightUrl());
+        if (NetWorkUtil.checkEnable(context)){
+            HttpManager.getInstance().getHttpServer().requestVideoList().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
+                    subscribe(new Observer<VideoMessage>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.e("-----onSubscribe","");
                         }
-                        VideoResourcesManager.getInstance().setVideoModels(Collections.unmodifiableList(videoModels));
-                        VideoPreLoader.getInstance().setPreLoadUrls(urls);
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("onError:", Objects.requireNonNull(e.getMessage()));
-                        Logger.e("电影列表加载失败！");
-                    }
+                        @Override
+                        public void onNext(VideoMessage videoList) {
+                            Log.e("-----onNext","");
+                            videos=videoList.getTrailers();
+                            videoListAdapter.setNewData(videos);
+                            videoModels.clear();
+                            for (VideoMessage.TrailersBean trailersBean:videos){
+                                VideoModel videoModel=new VideoModel(trailersBean.getHightUrl(),trailersBean.getMovieName());
+                                videoModels.add(videoModel);
+                                urls.add(trailersBean.getHightUrl());
+                            }
+                            VideoResourcesManager.getInstance().setVideoModels(Collections.unmodifiableList(videoModels));
+                            VideoPreLoader.getInstance().setPreLoadUrls(urls);
+                        }
 
-                    @Override
-                    public void onComplete() {
-                        Log.e("-----onComplete","");
-                    }
-                });
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("onError:", Objects.requireNonNull(e.getMessage()));
+                            Logger.e("电影列表加载失败！");
+                        }
 
+                        @Override
+                        public void onComplete() {
+                            Log.e("-----onComplete","");
+                        }
+                    });
+
+        }else {
+            Logger.e("当前无网络！");
+        }
     }
 
     @Override

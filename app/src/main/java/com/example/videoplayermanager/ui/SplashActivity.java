@@ -1,11 +1,15 @@
 package com.example.videoplayermanager.ui;
 
+import android.content.Intent;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.base.BaseActivity;
+import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
+import com.example.videoplayermanager.service.GuardService;
+import com.example.videoplayermanager.tcp.TcpClient;
 
 import butterknife.BindView;
 
@@ -13,6 +17,10 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     private static final int ANIM_TIME = 2000;
     @BindView(R.id.iv_splash)
     ImageView ivSplash;
+
+    private TcpClient tcpClient;
+    private String ip="192.168.0.95";
+    private int port=88;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_splash;
@@ -30,6 +38,10 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
 
     @Override
     protected void initData() {
+        //启动服务
+        Intent serviceIntent=new Intent(context, GuardService.class);
+        startService(serviceIntent);
+
 
     }
 

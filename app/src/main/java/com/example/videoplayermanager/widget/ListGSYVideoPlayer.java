@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.videoplayermanager.tcp.TcpClient;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
@@ -27,6 +28,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
 
     protected List<GSYVideoModel> mUriList = new ArrayList<>();
     protected int mPlayPosition;
+    protected  VideosIndex videosIndex;
 
     /**
      * 1.5.0开始加入，如果需要不同布局区分功能，需要重载
@@ -43,6 +45,10 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         super(context, attrs);
     }
 
+
+    public void setVideosIndex(VideosIndex videosIndex) {
+        this.videosIndex = videosIndex;
+    }
 
     /**
      * 设置播放URL
@@ -103,6 +109,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
             mTitleTextView.setText(gsyVideoModel.getTitle());
         }
+        videosIndex.currentVideosIndex(mPlayPosition);
         return set;
     }
 
@@ -192,6 +199,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
             setViewShowState(mLockScreen, GONE);
             if (mLoadingProgressBar instanceof ENDownloadView) {
                 ((ENDownloadView) mLoadingProgressBar).start();
+
             }
         }
     }
@@ -217,7 +225,16 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         return true;
     }
 
+    /**
+     * 获取当前正在播放的
+     * @return
+     */
+    public int getmPlayPosition() {
+        return mPlayPosition;
+    }
 
-
-
+    // 通知当前播放第几个视频
+    public interface VideosIndex{
+        void currentVideosIndex(int index);
+    }
 }
