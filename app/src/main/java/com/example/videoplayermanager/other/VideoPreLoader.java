@@ -4,11 +4,16 @@ import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.common.GlobalParameter;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * desc: 视频预加载
@@ -17,6 +22,9 @@ import java.util.List;
 public class VideoPreLoader {
 
     private static VideoPreLoader videoPreLoader;
+
+    public static final String DOWNLOAD_TIME_1="23:00";
+    public static final String DOWNLOAD_TIME_2="09:10";
 
     /**
      * 下载线程
@@ -43,6 +51,7 @@ public class VideoPreLoader {
         if (downloadThread==null){
             downloadThread= new Thread(()->{
                 for (int i=0;i<urls.size();i++){
+                    Logger.e("下载到；"+i);
                     realPreload(urls.get(i));
                     try {
                         Thread.sleep(50);
@@ -50,6 +59,7 @@ public class VideoPreLoader {
                         e.printStackTrace();
                     }
                 }
+                downloadThread=null;
             });
         }
         downloadThread.start();
@@ -93,4 +103,7 @@ public class VideoPreLoader {
         downloadThread=null;
 
     }
+
+
+
 }

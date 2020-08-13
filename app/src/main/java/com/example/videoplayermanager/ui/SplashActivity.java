@@ -7,7 +7,6 @@ import android.widget.ImageView;
 
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.base.BaseActivity;
-import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.service.GuardService;
 import com.example.videoplayermanager.tcp.TcpClient;
 
@@ -21,6 +20,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     private TcpClient tcpClient;
     private String ip="192.168.0.95";
     private int port=88;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_splash;

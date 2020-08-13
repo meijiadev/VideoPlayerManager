@@ -2,6 +2,7 @@ package com.example.videoplayermanager.protobufProcessor.dispatcher;
 
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.protobufProcessor.processor.RspHeartBeatProcess;
+import com.example.videoplayermanager.protobufProcessor.processor.RspLoginProcessor;
 
 import DDRADServiceProto.DDRADServiceCmd;
 import DDRCommProto.BaseCmd;
@@ -24,10 +25,9 @@ public class ClientMessageDispatcher extends BaseMessageDispatcher {
 
         BaseCmd.rspLogin rspLogin= BaseCmd.rspLogin.newBuilder().build();
         Logger.e("------"+rspLogin.getClass().toString());
-        //m_ProcessorMap.put(rspLogin.getClass().toString(),new RspLoginProcessor());
+        m_ProcessorMap.put(rspLogin.getClass().toString(),new RspLoginProcessor());
 
-        BaseCmd.bcLSAddr bcLSAddr= BaseCmd.bcLSAddr.newBuilder().build();
-        //m_ProcessorMap.put(bcLSAddr.getClass().toString(),new ServerInformationProcessor());
+
 
 
     }

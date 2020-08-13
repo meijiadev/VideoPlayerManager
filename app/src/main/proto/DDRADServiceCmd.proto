@@ -7,7 +7,7 @@ message HeartBeat{
 }
 
 // 上位机下发到三个广告屏的视频链接列表
-message VideoSequence{
+message notifyCurrentVideoSeq{
     repeated VideoInfo videoInfos=1;
 }
 
@@ -15,4 +15,11 @@ message VideoInfo{
     string name=1;            // 视频的名字 =md5 +.mp4
     string url=2;            //视频地址
     string businessInfo=3;  //商家信息
+}
+
+message reqVideoSeq{
+    string whatever = 1;
+}
+message rspVideoSeq{
+    repeated string url = 1;
 }

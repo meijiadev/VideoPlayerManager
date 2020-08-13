@@ -9,6 +9,7 @@ import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.ProxyCacheManager;
 import com.example.videoplayermanager.ui.CrashActivity;
 import com.example.videoplayermanager.ui.SplashActivity;
+import com.google.gson.GsonBuilder;
 import com.shuyu.gsyvideoplayer.cache.CacheFactory;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
@@ -34,6 +35,8 @@ public class MyApplication extends Application {
         CacheFactory.setCacheManager(ProxyCacheManager.class);
         GSYVideoType.setShowType(SCREEN_TYPE_DEFAULT);
         ProxyCacheManager.instance().newProxy(context, GlobalParameter.getDownloadFile());
+        GlobalParameter.initConfigFile();
+
     }
 
 

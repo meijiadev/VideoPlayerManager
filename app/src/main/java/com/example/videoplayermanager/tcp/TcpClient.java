@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.widget.TextView;
 
 import com.example.videoplayermanager.R;
+import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
@@ -120,7 +121,7 @@ public class TcpClient extends BaseSocketConnection {
                 if (activity.getLocalClassName().contains("LoginActivity")){
                     EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.tcpConnected));
                 }else {
-                    //sendData(CmdSchedule.commonHeader(BaseCmd.eCltType.eModuleServer), CmdSchedule.localLogin(GlobalParameter.getAccount(),GlobalParameter.getPassword()));
+                    requestLogin(GlobalParameter.ACCOUNT,GlobalParameter.PASSWORD);
                     if (xToast!=null){
                         xToast.cancel();
                     }
@@ -299,14 +300,19 @@ public class TcpClient extends BaseSocketConnection {
         DDRADServiceCmd.HeartBeat heartBeat=DDRADServiceCmd.HeartBeat.newBuilder()
                 .setIndex(index)
                 .build();
+        BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()
+                .setFromCltType(BaseCmd.eCltType.eAdClient)
+                .setToCltType(BaseCmd.eCltType.eAIServer)
+                .addFlowDirection(BaseCmd.CommonHeader.eFlowDir.Forward)
+                .build();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (isConnected&&manager!=null){
                     try {
-                        manager.getPulseManager().setPulseSendable(new PulseData(m_MessageRoute.serialize(null,heartBeat))).pulse();
+                        manager.getPulseManager().setPulseSendable(new PulseData(m_MessageRoute.serialize(header,heartBeat))).pulse();
                         Logger.d("发送心跳包");
-                        Thread.sleep(3000);
+                        Thread.sleep(1000);
                     }catch (NullPointerException e){
                         e.printStackTrace();
                     }catch (InterruptedException e) {
@@ -316,10 +322,44 @@ public class TcpClient extends BaseSocketConnection {
             }
         }).start();
     }
-
-
     public boolean isConnected() {
         return isConnected;
     }
+
+    /**
+     * 请求视频地址
+     */
+    public void requestVideoAddress(){
+        DDRADServiceCmd.reqVideoSeq reqVideoSeq= DDRADServiceCmd.reqVideoSeq.newBuilder()
+                .setWhatever("request")
+                .build();
+        BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()
+                .setFromCltType(BaseCmd.eCltType.eAdClient)
+                .setToCltType(BaseCmd.eCltType.eAIServer)
+                .addFlowDirection(BaseCmd.CommonHeader.eFlowDir.Forward)
+                .build();
+        sendData(header,reqVideoSeq);
+    }
+
+
+    /**
+     * 请求登录
+     * @param account
+     * @param password
+     */
+    public void requestLogin(String account,String password){
+        BaseCmd.reqLogin mreqLogin=BaseCmd.reqLogin.newBuilder()
+                .setUsername(account)
+                .setUserpwd(password)
+                .setType(BaseCmd.eCltType.eAdClient)
+                .build();
+        BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()
+                .setFromCltType(BaseCmd.eCltType.eAdClient)
+                .setToCltType(BaseCmd.eCltType.eAIServer)
+                .addFlowDirection(BaseCmd.CommonHeader.eFlowDir.Forward)
+                .build();
+        sendData(header,mreqLogin);
+    }
+
 
 }

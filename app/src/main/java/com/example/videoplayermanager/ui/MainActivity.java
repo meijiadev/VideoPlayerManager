@@ -123,6 +123,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                             }
                             VideoResourcesManager.getInstance().setVideoModels(Collections.unmodifiableList(videoModels));
                             VideoPreLoader.getInstance().setPreLoadUrls(urls);
+                            Intent intent=new Intent(MainActivity.this,VideoActivity.class);
+                            intent.putExtra("videoPosition",0);
+                            startActivity(intent);
                         }
 
                         @Override
