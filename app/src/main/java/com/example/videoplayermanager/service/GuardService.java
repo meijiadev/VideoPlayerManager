@@ -24,8 +24,8 @@ import java.util.List;
  * desc:
  */
 public class GuardService extends Service {
-    private String ip="192.168.0.95";
-    private int port=88;
+    private String ip="192.168.1.220";
+    private int port=189;
     private TcpClient tcpClient;
 
     private TimeTask<TimeManager.MyTask> myTaskTimeTask;
@@ -68,15 +68,29 @@ public class GuardService extends Service {
      */
     private List<TimeManager.MyTask> createTasks(){
         return new ArrayList<TimeManager.MyTask>(){{
-         TimeManager.MyTask myTask=new TimeManager.MyTask();
             try {
+                String formatType="yyyy-MM-dd HH:mm:ss";
+                TimeManager.MyTask startPlayVideo=new TimeManager.MyTask();
+                String startT=TimeUtils.getCurrentTime2()+" "+TimeManager.START_PLAY_VIDEO;
+                String endT=TimeUtils.getCurrentTime2()+" "+TimeManager.END_PLAY_VIDEO;
+                startPlayVideo.setStarTime(TimeUtils.stringToLong(startT,formatType));
+                startPlayVideo.setEndTime(TimeUtils.stringToLong(endT,formatType));
+                startPlayVideo.name=TimeManager.START_PLAY_VIDEO_NAME;
+                add(startPlayVideo);
+                TimeManager.MyTask myTask=new TimeManager.MyTask();
                 String startTime=TimeUtils.getCurrentTime2()+" "+TimeManager.START_DOWNLOAD_1;
                 String endTime=TimeUtils.getCurrentTime2()+" "+TimeManager.END_DOWNLOAD_1;
-                String formatType="yyyy-MM-dd HH:mm:ss";
                 myTask.setStarTime(TimeUtils.stringToLong(startTime,formatType));
                 myTask.setEndTime(TimeUtils.stringToLong(endTime,formatType));
-                myTask.name="download";
+                myTask.name=TimeManager.START_DOWNLOAD_1_NAME;
                 add(myTask);
+                TimeManager.MyTask myTask1=new TimeManager.MyTask();
+                String startTime1=TimeUtils.getCurrentTime2()+" "+TimeManager.START_DOWNLOAD_2;
+                String endTime1=TimeUtils.getCurrentTime2()+" "+TimeManager.END_DOWNLOAD_2;
+                myTask1.setStarTime(TimeUtils.stringToLong(startTime1,formatType));
+                myTask1.setEndTime(TimeUtils.stringToLong(endTime1,formatType));
+                myTask1.name=TimeManager.START_DOWNLOAD_2_NAME;
+                add(myTask1);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

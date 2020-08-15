@@ -2,23 +2,16 @@ package com.example.videoplayermanager.tcp;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.view.Gravity;
-import android.widget.TextView;
-
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.Logger;
-import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.protobufProcessor.MessageRoute;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.BaseMessageDispatcher;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessageLite;
 import com.google.protobuf.InvalidProtocolBufferException;
-
-import com.hjq.xtoast.OnClickListener;
 import com.hjq.xtoast.XToast;
 import com.xuhao.didi.core.iocore.interfaces.ISendable;
 import com.xuhao.didi.core.pojo.OriginalData;
@@ -28,13 +21,7 @@ import com.xuhao.didi.socket.client.sdk.client.ConnectionInfo;
 import com.xuhao.didi.socket.client.sdk.client.OkSocketOptions;
 import com.xuhao.didi.socket.client.sdk.client.action.SocketActionAdapter;
 import com.xuhao.didi.socket.client.sdk.client.connection.IConnectionManager;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.List;
-
 import DDRADServiceProto.DDRADServiceCmd;
 import DDRCommProto.BaseCmd;
 
@@ -118,13 +105,9 @@ public class TcpClient extends BaseSocketConnection {
             Logger.e("--------连接成功---------");
             Activity activity= ActivityStackManager.getInstance().getTopActivity();
             if (activity!=null){
-                if (activity.getLocalClassName().contains("LoginActivity")){
-                    EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.tcpConnected));
-                }else {
-                    requestLogin(GlobalParameter.ACCOUNT,GlobalParameter.PASSWORD);
-                    if (xToast!=null){
-                        xToast.cancel();
-                    }
+                requestLogin(GlobalParameter.ACCOUNT,GlobalParameter.PASSWORD);
+                if (xToast!=null){
+                    xToast.cancel();
                 }
             }
             sendHeartBeat();
@@ -152,12 +135,8 @@ public class TcpClient extends BaseSocketConnection {
             isConnected=false;
             Activity activity=ActivityStackManager.getInstance().getTopActivity();
             if (activity!=null){
-                if (activity.getLocalClassName().contains("LoginActivity")){
-                    disConnect();
-                }else {
-                    Logger.e("网络连接断开，当前处于"+activity.getLocalClassName());
-                    showXToast(activity);
-                }
+                Logger.e("网络连接断开，当前处于"+activity.getLocalClassName());
+                showXToast(activity);
             }
         }
 
@@ -297,7 +276,7 @@ public class TcpClient extends BaseSocketConnection {
      * 持续发送心跳
      */
     public void sendHeartBeat(){
-        DDRADServiceCmd.HeartBeat heartBeat=DDRADServiceCmd.HeartBeat.newBuilder()
+        DDRADServiceCmd.ADHeartBeat heartBeat=DDRADServiceCmd.ADHeartBeat.newBuilder()
                 .setIndex(index)
                 .build();
         BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()

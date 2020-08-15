@@ -26,16 +26,15 @@ public class GlobalParameter {
     public static final String ROBOT_FOLDER_DOWNLOAD= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRMapDownload"+"/"; //下载文件夹
     public static final String LOCAL_AD_FILE=Environment.getExternalStorageDirectory().getPath()+"/"+"广告机参数"+"/";
 
-    public static  String ACCOUNT="admin";
-    public static  String PASSWORD="admin";
+    public static  String ACCOUNT="admin_ad1";
+    public static  String PASSWORD="admin_ad";
     public static  String IP="192.168.0.95";
-
     public static  int PORT=88;
 
     public static File getDownloadFile(){
         File dir=new File(VIDEO_FOLDER);
         if (dir.exists()){
-            Logger.e("文件夹已存在，无须创建");
+            //Logger.e("文件夹已存在，无须创建");
         }else {
             dir.mkdirs();
             Logger.e("文件夹创建");

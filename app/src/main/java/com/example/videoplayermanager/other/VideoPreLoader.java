@@ -23,9 +23,6 @@ public class VideoPreLoader {
 
     private static VideoPreLoader videoPreLoader;
 
-    public static final String DOWNLOAD_TIME_1="23:00";
-    public static final String DOWNLOAD_TIME_2="09:10";
-
     /**
      * 下载线程
      */
@@ -51,7 +48,7 @@ public class VideoPreLoader {
         if (downloadThread==null){
             downloadThread= new Thread(()->{
                 for (int i=0;i<urls.size();i++){
-                    Logger.e("下载到；"+i);
+                    //Logger.d("下载到；"+i);
                     realPreload(urls.get(i));
                     try {
                         Thread.sleep(50);
@@ -73,7 +70,7 @@ public class VideoPreLoader {
         HttpURLConnection connection;
         HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context, GlobalParameter.getDownloadFile());
         String mUrl=httpProxyCacheServer.getProxyUrl(url);
-        Logger.e("---------:"+mUrl);
+        //Logger.d("---------:"+mUrl);
         if (mUrl.contains("http")){
             try {
                 URL myURL=new URL(mUrl);
@@ -85,7 +82,7 @@ public class VideoPreLoader {
                 do {
                     int numRed=inputStream.read(buffer);
                     download+=numRed;
-                    Logger.e("读取下载进度："+download/1024/1024);
+                    //Logger.e("读取下载进度："+download/1024/1024);
                     if (numRed==-1){
                         break;
                     }

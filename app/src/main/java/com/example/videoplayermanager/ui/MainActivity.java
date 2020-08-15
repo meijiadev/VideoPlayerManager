@@ -1,7 +1,6 @@
 package com.example.videoplayermanager.ui;
 
 import android.content.Intent;
-import android.os.Parcelable;
 import android.util.Log;
 
 
@@ -9,7 +8,6 @@ import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.adapter.VideoListAdapter;
 import com.example.videoplayermanager.base.BaseMvpActivity;
 import com.example.videoplayermanager.bean.VideoMessage;
-import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.http.HttpManager;
 import com.example.videoplayermanager.other.Logger;
@@ -17,12 +15,14 @@ import com.example.videoplayermanager.other.NetWorkUtil;
 import com.example.videoplayermanager.other.VideoPreLoader;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.presenter.MainPresenter;
+import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
+import com.example.videoplayermanager.tcp.TcpClient;
 import com.hjq.permissions.OnPermission;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,9 +44,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     private String [] permission=new String[]{ Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE};
     private List<VideoMessage.TrailersBean> videos=new ArrayList<>();
-    private List<VideoModel> videoModels=new ArrayList<>();
+    private List<GSYVideoModel> videoModels=new ArrayList<>();
     private List<String> urls=new ArrayList<>();
     private VideoListAdapter videoListAdapter;
+
+
     @Override
     protected MainPresenter bindPresenter() {
         mPresenter=new MainPresenter();
@@ -71,6 +73,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void initData() {
+        TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).requestVideoAddress();
         requestPermission();
     }
 
@@ -117,11 +120,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                             videoListAdapter.setNewData(videos);
                             videoModels.clear();
                             for (VideoMessage.TrailersBean trailersBean:videos){
-                                VideoModel videoModel=new VideoModel(trailersBean.getHightUrl(),trailersBean.getMovieName());
-                                videoModels.add(videoModel);
+                                GSYVideoModel gsyVideoModel=new GSYVideoModel(trailersBean.getHightUrl(),trailersBean.getVideoTitle());
+                                videoModels.add(gsyVideoModel);
                                 urls.add(trailersBean.getHightUrl());
                             }
-                            VideoResourcesManager.getInstance().setVideoModels(Collections.unmodifiableList(videoModels));
+                            VideoResourcesManager.getInstance().setVideoModels(videoModels);
                             VideoPreLoader.getInstance().setPreLoadUrls(urls);
                             Intent intent=new Intent(MainActivity.this,VideoActivity.class);
                             intent.putExtra("videoPosition",0);

@@ -25,7 +25,6 @@ import androidx.annotation.RequiresApi;
 public class MessageRoute {
     private Context context;
     public String headString="pbh\0";
-    private BaseSocketConnection m_BaseSocketConnection;
     private BaseMessageDispatcher m_MessageDispatcher=null;
     public  static StreamBuffer streamBuffer;
 
@@ -33,21 +32,17 @@ public class MessageRoute {
     @SuppressLint("NewApi")
     public MessageRoute(Context context, BaseSocketConnection bc, BaseMessageDispatcher bmd){
         this.context=context;
-        m_BaseSocketConnection=bc;
         m_MessageDispatcher=bmd;
         streamBuffer=StreamBuffer.getInstance();
     }
 
     public static String javaClass2ProtoTypeName(String className){
         if (className.contains("BaseCmd")){
-            String sType=className.replaceAll("class DDRCommProto.BaseCmd\\$","DDRCommProto.");
-            return sType;
+            return className.replaceAll("class DDRCommProto.BaseCmd\\$","DDRCommProto.");
         } else if (className.contains("DDRAIServiceCmd")){
-            String sType=className.replaceAll("class DDRAIServiceProto.DDRAIServiceCmd\\$","DDRAIServiceProto.");
-            return sType;
+            return className.replaceAll("class DDRAIServiceProto.DDRAIServiceCmd\\$","DDRAIServiceProto.");
         }else if (className.contains("DDRADServiceCmd")){
-            String sType=className.replaceAll("class DDRADServiceProto.DDRADServiceCmd\\$","DDRADServiceProto");
-            return sType;
+            return className.replaceAll("class DDRADServiceProto.DDRADServiceCmd\\$","DDRADServiceProto.");
         }
         return null;
     }
@@ -55,18 +50,14 @@ public class MessageRoute {
     public static String protoTypeName2JavaClassName(String typeName){
         if (typeName.contains("DDRCommProto")){
             if (typeName.contains("Remote")|typeName.contains("rspSelectLS")){
-                String className=typeName.replaceAll("DDRCommProto\\.","class DDRCommProto.RemoteCmd\\$");
-                return className;
+                return typeName.replaceAll("DDRCommProto\\.","class DDRCommProto.RemoteCmd\\$");
             }else {
-                String className=typeName.replaceAll("DDRCommProto\\.","class DDRCommProto.BaseCmd\\$");
-                return className;
+                return typeName.replaceAll("DDRCommProto\\.","class DDRCommProto.BaseCmd\\$");
             }
         }else if (typeName.contains("DDRAIServiceProto")){
-            String className=typeName.replaceAll("DDRAIServiceProto\\.","class DDRAIServiceProto.DDRAIServiceCmd\\$");
-            return className;
+            return typeName.replaceAll("DDRAIServiceProto\\.","class DDRAIServiceProto.DDRAIServiceCmd\\$");
         }else if (typeName.contains("DDRADServiceProto")){
-            String className=typeName.replaceAll("DDRADServiceProto\\.","class DDRADServiceProto.DDRADServiceCmd\\$");
-            return className;
+            return typeName.replaceAll("DDRADServiceProto\\.","class DDRADServiceProto.DDRADServiceCmd\\$");
         }
         return null;
     }

@@ -2,7 +2,7 @@ syntax="proto3";
 package DDRADServiceProto;
 
 // 心跳包 index 表示当前播放视频的索引
-message HeartBeat{
+message ADHeartBeat{
     int32 index=1;
 }
 
@@ -12,9 +12,12 @@ message notifyCurrentVideoSeq{
 }
 
 message VideoInfo{
-    string name=1;            // 视频的名字 =md5 +.mp4
-    string url=2;            //视频地址
-    string businessInfo=3;  //商家信息
+    string name=1; 	        // 视频的名字 =md5 +.mp4
+	int32 putMode = 2;      // 投放模式
+    string businessInfo=3;  // 商家信息
+	int32 adType = 4;       // 节目类型
+	string url=5;           // 视频地址
+	
 }
 
 message reqVideoSeq{

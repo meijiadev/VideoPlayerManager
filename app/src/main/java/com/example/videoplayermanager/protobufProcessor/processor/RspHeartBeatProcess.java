@@ -15,8 +15,8 @@ public class RspHeartBeatProcess extends BaseProcessor {
     public void process(Context context, BaseCmd.CommonHeader commonHeader, GeneratedMessageLite msg) {
         super.process(context, commonHeader, msg);
         TcpClient tcpClient=TcpClient.tcpClient;
-        DDRADServiceCmd.HeartBeat heartBeat= (DDRADServiceCmd.HeartBeat) msg;
-        Logger.e("--------接收心跳"+heartBeat.getIndex());
+        DDRADServiceCmd.ADHeartBeat heartBeat= (DDRADServiceCmd.ADHeartBeat) msg;
+        Logger.d("--------接收心跳"+heartBeat.getIndex());
         if (tcpClient!=null){
             tcpClient.feedDog();
         }
