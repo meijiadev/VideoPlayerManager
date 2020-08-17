@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.tcp.TcpClient;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;

@@ -3,9 +3,12 @@ package com.example.videoplayermanager.protobufProcessor.processor;
 import android.content.Context;
 
 import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.google.protobuf.GeneratedMessageLite;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +29,10 @@ public class NotifyCurrentVideoSeqProcessor extends BaseProcessor {
         for (int i=0;i<videoInfos.size();i++){
             GSYVideoModel gsyVideoModel=new GSYVideoModel(videoInfos.get(i).getUrl(),videoInfos.get(i).getName());
             gsyVideoModels.add(gsyVideoModel);
+            Logger.e("----------:"+gsyVideoModel.getTitle()+"------"+i);
         }
         VideoResourcesManager.getInstance().setVideoModels(gsyVideoModels);
-        Logger.d("接收视频播放列表！");
+        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.updatePlayVideos));
+        Logger.e("接收视频播放列表！"+gsyVideoModels.size());
     }
 }

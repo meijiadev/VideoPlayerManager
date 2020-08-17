@@ -12,6 +12,8 @@ public class MessageEvent {
         updatePort,           // 更新端口号
         tcpConnected,         //tcp已连接
         LoginSuccess,        //登陆成功
+        updatePlayVideos,   //更新视频播放列表
+        allPlayVideos,      //所有的视频地址
 
     }
 

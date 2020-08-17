@@ -70,7 +70,7 @@ public class VideoPreLoader {
         HttpURLConnection connection;
         HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context, GlobalParameter.getDownloadFile());
         String mUrl=httpProxyCacheServer.getProxyUrl(url);
-        //Logger.d("---------:"+mUrl);
+        Logger.d("---------:"+mUrl);
         if (mUrl.contains("http")){
             try {
                 URL myURL=new URL(mUrl);
@@ -82,7 +82,7 @@ public class VideoPreLoader {
                 do {
                     int numRed=inputStream.read(buffer);
                     download+=numRed;
-                    //Logger.e("读取下载进度："+download/1024/1024);
+                    Logger.e("读取下载进度："+download/1024/1024);
                     if (numRed==-1){
                         break;
                     }

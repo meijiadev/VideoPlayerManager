@@ -11,6 +11,7 @@ import android.view.View;
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.base.BaseActivity;
 import com.example.videoplayermanager.common.GlobalParameter;
+import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
@@ -37,6 +38,7 @@ public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.Vi
     @Override
     protected void initView() {
         setStatusBarEnabled(true);
+        tcpClient=TcpClient.getInstance(context, ClientMessageDispatcher.getInstance());
         videoPlayer.setVideosIndex(this::currentVideosIndex);  //注册监听播放视频的索引
     }
 
@@ -65,7 +67,6 @@ public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.Vi
             }
         });
         videoPlayer.startPlayLogic();
-        tcpClient=TcpClient.getInstance(context, ClientMessageDispatcher.getInstance());
     }
 
     @Override
@@ -102,6 +103,7 @@ public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.Vi
 
     @Override
     public void currentVideosIndex(int index) {
+        Logger.e("---索引："+index);
         if (tcpClient!=null){
             tcpClient.setIndex(index);
         }

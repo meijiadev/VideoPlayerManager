@@ -24,7 +24,7 @@ import java.util.List;
  * desc:
  */
 public class GuardService extends Service {
-    private String ip="192.168.1.220";
+    private String ip="192.168.1.66";
     private int port=189;
     private TcpClient tcpClient;
 

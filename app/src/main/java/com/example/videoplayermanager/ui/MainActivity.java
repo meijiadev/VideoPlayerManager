@@ -11,6 +11,7 @@ import com.example.videoplayermanager.bean.VideoMessage;
 import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.http.HttpManager;
 import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.NetWorkUtil;
 import com.example.videoplayermanager.other.VideoPreLoader;
 import com.example.videoplayermanager.other.VideoResourcesManager;
@@ -21,6 +22,9 @@ import com.hjq.permissions.OnPermission;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,18 +45,29 @@ import static com.example.videoplayermanager.http.Api.VIDEO_LIST_DOMAIN_NAME;
 public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainContract.View, OnPermission {
     @BindView(R.id.videoRecycler)
     RecyclerView videoRecycler;
-
     private String [] permission=new String[]{ Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE};
     private List<VideoMessage.TrailersBean> videos=new ArrayList<>();
     private List<GSYVideoModel> videoModels=new ArrayList<>();
     private List<String> urls=new ArrayList<>();
     private VideoListAdapter videoListAdapter;
-
-
     @Override
     protected MainPresenter bindPresenter() {
         mPresenter=new MainPresenter();
         return mPresenter;
+    }
+    private boolean isReceive=false;
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onReceive(MessageEvent messageEvent){
+        if (messageEvent.getType().equals(MessageEvent.Type.updatePlayVideos)){
+            if (!isReceive){
+                isReceive=true;
+                Intent intent=new Intent(MainActivity.this,VideoActivity.class);
+                intent.putExtra("videoPosition",0);
+                startActivity(intent);
+            }
+        }else if (messageEvent.getType().equals(MessageEvent.Type.LoginSuccess)){
+            TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).requestVideoAddress();
+        }
     }
 
     @Override
@@ -73,7 +88,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void initData() {
-        TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).requestVideoAddress();
         requestPermission();
     }
 
@@ -106,6 +120,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public void hasPermission(List<String> granted, boolean isAll) {
         Logger.d("权限请求成功");
         if (NetWorkUtil.checkEnable(context)){
+/*
             HttpManager.getInstance().getHttpServer().requestVideoList().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
                     subscribe(new Observer<VideoMessage>() {
                         @Override
@@ -142,6 +157,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                             Log.e("-----onComplete","");
                         }
                     });
+*/
 
         }else {
             Logger.e("当前无网络！");

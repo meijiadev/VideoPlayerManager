@@ -38,7 +38,7 @@ public class TcpClient extends BaseSocketConnection {
     private boolean isConnected; //是否连接
     private SocketCallBack socketCallBack;
     private byte[] heads=new byte[4];  //存储头部长度信息的字节数组
-    private byte [] bodyLenths=new byte[4];        //存储body体的信息长度
+    private byte [] bodyLengths =new byte[4];        //存储body体的信息长度
     private XToast xToast;
 
     /**
@@ -210,8 +210,8 @@ public class TcpClient extends BaseSocketConnection {
             if (header == null || header.length < getHeaderLength()) {
                 return 0;
             }
-            System.arraycopy(header,4,bodyLenths,0,4);
-            return bytesToIntLittle(bodyLenths,0)-8;
+            System.arraycopy(header,4, bodyLengths,0,4);
+            return bytesToIntLittle(bodyLengths,0)-8;
         }
     }
 
@@ -235,7 +235,7 @@ public class TcpClient extends BaseSocketConnection {
     public void feedDog(){
         if (manager!=null){
             manager.getPulseManager().feed();
-           Logger.d("---喂狗");
+           //Logger.d("---喂狗");
         }
     }
 
@@ -261,7 +261,6 @@ public class TcpClient extends BaseSocketConnection {
     public void sendData(BaseCmd.CommonHeader commonHeader, GeneratedMessageLite message){
         if (manager!=null){
             byte[] data=m_MessageRoute.serialize(commonHeader,message);
-            Logger.d("--------sendData");
             manager.send(new SendData(data));
         }
     }
@@ -276,9 +275,6 @@ public class TcpClient extends BaseSocketConnection {
      * 持续发送心跳
      */
     public void sendHeartBeat(){
-        DDRADServiceCmd.ADHeartBeat heartBeat=DDRADServiceCmd.ADHeartBeat.newBuilder()
-                .setIndex(index)
-                .build();
         BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()
                 .setFromCltType(BaseCmd.eCltType.eAdClient)
                 .setToCltType(BaseCmd.eCltType.eAIServer)
@@ -289,8 +285,11 @@ public class TcpClient extends BaseSocketConnection {
             public void run() {
                 while (isConnected&&manager!=null){
                     try {
+                        DDRADServiceCmd.ADHeartBeat heartBeat=DDRADServiceCmd.ADHeartBeat.newBuilder()
+                                .setIndex(index)
+                                .build();
                         manager.getPulseManager().setPulseSendable(new PulseData(m_MessageRoute.serialize(header,heartBeat))).pulse();
-                        Logger.d("发送心跳包");
+                        Logger.e("发送心跳包"+heartBeat.getIndex());
                         Thread.sleep(1000);
                     }catch (NullPointerException e){
                         e.printStackTrace();
