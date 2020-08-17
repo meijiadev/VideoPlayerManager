@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.tcp.TcpClient;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
@@ -103,6 +104,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
      */
     protected boolean setUp(List<GSYVideoModel> url, boolean cacheWithPlay, int position, File cachePath, Map<String, String> mapHeadData, boolean changeState) {
         mUriList = url;
+        mUriList=VideoResourcesManager.getInstance().getVideoModels();
         mPlayPosition = position;
         mMapHeadData = mapHeadData;
         GSYVideoModel gsyVideoModel = url.get(position);
@@ -111,6 +113,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
             mTitleTextView.setText(gsyVideoModel.getTitle());
         }
         videosIndex.currentVideosIndex(mPlayPosition);
+        Logger.e("正在播放："+mPlayPosition+"----列表长度："+mUriList.size());
         return set;
     }
 

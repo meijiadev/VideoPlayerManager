@@ -91,6 +91,7 @@ public class VideoPreLoader {
                 Logger.e("读取下载完毕！");
             } catch (IOException e) {
                 e.printStackTrace();
+
             }
         }
     }

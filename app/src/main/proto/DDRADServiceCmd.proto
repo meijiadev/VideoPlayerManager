@@ -7,6 +7,8 @@ message ADHeartBeat{
 }
 
 // 上位机下发到三个广告屏的视频链接列表
+
+
 message notifyCurrentVideoSeq{
     repeated VideoInfo videoInfos=1;
 }
