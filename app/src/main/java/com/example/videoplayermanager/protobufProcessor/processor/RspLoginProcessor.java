@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
+import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
+import com.example.videoplayermanager.tcp.TcpClient;
 import com.google.protobuf.GeneratedMessageLite;
 
 import org.greenrobot.eventbus.EventBus;
@@ -17,6 +19,7 @@ public class RspLoginProcessor extends BaseProcessor {
         super.process(context, commonHeader, msg);
         BaseCmd.rspLogin rspLogin= (BaseCmd.rspLogin) msg;
         Logger.e("登陆回复");
-        EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.LoginSuccess));
+        //EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.LoginSuccess));
+        TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).requestVideoAddress();
     }
 }

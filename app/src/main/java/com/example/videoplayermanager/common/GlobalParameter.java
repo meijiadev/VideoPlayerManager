@@ -6,6 +6,7 @@ import com.example.videoplayermanager.bean.ADConfig;
 import com.example.videoplayermanager.other.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,11 +26,15 @@ public class GlobalParameter {
     public static final String ROBOT_FOLDER_LOG= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRMapLog"+"/";      //日志存储地址
     public static final String ROBOT_FOLDER_DOWNLOAD= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRMapDownload"+"/"; //下载文件夹
     public static final String LOCAL_AD_FILE=Environment.getExternalStorageDirectory().getPath()+"/"+"广告机参数"+"/";
+    public static final String AD_CONFIG_NAME="Config.txt";
 
+    public static  String ACCOUNT_1="admin_ad1";
+    public static  String ACCOUNT_2="admin_ad2";
+    public static  String ACCOUNT_3="admin_ad3";
+    public static  String IP="192.168.0.95";
+    public static  String PORT="88";
     public static  String ACCOUNT="admin_ad1";
     public static  String PASSWORD="admin_ad";
-    public static  String IP="192.168.0.95";
-    public static  int PORT=88;
 
     public static File getDownloadFile(){
         File dir=new File(VIDEO_FOLDER);
@@ -50,20 +55,27 @@ public class GlobalParameter {
         new Thread(()->{
             File dir;
             File txtFile;
+            GsonBuilder gsonBuilder=new GsonBuilder();
+            Gson gson=gsonBuilder.create();
             try {
                 dir=new File(LOCAL_AD_FILE);
                 if (!dir.exists()){
                     dir.mkdir();
                 }
-                txtFile=new File(dir,"Config.txt");
+                txtFile=new File(dir,AD_CONFIG_NAME);
                 if (!txtFile.exists()){
                     txtFile.createNewFile();
-                    GsonBuilder gsonBuilder=new GsonBuilder();
-                    Gson gson=gsonBuilder.create();
                     ADConfig adConfig=new ADConfig();
                     String jsonMessage=gson.toJson(adConfig);
                     PrintStream printStream=new PrintStream(new FileOutputStream(txtFile));
                     printStream.println(jsonMessage);
+                }else {
+                    ADConfig adConfig=gson.fromJson(ReadTxtFile(LOCAL_AD_FILE+AD_CONFIG_NAME),ADConfig.class);
+                    IP=adConfig.getIP();
+                    ACCOUNT=adConfig.getAccount();
+                    PASSWORD=adConfig.getPassword();
+                    PORT=adConfig.getPort();
+                    Logger.e(IP+";"+ACCOUNT+";"+PASSWORD+";"+PORT);
                 }
             }catch (Exception e){
                 e.printStackTrace();

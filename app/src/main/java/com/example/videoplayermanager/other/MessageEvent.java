@@ -14,7 +14,7 @@ public class MessageEvent {
         LoginSuccess,        //登陆成功
         updatePlayVideos,   //更新视频播放列表
         allPlayVideos,      //所有的视频地址
-
+        startPlayVideo,        //开始播放视频
     }
 
     public MessageEvent(Type type) {

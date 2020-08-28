@@ -69,9 +69,10 @@ public class TcpClient extends BaseSocketConnection {
      * @param ip
      * @param port
      */
-    public synchronized void createConnect(String ip, int port){
+    public synchronized void createConnect(String ip, String port){
         Logger.e("连接tcp:"+ip+";"+port);
-        info=new ConnectionInfo(ip,port);
+        int mPort= Integer.parseInt(port);
+        info=new ConnectionInfo(ip,mPort);
         manager=OkSocket.open(info);
         OkSocketOptions.Builder clientOptions=new OkSocketOptions.Builder();
         clientOptions.setPulseFeedLoseTimes(100);
@@ -266,9 +267,13 @@ public class TcpClient extends BaseSocketConnection {
     }
 
     private int index=-1;
-
-    public void setIndex(int index){
+    private boolean hasNext=true;
+    private String name="NULL";
+    public void setIndex(int index,boolean hasNext,String name){
         this.index=index;
+        this.hasNext=hasNext;
+        if (!name.isEmpty())
+        this.name=name;
     }
 
     /**
@@ -287,9 +292,11 @@ public class TcpClient extends BaseSocketConnection {
                     try {
                         DDRADServiceCmd.ADHeartBeat heartBeat=DDRADServiceCmd.ADHeartBeat.newBuilder()
                                 .setIndex(index)
+                                .setHasNext(hasNext)
+                                .setVideoName(name)
                                 .build();
                         manager.getPulseManager().setPulseSendable(new PulseData(m_MessageRoute.serialize(header,heartBeat))).pulse();
-                        Logger.e("发送心跳包"+heartBeat.getIndex());
+                        Logger.e("发送心跳包"+heartBeat.getIndex()+hasNext+"视频名字："+name);
                         Thread.sleep(1000);
                     }catch (NullPointerException e){
                         e.printStackTrace();

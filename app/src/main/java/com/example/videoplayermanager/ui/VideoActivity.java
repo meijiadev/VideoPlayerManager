@@ -47,6 +47,7 @@ public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.Vi
         Intent intent=getIntent();
         List<GSYVideoModel> videoModels = VideoResourcesManager.getInstance().getVideoModels();
         int index=intent.getIntExtra("videoPosition",0);
+
         videoPlayer.setUp(videoModels,true,index, GlobalParameter.getDownloadFile());
         //设置返回键
         videoPlayer.getBackButton().setVisibility(View.VISIBLE);
@@ -102,10 +103,10 @@ public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.Vi
     }
 
     @Override
-    public void currentVideosIndex(int index) {
+    public void currentVideosIndex(int index,boolean hasNext,String name) {
         Logger.e("---索引："+index);
         if (tcpClient!=null){
-            tcpClient.setIndex(index);
+            tcpClient.setIndex(index,hasNext,name);
         }
     }
 }

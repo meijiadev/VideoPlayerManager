@@ -4,11 +4,11 @@ package DDRADServiceProto;
 // 心跳包 index 表示当前播放视频的索引
 message ADHeartBeat{
     int32 index=1;
+	bool hasNext = 2;
+	string videoName = 3;
 }
 
 // 上位机下发到三个广告屏的视频链接列表
-
-
 message notifyCurrentVideoSeq{
     repeated VideoInfo videoInfos=1;
 }

@@ -14,7 +14,7 @@ public class TimeUtils {
         SimpleDateFormat dff = new SimpleDateFormat("HH:mm:ss");
         dff.setTimeZone(TimeZone.getTimeZone("GMT+08"));
         String ee = dff.format(new Date());
-        Logger.e("-----当前时间："+ee);
+       // Logger.e("-----当前时间："+ee);
         return ee;
     }
 

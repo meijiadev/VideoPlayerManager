@@ -103,17 +103,23 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
      * @return
      */
     protected boolean setUp(List<GSYVideoModel> url, boolean cacheWithPlay, int position, File cachePath, Map<String, String> mapHeadData, boolean changeState) {
-        mUriList = url;
         mUriList=VideoResourcesManager.getInstance().getVideoModels();
         mPlayPosition = position;
         mMapHeadData = mapHeadData;
-        GSYVideoModel gsyVideoModel = url.get(position);
+        GSYVideoModel gsyVideoModel = new GSYVideoModel(mUriList.get(mPlayPosition).getUrl(),mUriList.get(mPlayPosition).getTitle());
+        Logger.e("正在播放："+mPlayPosition+"----列表长度："+mUriList.size()+"视频地址："+gsyVideoModel.getUrl()+"视频名字："+gsyVideoModel.getTitle());
         boolean set = setUp(gsyVideoModel.getUrl(), cacheWithPlay, cachePath, gsyVideoModel.getTitle(), changeState);
         if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
             mTitleTextView.setText(gsyVideoModel.getTitle());
         }
-        videosIndex.currentVideosIndex(mPlayPosition);
-        Logger.e("正在播放："+mPlayPosition+"----列表长度："+mUriList.size());
+        if (mUriList.size()>1)
+        if (mPlayPosition==mUriList.size()-1){
+            videosIndex.currentVideosIndex(mPlayPosition,false,gsyVideoModel.getTitle());
+        }else if (mPlayPosition<mUriList.size()-1){
+            videosIndex.currentVideosIndex(mPlayPosition,true,gsyVideoModel.getTitle());
+        }else {
+            videosIndex.currentVideosIndex(mPlayPosition,false,gsyVideoModel.getTitle());
+        }
         return set;
     }
 
@@ -214,6 +220,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
      * @return true (将原来的列表播放 改为列表循环播放)
      */
     public boolean playNext() {
+        mUriList=VideoResourcesManager.getInstance().getVideoModels();
         if (mPlayPosition < (mUriList.size() - 1)) {
             mPlayPosition += 1;
         }else {
@@ -239,6 +246,6 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
 
     // 通知当前播放第几个视频
     public interface VideosIndex{
-        void currentVideosIndex(int index);
+        void currentVideosIndex(int index,boolean hasNext,String name);
     }
 }

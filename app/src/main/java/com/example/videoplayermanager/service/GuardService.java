@@ -9,6 +9,7 @@ import com.bolex.timetask.lib.timed.Task;
 import com.bolex.timetask.lib.timed.TimeHandler;
 import com.bolex.timetask.lib.timed.TimeTask;
 import com.example.videoplayermanager.MyApplication;
+import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.TimeManager;
 import com.example.videoplayermanager.other.TimeUtils;
@@ -24,8 +25,6 @@ import java.util.List;
  * desc:
  */
 public class GuardService extends Service {
-    private String ip="192.168.1.66";
-    private int port=189;
     private TcpClient tcpClient;
 
     private TimeTask<TimeManager.MyTask> myTaskTimeTask;
@@ -51,7 +50,7 @@ public class GuardService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!tcpClient.isConnected()){
-            tcpClient.createConnect(ip,port);
+            tcpClient.createConnect(GlobalParameter.IP,GlobalParameter.PORT);
         }
         return super.onStartCommand(intent, flags, startId);
     }

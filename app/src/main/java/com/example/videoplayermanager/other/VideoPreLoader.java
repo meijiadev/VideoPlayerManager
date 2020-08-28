@@ -99,7 +99,6 @@ public class VideoPreLoader {
     public void onDestroy(){
         videoPreLoader=null;
         downloadThread=null;
-
     }
 
 
