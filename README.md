@@ -1,4 +1,4 @@
-# VideoPlayerManager
+# VideoPlayerManager 广告机项目
 一款视频播放器，支持边播边缓存、预缓存. 列表循环播放
 
 增加开机自启动，崩溃重启
@@ -11,7 +11,7 @@
 
 
    
-   
+ 
    用到了第三方库：
    
     implementation 'com.google.protobuf:protobuf-java:3.4.0'
