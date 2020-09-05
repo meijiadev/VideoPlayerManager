@@ -1,10 +1,10 @@
 package com.example.videoplayermanager.bean;
 
 public class ADConfig {
-    private String IP="在此更改IP";
-    private String port="在此更改端口";
-    private String account="在此更改账号";
-    private String password="在此更改密码";
+    private String IP="192.168.0.96";
+    private String port="189";
+    private String account="admin_ad1";
+    private String password="admin_ad";
 
 
     public void setAccount(String account) {

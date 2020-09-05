@@ -23,7 +23,7 @@ import java.io.PrintStream;
  */
 public class GlobalParameter {
     public static final String VIDEO_FOLDER= Environment.getExternalStorageDirectory().getPath()+"/"+"DownloadVideo"+"/";      //存储地址
-    public static final String ROBOT_FOLDER_LOG= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRMapLog"+"/";      //日志存储地址
+    public static final String ROBOT_FOLDER_LOG= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRADLog"+"/";      //日志存储地址
     public static final String ROBOT_FOLDER_DOWNLOAD= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRMapDownload"+"/"; //下载文件夹
     public static final String LOCAL_AD_FILE=Environment.getExternalStorageDirectory().getPath()+"/"+"广告机参数"+"/";
     public static final String AD_CONFIG_NAME="Config.txt";
@@ -31,8 +31,8 @@ public class GlobalParameter {
     public static  String ACCOUNT_1="admin_ad1";
     public static  String ACCOUNT_2="admin_ad2";
     public static  String ACCOUNT_3="admin_ad3";
-    public static  String IP="192.168.0.95";
-    public static  String PORT="88";
+    public static  String IP="192.168.0.96";
+    public static  String PORT="189";
     public static  String ACCOUNT="admin_ad1";
     public static  String PASSWORD="admin_ad";
 

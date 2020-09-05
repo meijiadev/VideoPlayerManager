@@ -37,8 +37,10 @@ public class CrashActivity extends BaseActivity {
             // 这种情况永远不会发生，只要完成该活动就可以避免递归崩溃。
             finish();
         }
+        saveCrashInfo2File(CustomActivityOnCrash.getAllErrorDetailsFromIntent(CrashActivity.this, getIntent()));
         Logger.e("进入重启程序");
         CustomActivityOnCrash.restartApplication(CrashActivity.this, mConfig);
+
     }
 
 

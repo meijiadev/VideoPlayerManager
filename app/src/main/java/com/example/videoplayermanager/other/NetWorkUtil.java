@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -15,6 +16,25 @@ import java.util.Enumeration;
  * desc：网络环境
  */
 public class NetWorkUtil {
+
+
+    public static boolean pingHost(String str) {  //str  为要ping的IP地址
+        boolean result = false;
+        try {
+            Process p = Runtime.getRuntime().exec("ping -c 1 -w 100 " + str);
+            int status = p.waitFor();
+            Logger.e("--------Ping的结果："+status);
+            if (status == 0) {
+                result = true;
+            } else {
+                result = false;
+            }
+        }
+        catch (IOException e) {}
+        catch (InterruptedException e) {}
+
+        return result;
+    }
     /**
      * 检查网络是否可用
      *

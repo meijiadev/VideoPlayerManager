@@ -6,6 +6,8 @@ message ADHeartBeat{
     int32 index=1;
 	bool hasNext = 2;
 	string videoName = 3;
+	string programNum = 4;
+	int32 timeDuration = 5;
 }
 
 // 上位机下发到三个广告屏的视频链接列表
@@ -19,7 +21,10 @@ message VideoInfo{
     string businessInfo=3;  // 商家信息
 	int32 adType = 4;       // 节目类型
 	string url=5;           // 视频地址
-	
+	string floor=6;         // 商家楼层
+	string number=7;        // 商家号码
+	string logo=8;          // 商家logo地址	
+	string programNum=9;    // 节目单号
 }
 
 message reqVideoSeq{

@@ -7,6 +7,7 @@ import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
 import com.google.protobuf.GeneratedMessageLite;
+import com.hjq.toast.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -19,6 +20,7 @@ public class RspLoginProcessor extends BaseProcessor {
         super.process(context, commonHeader, msg);
         BaseCmd.rspLogin rspLogin= (BaseCmd.rspLogin) msg;
         Logger.e("登陆回复");
+        ToastUtils.show("登陆成功！");
         //EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.LoginSuccess));
         TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).requestVideoAddress();
     }

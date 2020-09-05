@@ -12,6 +12,7 @@ import com.example.videoplayermanager.protobufProcessor.MessageRoute;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.BaseMessageDispatcher;
 import com.google.protobuf.GeneratedMessageLite;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.hjq.toast.ToastUtils;
 import com.hjq.xtoast.XToast;
 import com.xuhao.didi.core.iocore.interfaces.ISendable;
 import com.xuhao.didi.core.pojo.OriginalData;
@@ -103,7 +104,7 @@ public class TcpClient extends BaseSocketConnection {
         @Override
         public void onSocketConnectionSuccess(ConnectionInfo info, String action) {
             isConnected=true;
-            Logger.e("--------连接成功---------");
+            ToastUtils.show("服务器连接成功！");
             Activity activity= ActivityStackManager.getInstance().getTopActivity();
             if (activity!=null){
                 requestLogin(GlobalParameter.ACCOUNT,GlobalParameter.PASSWORD);
@@ -137,7 +138,7 @@ public class TcpClient extends BaseSocketConnection {
             Activity activity=ActivityStackManager.getInstance().getTopActivity();
             if (activity!=null){
                 Logger.e("网络连接断开，当前处于"+activity.getLocalClassName());
-                showXToast(activity);
+                //showXToast(activity);
             }
         }
 
@@ -269,11 +270,15 @@ public class TcpClient extends BaseSocketConnection {
     private int index=-1;
     private boolean hasNext=true;
     private String name="NULL";
-    public void setIndex(int index,boolean hasNext,String name){
+    private String programNum="NULL";
+    private int timeDuration;
+    public void setIndex(int index,boolean hasNext,String name,String programNum,int timeDuration){
         this.index=index;
         this.hasNext=hasNext;
-        if (!name.isEmpty())
-        this.name=name;
+        this.name=(name.isEmpty())?"NULL":name;
+        this.programNum=(programNum.isEmpty())?"NULL":programNum;
+        this.timeDuration=timeDuration;
+
     }
 
     /**
@@ -294,6 +299,8 @@ public class TcpClient extends BaseSocketConnection {
                                 .setIndex(index)
                                 .setHasNext(hasNext)
                                 .setVideoName(name)
+                                .setProgramNum(programNum)
+                                .setTimeDuration(timeDuration)
                                 .build();
                         manager.getPulseManager().setPulseSendable(new PulseData(m_MessageRoute.serialize(header,heartBeat))).pulse();
                         Logger.e("发送心跳包"+heartBeat.getIndex()+hasNext+"视频名字："+name);

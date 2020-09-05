@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.percentlayout.widget.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,11 +7,56 @@
     tools:context=".ui.VideoActivity">
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
->
+        android:layout_height="match_parent">
         <com.example.videoplayermanager.widget.ListGSYVideoPlayer
             android:id="@+id/videoPlayer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/layoutMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="137dp"
+        android:background="#4DFFFFFF"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"
+        >
+        <TextView
+            android:id="@+id/tvFloor"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="B1"
+            android:textSize="118dp"
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="25dp"
+            android:includeFontPadding="false"
+            android:gravity="bottom"
+            android:layout_alignParentBottom="true"
+            />
+        <TextView
+            android:id="@+id/tvNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="46dp"
+            android:layout_toRightOf="@id/tvFloor"
+            android:text="108"
+            android:textColor="@android:color/black"
+            android:textSize="53dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="bottom"
+            android:includeFontPadding="false"
+            android:paddingBottom="19dp"
+            />
+        <com.itheima.roundedimageview.RoundedImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="150dp"
+            android:layout_height="88dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="25dp"
+            android:layout_marginRight="38dp"
+            android:scaleType="centerInside"
+            app:riv_corner_radius="6dp"
+            />
+    </RelativeLayout>
+</androidx.percentlayout.widget.PercentRelativeLayout>

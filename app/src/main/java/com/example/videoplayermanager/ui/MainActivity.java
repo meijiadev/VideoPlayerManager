@@ -15,28 +15,31 @@ import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.TimeUtils;
+import com.example.videoplayermanager.other.VideoPreLoader;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.presenter.MainPresenter;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
+import com.example.videoplayermanager.service.GuardService;
 import com.example.videoplayermanager.tcp.TcpClient;
 import com.hjq.permissions.OnPermission;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.hjq.toast.ToastUtils;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
 
 import static com.example.videoplayermanager.http.Api.APP_DEFAULT_DOMAIN;
 import static com.example.videoplayermanager.http.Api.VIDEO_LIST_DOMAIN_NAME;
 
-public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainContract.View, OnPermission {
+public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainContract.View {
     @BindView(R.id.tv_time)
     TextView tvTime;
-    private String [] permission=new String[]{ Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE};
+
+
     private boolean isReceive;       //接收到播放列表
     private boolean isStartPlay;     //开始播放
 
@@ -86,76 +89,27 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void initView() {
+        setStatusBarEnabled(true);
         RetrofitUrlManager.getInstance().putDomain(VIDEO_LIST_DOMAIN_NAME,APP_DEFAULT_DOMAIN);
     }
 
     @Override
     protected void initData() {
-        requestPermission();
-        new TimeThread().start();
-    }
-
-
-    /**
-     * 请求权限
-     */
-    private void requestPermission(){
-        XXPermissions.with(this)
-                .permission(permission)
-                .request(this);
-    }
-
-    public boolean isRunning=true;
-    class TimeThread extends Thread {
-        @Override
-        public void run() {
-            do {
-                try {
-                    Thread.sleep(500);
-                    Message msg = new Message();
-                    msg.what = 1;  //消息(一个整型值)
-                    mHandler.sendMessage(msg);// 每隔1秒发送一个msg给mHandler
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } while (isRunning);
-        }
-    }
-
-    //在主线程里面处理消息并更新UI界面
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    String sysTimeStr= TimeUtils.getCurrentTime1();
-                    tvTime.setText(sysTimeStr); //更新时间
-                    break;
-                default:
-                    break;
-
-            }
-        }
-    };
-    /**
-     * 权限通过
-     * @param granted
-     * @param isAll
-     */
-    @Override
-    public void hasPermission(List<String> granted, boolean isAll) {
-        Logger.d("权限请求成功");
-    }
-
-    @Override
-    public void noPermission(List<String> denied, boolean quick) {
+        //启动服务
+        Intent serviceIntent=new Intent(context, GuardService.class);
+        startService(serviceIntent);
 
     }
+
+
+
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isRunning=false;
+        TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).disConnect();
+        VideoPreLoader.getInstance().onDestroy();
+        ToastUtils.show("退出广告播放！");
     }
 }

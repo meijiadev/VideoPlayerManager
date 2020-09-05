@@ -6,9 +6,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.videoplayermanager.R;
+import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.VideoResourcesManager;
-import com.example.videoplayermanager.tcp.TcpClient;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
@@ -28,7 +29,7 @@ import moe.codeest.enviews.ENDownloadView;
  */
 public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
 
-    protected List<GSYVideoModel> mUriList = new ArrayList<>();
+    protected List<VideoModel> mUriList = new ArrayList<com.example.videoplayermanager.bean.VideoModel>();
     protected int mPlayPosition;
     protected  VideosIndex videosIndex;
 
@@ -47,6 +48,10 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         super(context, attrs);
     }
 
+    @Override
+    public int getLayoutId() {
+        return R.layout.empty_control_video;
+    }
 
     public void setVideosIndex(VideosIndex videosIndex) {
         this.videosIndex = videosIndex;
@@ -60,7 +65,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
      * @param cacheWithPlay 是否边播边缓存
      * @return
      */
-    public boolean setUp(List<GSYVideoModel> url, boolean cacheWithPlay, int position) {
+    public boolean setUp(List<VideoModel> url, boolean cacheWithPlay, int position) {
         return setUp(url, cacheWithPlay, position, null, new HashMap<String, String>());
     }
 
@@ -73,7 +78,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
      * @param cachePath     缓存路径，如果是M3U8或者HLS，请设置为false
      * @return
      */
-    public boolean setUp(List<GSYVideoModel> url, boolean cacheWithPlay, int position, File cachePath) {
+    public boolean setUp(List<VideoModel> url, boolean cacheWithPlay, int position, File cachePath) {
         return setUp(url, cacheWithPlay, position, cachePath, new HashMap<String, String>());
     }
 
@@ -87,7 +92,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
      * @param mapHeadData   http header
      * @return
      */
-    public boolean setUp(List<GSYVideoModel> url, boolean cacheWithPlay, int position, File cachePath, Map<String, String> mapHeadData) {
+    public boolean setUp(List<VideoModel> url, boolean cacheWithPlay, int position, File cachePath, Map<String, String> mapHeadData) {
         return setUp(url, cacheWithPlay, position, cachePath, mapHeadData, true);
     }
 
@@ -102,27 +107,36 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
      * @param changeState   切换的时候释放surface
      * @return
      */
-    protected boolean setUp(List<GSYVideoModel> url, boolean cacheWithPlay, int position, File cachePath, Map<String, String> mapHeadData, boolean changeState) {
+    protected boolean setUp(List<VideoModel> url, boolean cacheWithPlay, int position, File cachePath, Map<String, String> mapHeadData, boolean changeState) {
         mUriList=VideoResourcesManager.getInstance().getVideoModels();
         mPlayPosition = position;
         mMapHeadData = mapHeadData;
         GSYVideoModel gsyVideoModel = new GSYVideoModel(mUriList.get(mPlayPosition).getUrl(),mUriList.get(mPlayPosition).getTitle());
         Logger.e("正在播放："+mPlayPosition+"----列表长度："+mUriList.size()+"视频地址："+gsyVideoModel.getUrl()+"视频名字："+gsyVideoModel.getTitle());
         boolean set = setUp(gsyVideoModel.getUrl(), cacheWithPlay, cachePath, gsyVideoModel.getTitle(), changeState);
-        if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
+      /*  if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
             mTitleTextView.setText(gsyVideoModel.getTitle());
-        }
-        if (mUriList.size()>1)
-        if (mPlayPosition==mUriList.size()-1){
-            videosIndex.currentVideosIndex(mPlayPosition,false,gsyVideoModel.getTitle());
-        }else if (mPlayPosition<mUriList.size()-1){
-            videosIndex.currentVideosIndex(mPlayPosition,true,gsyVideoModel.getTitle());
-        }else {
-            videosIndex.currentVideosIndex(mPlayPosition,false,gsyVideoModel.getTitle());
-        }
+        }*/
         return set;
     }
 
+    @Override
+    protected void touchSurfaceMoveFullLogic(float absDeltaX, float absDeltaY) {
+        super.touchSurfaceMoveFullLogic(absDeltaX, absDeltaY);
+        //不给触摸快进，如果需要，屏蔽下方代码即可
+        mChangePosition = false;
+
+        //不给触摸音量，如果需要，屏蔽下方代码即可
+        mChangeVolume = false;
+
+        //不给触摸亮度，如果需要，屏蔽下方代码即可
+        mBrightness = false;
+    }
+    @Override
+    protected void touchDoubleUp() {
+        //super.touchDoubleUp();
+        //不需要双击暂停
+    }
 
     @Override
     protected void cloneParams(GSYBaseVideoPlayer from, GSYBaseVideoPlayer to) {
@@ -133,7 +147,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         st.mUriList = sf.mUriList;
     }
 
-    @Override
+  /*  @Override
     public GSYBaseVideoPlayer startWindowFullscreen(Context context, boolean actionBar, boolean statusBar) {
         GSYBaseVideoPlayer gsyBaseVideoPlayer = super.startWindowFullscreen(context, actionBar, statusBar);
         if (gsyBaseVideoPlayer != null) {
@@ -144,9 +158,9 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
             }
         }
         return gsyBaseVideoPlayer;
-    }
+    }*/
 
-    @Override
+   /* @Override
     protected void resolveNormalVideoShow(View oldF, ViewGroup vp, GSYVideoPlayer gsyVideoPlayer) {
         if (gsyVideoPlayer != null) {
             ListGSYVideoPlayer listGSYVideoPlayer = (ListGSYVideoPlayer) gsyVideoPlayer;
@@ -156,7 +170,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
             }
         }
         super.resolveNormalVideoShow(oldF, vp, gsyVideoPlayer);
-    }
+    }*/
 
     @Override
     public void onCompletion() {
@@ -188,6 +202,22 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
                 ((ENDownloadView) mLoadingProgressBar).start();
             }
         }
+        new Thread(()->{
+            try {
+                Thread.sleep(200);
+                if (mUriList.size()>1)
+                    if (mPlayPosition==mUriList.size()-1){
+                        videosIndex.currentVideosIndex(mPlayPosition,false,mUriList.get(mPlayPosition).getTitle());
+                    }else if (mPlayPosition<mUriList.size()-1){
+                        videosIndex.currentVideosIndex(mPlayPosition,true,mUriList.get(mPlayPosition).getTitle());
+                    }else {
+                        videosIndex.currentVideosIndex(mPlayPosition,false,mUriList.get(mPlayPosition).getTitle());
+                    }
+                Logger.e("--------当前："+mPlayPosition+";当前视频总长："+getDuration());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 
@@ -229,12 +259,14 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         GSYVideoModel gsyVideoModel = mUriList.get(mPlayPosition);
         mSaveChangeViewTIme = 0;
         setUp(mUriList, mCache, mPlayPosition, null, mMapHeadData, false);
-        if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
+      /*  if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
             mTitleTextView.setText(gsyVideoModel.getTitle());
-        }
+        }*/
         startPlayLogic();
         return true;
     }
+
+
 
     /**
      * 获取当前正在播放的
@@ -248,4 +280,5 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
     public interface VideosIndex{
         void currentVideosIndex(int index,boolean hasNext,String name);
     }
+
 }

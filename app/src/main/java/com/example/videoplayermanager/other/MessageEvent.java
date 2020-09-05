@@ -15,6 +15,7 @@ public class MessageEvent {
         updatePlayVideos,   //更新视频播放列表
         allPlayVideos,      //所有的视频地址
         startPlayVideo,        //开始播放视频
+        startApp,             //启动APP
     }
 
     public MessageEvent(Type type) {

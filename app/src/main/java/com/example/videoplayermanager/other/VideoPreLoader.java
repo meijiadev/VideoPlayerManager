@@ -3,6 +3,7 @@ package com.example.videoplayermanager.other;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.common.GlobalParameter;
+import com.hjq.toast.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -22,6 +23,7 @@ import java.util.TimeZone;
 public class VideoPreLoader {
 
     private static VideoPreLoader videoPreLoader;
+    private boolean isRunning;
 
     /**
      * 下载线程
@@ -37,7 +39,7 @@ public class VideoPreLoader {
     }
 
     private VideoPreLoader(){
-
+        isRunning=true;
     }
 
     /**
@@ -47,6 +49,11 @@ public class VideoPreLoader {
     public void setPreLoadUrls(List<String> urls){
         if (downloadThread==null){
             downloadThread= new Thread(()->{
+                try {
+                    Thread.sleep(6000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 for (int i=0;i<urls.size();i++){
                     //Logger.d("下载到；"+i);
                     realPreload(urls.get(i));
@@ -55,11 +62,14 @@ public class VideoPreLoader {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                 if (!isRunning)
+                     return;
                 }
+                ToastUtils.show("视频下载完成！");
                 downloadThread=null;
             });
+            downloadThread.start();
         }
-        downloadThread.start();
     }
 
     /**
@@ -98,7 +108,7 @@ public class VideoPreLoader {
 
     public void onDestroy(){
         videoPreLoader=null;
-        downloadThread=null;
+        isRunning=false;
     }
 
 

@@ -8,6 +8,8 @@ import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.VideoPreLoader;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.google.protobuf.GeneratedMessageLite;
+import com.hjq.toast.ToastUtils;
+
 import DDRADServiceProto.DDRADServiceCmd;
 import DDRCommProto.BaseCmd;
 
@@ -17,6 +19,7 @@ public class RspVideoAddressProcessor extends BaseProcessor {
         super.process(context, commonHeader, msg);
         DDRADServiceCmd.rspVideoSeq rspVideoSeq= (DDRADServiceCmd.rspVideoSeq) msg;
         VideoResourcesManager.getInstance().setVideoUrls(rspVideoSeq.getUrlList());
+        ToastUtils.show("已获取将要播放视频！");
         VideoPreLoader.getInstance().setPreLoadUrls(rspVideoSeq.getUrlList());
         Logger.e("返回所有视频下载地址"+rspVideoSeq.getUrlList().size());
     }

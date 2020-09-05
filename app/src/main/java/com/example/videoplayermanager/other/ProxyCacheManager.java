@@ -21,7 +21,7 @@ import java.util.Map;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 public class ProxyCacheManager implements ICacheManager, CacheListener {
-    public static int DEFAULT_MAX_SIZE = 1024* 1024 * 1024;
+    public static long DEFAULT_MAX_SIZE = 1024* 1024 *1024*11;          //缓存空间 15G
 
     //视频代理
     protected HttpProxyCacheServer proxy;
@@ -158,7 +158,7 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
         }
         HttpProxyCacheServer.Builder builder = new HttpProxyCacheServer.Builder(context);
         builder.cacheDirectory(file);
-        builder.maxCacheSize(DEFAULT_MAX_SIZE);
+        builder.maxCacheFilesCount(100);
         builder.headerInjector(userAgentHeadersInjector);
         builder.fileNameGenerator(new Md5FileNameGenerator());
         if (fileNameGenerator != null) {

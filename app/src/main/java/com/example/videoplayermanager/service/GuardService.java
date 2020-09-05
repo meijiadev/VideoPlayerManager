@@ -11,6 +11,7 @@ import com.bolex.timetask.lib.timed.TimeTask;
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.other.NetWorkUtil;
 import com.example.videoplayermanager.other.TimeManager;
 import com.example.videoplayermanager.other.TimeUtils;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 public class GuardService extends Service {
     private TcpClient tcpClient;
-
+    private boolean isPing;
     private TimeTask<TimeManager.MyTask> myTaskTimeTask;
     private String ACTION="timeTask.action";
     public GuardService() {
@@ -58,6 +59,7 @@ public class GuardService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        myTaskTimeTask.onColse();
     }
 
 

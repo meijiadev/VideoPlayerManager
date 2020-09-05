@@ -45,6 +45,12 @@
             android:name=".service.GuardService"
             android:enabled="true"
             android:exported="false" />
+        <meta-data
+            android:name="design_width_in_dp"
+            android:value="540"/>
+        <meta-data
+            android:name="design_height_in_dp"
+            android:value="960"/>
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ManifestOrder" />

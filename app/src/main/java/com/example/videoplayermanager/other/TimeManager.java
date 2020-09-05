@@ -18,8 +18,8 @@ public class TimeManager implements TimeHandler<TimeManager.MyTask> {
     public static final String END_DOWNLOAD_2="15:35:10";
     public static final String START_DOWNLOAD_2_NAME="download2";
 
-    public static final String START_PLAY_VIDEO="09:49:05";
-    public static final String END_PLAY_VIDEO="09:49:30";
+    public static final String START_PLAY_VIDEO="09:30:05";
+    public static final String END_PLAY_VIDEO="09:30:30";
     public static final String START_PLAY_VIDEO_NAME="startPlayVideo";
 
     @Override
