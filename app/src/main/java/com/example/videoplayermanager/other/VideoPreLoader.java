@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -39,15 +40,15 @@ public class VideoPreLoader {
                 //Logger.d("下载到；"+i);
                 realPreload(urls.get(i));
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
                 if (!isRunning)
                     return;
             }
-            ToastUtils.show("视频下载完成！");
-            downloadThread=null;
+            EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadFinish));
         }
     }
 
@@ -73,6 +74,10 @@ public class VideoPreLoader {
            downloadThread=new DownloadThread();
            downloadThread.start();
         }
+    }
+
+    public List<String> getUrls() {
+        return urls==null?urls=new ArrayList<>():urls;
     }
 
     /**
@@ -110,6 +115,7 @@ public class VideoPreLoader {
     }
 
     public void onDestroy(){
+        downloadThread=null;
         videoPreLoader=null;
         isRunning=false;
     }

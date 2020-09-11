@@ -9,6 +9,8 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.example.videoplayermanager.http.Api.APP_AWAIT_SHOW_DOMAIN;
 import static com.example.videoplayermanager.http.Api.APP_DEFAULT_DOMAIN;
 
 /**
@@ -34,7 +36,7 @@ public class HttpManager {
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .build();
         this.retrofit=new Retrofit.Builder()
-                .baseUrl(APP_DEFAULT_DOMAIN)                                  //默认的url
+                .baseUrl(APP_AWAIT_SHOW_DOMAIN)                                  //默认的url
                 .addConverterFactory(GsonConverterFactory.create())          //请求结果转换成实体类
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())  //适配Rxjava
                 .client(okHttpClient)

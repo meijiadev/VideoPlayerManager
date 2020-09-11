@@ -18,6 +18,8 @@ public class MessageEvent {
         updateProgress,
         apkDownloadSucceed,
         apkDownloadFailed,
+        downloadIndex,         //视频已下载的个数
+        downloadFinish,        //下载完成
     }
 
     public MessageEvent(Type type) {

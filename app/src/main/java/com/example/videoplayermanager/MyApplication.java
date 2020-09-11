@@ -33,11 +33,13 @@ public class MyApplication extends Application {
 
     @SuppressLint("StaticFieldLeak")
     public static Context context;
+    public static MyApplication myApplication;
 
     @Override
     public void onCreate() {
         super.onCreate();
         context=this;
+        myApplication=this;
         initSDK();
         //EXOPlayer内核，支持格式更多
         PlayerFactory.setPlayManager(Exo2PlayerManager.class);
@@ -89,8 +91,8 @@ public class MyApplication extends Application {
         ToastUtils.init(this,new ToastWhiteStyle(this));
     }
 
-    public static Context getInstance(){
-        return context;
+    public static MyApplication getInstance(){
+        return myApplication;
     }
 }
 

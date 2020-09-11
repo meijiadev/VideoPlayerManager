@@ -1,13 +1,21 @@
 package com.example.videoplayermanager.ui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.R;
+import com.example.videoplayermanager.banner.LocalImageLoader;
 import com.example.videoplayermanager.base.BaseDialog;
 import com.example.videoplayermanager.base.BaseMvpActivity;
 import com.example.videoplayermanager.base.BaseThread;
@@ -24,13 +32,19 @@ import com.example.videoplayermanager.service.GuardService;
 import com.example.videoplayermanager.tcp.TcpClient;
 import com.example.videoplayermanager.ui.dialog.ProgressDialog;
 import com.hjq.toast.ToastUtils;
+import com.hjq.xtoast.XToast;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.Transformer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import androidx.core.content.FileProvider;
@@ -45,9 +59,13 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private boolean isReceive;       //接收到播放列表
     private boolean isStartPlay;     //开始播放
     private BaseDialog progressDialog;
-
+    private XToast xToast;
     @BindView(R.id.tvTest)
     TextView tvTest;
+    @BindView(R.id.banner)
+    Banner banner;
+    private LocalImageLoader localImageLoader;
+    private List<Integer> imageResource;
 
     @Override
     protected MainPresenter bindPresenter() {
@@ -122,7 +140,34 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         //启动服务
         Intent serviceIntent=new Intent(context, GuardService.class);
         startService(serviceIntent);
+        imageResource=new ArrayList<>();
+        imageResource.add(R.mipmap.poster_one);
+        imageResource.add(R.mipmap.poster_two);
+        imageResource.add(R.mipmap.poster_three);
+        imageResource.add(R.mipmap.poster_four);
+        useBanner();
     }
+
+    public void useBanner(){
+        localImageLoader=new LocalImageLoader();
+        //样式
+       // banner.setBannerStyle(BannerConfig.NOT_INDICATOR);
+        //加载器
+        banner.setImageLoader(localImageLoader);
+        //动画效果
+        banner.setBannerAnimation(Transformer.ZoomOutSlide);
+        //间隔时间
+        banner.setDelayTime(3000);
+        //是否为自动轮播
+        banner.isAutoPlay(true);
+        //图片显示的位置
+        banner.setIndicatorGravity(BannerConfig.CENTER);
+        //图片加载地址
+        banner.setImages(imageResource);
+        banner.start();
+    }
+
+
 
     @OnClick(R.id.tvTest)
     public void onViewClicked(View view){
@@ -134,6 +179,22 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         }
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        banner.startAutoPlay();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        banner.startAutoPlay();
+    }
+
+    /**
+     * 下载更新最新版本apk
+     */
     private void isDownloadApk(){
         if (progressDialog==null){
             progressDialog=new ProgressDialog.Builder(this)
@@ -150,7 +211,51 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         super.onDestroy();
         TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).disConnect();
         VideoPreLoader.getInstance().onDestroy();
+        if (xToast!=null){
+            xToast.cancel();
+        }
         ToastUtils.show("退出广告播放！");
+    }
+
+
+    private TextView tvShowDownloadCounts;
+    /**
+     * 全局浮窗
+     * @param
+     */
+    private void showXToast(){
+        xToast=new XToast(MyApplication.getInstance())
+                .setView(R.layout.xtoast_layout)
+                .setDraggable()
+                .setOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR)
+                .setAnimStyle(android.R.style.Animation_Dialog)
+                .setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP)
+                .show();
+        tvShowDownloadCounts= (TextView) xToast.findViewById(R.id.tvDownloadTimes);
+        Logger.e("显示浮窗！");
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void updateVideos(MessageEvent messageEvent){
+        switch (messageEvent.getType()){
+            case allPlayVideos:
+                showXToast();
+                break;
+            case downloadIndex:
+                int hasDownload= (int) messageEvent.getData();
+                int totalCount=VideoPreLoader.getInstance().getUrls().size();
+                tvShowDownloadCounts.setText(hasDownload+"/"+totalCount);
+                break;
+            case downloadFinish:
+                ToastUtils.show("已全部下载！");
+                new Handler().postDelayed(()->{
+                    if (xToast!=null)
+                        xToast.cancel();
+                },1000);
+                break;
+
+        }
     }
 
 }

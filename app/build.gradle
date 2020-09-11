@@ -158,4 +158,8 @@ dependencies {
     //AgentWeb 是一个基于的 Android WebView ，极度容易使用以及功能强大的库
     implementation 'com.just.agentweb:agentweb-androidx:4.1.4' // (必选)
     implementation 'com.just.agentweb:filechooser-androidx:4.1.4'// (可选)
+
+    implementation 'com.youth.banner:banner:1.4.10'   //banner依赖
+
+
 }

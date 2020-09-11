@@ -23,7 +23,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     private static final int ANIM_TIME = 2000;
     @BindView(R.id.iv_splash)
     ImageView ivSplash;
-    private String [] permission=new String[]{ Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE};
+    private String [] permission=new String[]{ Permission.READ_EXTERNAL_STORAGE,Permission.WRITE_EXTERNAL_STORAGE,Permission.SYSTEM_ALERT_WINDOW};
     private TcpClient tcpClient;
     private String ip="192.168.0.96";
     private int port=189;

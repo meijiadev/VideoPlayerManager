@@ -10,6 +10,8 @@ import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.google.protobuf.GeneratedMessageLite;
 import com.hjq.toast.ToastUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import DDRADServiceProto.DDRADServiceCmd;
 import DDRCommProto.BaseCmd;
 
@@ -22,5 +24,6 @@ public class RspVideoAddressProcessor extends BaseProcessor {
         ToastUtils.show("已获取将要播放视频！");
         VideoPreLoader.getInstance().setPreLoadUrls(rspVideoSeq.getUrlList());
         Logger.e("返回所有视频下载地址"+rspVideoSeq.getUrlList().size());
+        EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.allPlayVideos));
     }
 }

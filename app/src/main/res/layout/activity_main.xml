@@ -5,13 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
-    <ImageView
-        android:id="@+id/ivStatus"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@mipmap/splash"
-        android:scaleType="centerCrop"
-        />
+   <com.youth.banner.Banner
+       android:id="@+id/banner"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"/>
     <TextView
         android:id="@+id/tvTest"
         android:layout_width="100dp"
