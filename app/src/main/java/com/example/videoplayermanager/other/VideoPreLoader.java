@@ -2,6 +2,7 @@ package com.example.videoplayermanager.other;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.videoplayermanager.MyApplication;
+import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.hjq.toast.ToastUtils;
 
@@ -24,11 +25,31 @@ public class VideoPreLoader {
 
     private static VideoPreLoader videoPreLoader;
     private boolean isRunning;
+    private List<String> urls;
 
     /**
      * 下载线程
      */
-    private Thread downloadThread;
+    private DownloadThread downloadThread;
+    public class DownloadThread extends BaseThread{
+        @Override
+        public void run() {
+            super.run();
+            for (int i=0;i<urls.size();i++){
+                //Logger.d("下载到；"+i);
+                realPreload(urls.get(i));
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (!isRunning)
+                    return;
+            }
+            ToastUtils.show("视频下载完成！");
+            downloadThread=null;
+        }
+    }
 
 
     public static VideoPreLoader getInstance() {
@@ -47,28 +68,10 @@ public class VideoPreLoader {
      * @param urls
      */
     public void setPreLoadUrls(List<String> urls){
+        this.urls=urls;
         if (downloadThread==null){
-            downloadThread= new Thread(()->{
-                try {
-                    Thread.sleep(6000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                for (int i=0;i<urls.size();i++){
-                    //Logger.d("下载到；"+i);
-                    realPreload(urls.get(i));
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                 if (!isRunning)
-                     return;
-                }
-                ToastUtils.show("视频下载完成！");
-                downloadThread=null;
-            });
-            downloadThread.start();
+           downloadThread=new DownloadThread();
+           downloadThread.start();
         }
     }
 
@@ -110,7 +113,5 @@ public class VideoPreLoader {
         videoPreLoader=null;
         isRunning=false;
     }
-
-
 
 }

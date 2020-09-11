@@ -33,7 +33,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.e("-------------"+this.getClass().getSimpleName());
+        Logger.d("-------------"+this.getClass().getSimpleName());
         if (getLayoutId()>0){
             setContentView(getLayoutId());
         }
@@ -104,31 +104,31 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
     @Override
     protected void onRestart() {
         super.onRestart();
-        Logger.e("-------------"+this.getClass().getSimpleName());
+        Logger.d("-------------"+this.getClass().getSimpleName());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Logger.e("-------------"+this.getClass().getSimpleName());
+        Logger.d("-------------"+this.getClass().getSimpleName());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Logger.e("-------------"+this.getClass().getSimpleName());
+        Logger.d("-------------"+this.getClass().getSimpleName());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Logger.e("-------------"+this.getClass().getSimpleName());
+        Logger.d("-------------"+this.getClass().getSimpleName());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Logger.e("-------------"+this.getClass().getSimpleName());
+        Logger.d("-------------"+this.getClass().getSimpleName());
     }
 
     @Override
@@ -139,7 +139,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
         mButterKnife.unbind();
         EventBusManager.unregister(this);
         ActivityStackManager.getInstance().onDestroyed(this);
-        Logger.e("-------------"+this.getClass().getSimpleName());
+        Logger.d("-------------"+this.getClass().getSimpleName());
     }
 
     /**

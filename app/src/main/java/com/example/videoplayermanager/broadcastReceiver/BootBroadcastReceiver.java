@@ -30,10 +30,6 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
             it.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             context.startActivity(it);
             Logger.e("Boot开机自启动！");
-
-            //启动服务
-            Intent serviceIntent=new Intent(context, GuardService.class);
-            context.startService(serviceIntent);
         }
     }
 
@@ -46,7 +42,7 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")){
            new Thread(()->{
                try {
-                   Thread.sleep(3*60000);
+                   Thread.sleep(90000);
                } catch (InterruptedException e) {
                    e.printStackTrace();
                }

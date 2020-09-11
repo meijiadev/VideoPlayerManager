@@ -36,7 +36,6 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     @Override
     protected void initView() {
         setStatusBarEnabled(true);
-        GlobalParameter.initConfigFile();
         AlphaAnimation alphaAnimation=new AlphaAnimation(0.4f,1.0f);
         alphaAnimation.setDuration(ANIM_TIME);
         alphaAnimation.setAnimationListener(this);
@@ -68,6 +67,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     @Override
     public void hasPermission(List<String> granted, boolean isAll) {
         Logger.d("权限请求成功");
+        GlobalParameter.initConfigFile();
         if (isAll){
             startActivityFinish(MainActivity.class);
         }
@@ -76,7 +76,6 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     @Override
     public void noPermission(List<String> denied, boolean quick) {
         if (quick){
-
             XXPermissions.gotoPermissionSettings(SplashActivity.this, true);
         }else {
             requestPermission();

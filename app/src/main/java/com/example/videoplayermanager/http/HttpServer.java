@@ -21,9 +21,10 @@ import static me.jessyan.retrofiturlmanager.RetrofitUrlManager.DOMAIN_NAME_HEADE
 
 public interface HttpServer {
     //下载apk
+    //下载apk
     @Headers({DOMAIN_NAME_HEADER+APP_UPDATE_DOMAIN_NAME})
     @Streaming
-    @GET("links/4636")
+    @GET("/")
     Observable<ResponseBody>downloadApk();
 
 

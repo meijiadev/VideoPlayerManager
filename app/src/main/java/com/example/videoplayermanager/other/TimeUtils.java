@@ -3,9 +3,22 @@ package com.example.videoplayermanager.other;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class TimeUtils {
+
+    /**
+     * 时间戳转固定格式的时间
+     * @return
+     */
+    public static String longToDate(long longTime){
+        SimpleDateFormat dff = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String time=dff.format(longTime);
+        return time;
+    }
+
+
     /**
      * 获取当前时分
      * @return

@@ -4,7 +4,6 @@ import butterknife.BindView;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,7 +17,6 @@ import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
-import com.example.videoplayermanager.widget.CustomTextView;
 import com.example.videoplayermanager.widget.ListGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;

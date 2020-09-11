@@ -40,7 +40,6 @@ public class CrashActivity extends BaseActivity {
         saveCrashInfo2File(CustomActivityOnCrash.getAllErrorDetailsFromIntent(CrashActivity.this, getIntent()));
         Logger.e("进入重启程序");
         CustomActivityOnCrash.restartApplication(CrashActivity.this, mConfig);
-
     }
 
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.view.Gravity;
 import com.example.videoplayermanager.R;
+import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.Logger;
@@ -40,7 +41,7 @@ public class TcpClient extends BaseSocketConnection {
     private SocketCallBack socketCallBack;
     private byte[] heads=new byte[4];  //存储头部长度信息的字节数组
     private byte [] bodyLengths =new byte[4];        //存储body体的信息长度
-    private XToast xToast;
+    //private XToast xToast;
 
     /**
      * 获取客户端
@@ -108,9 +109,6 @@ public class TcpClient extends BaseSocketConnection {
             Activity activity= ActivityStackManager.getInstance().getTopActivity();
             if (activity!=null){
                 requestLogin(GlobalParameter.ACCOUNT,GlobalParameter.PASSWORD);
-                if (xToast!=null){
-                    xToast.cancel();
-                }
             }
             sendHeartBeat();
         }
@@ -168,10 +166,10 @@ public class TcpClient extends BaseSocketConnection {
 
     }
 
-    /**
+  /*  *//**
      * 显示全局弹窗
      * @param activity
-     */
+     *//*
     private void showXToast(Activity activity){
         activity.runOnUiThread(new Runnable() {
             @Override
@@ -185,7 +183,7 @@ public class TcpClient extends BaseSocketConnection {
                         .show();
             }
         });
-    }
+    }*/
 
     /**
      * 自定义解析头
@@ -314,6 +312,10 @@ public class TcpClient extends BaseSocketConnection {
             }
         }).start();
     }
+
+
+
+
     public boolean isConnected() {
         return isConnected;
     }
@@ -343,7 +345,7 @@ public class TcpClient extends BaseSocketConnection {
         BaseCmd.reqLogin mreqLogin=BaseCmd.reqLogin.newBuilder()
                 .setUsername(account)
                 .setUserpwd(password)
-                .setType(BaseCmd.eCltType.eAdClient)
+                .setType(BaseCmd.eCltType.eSellV2AndroidClient)
                 .build();
         BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()
                 .setFromCltType(BaseCmd.eCltType.eAdClient)

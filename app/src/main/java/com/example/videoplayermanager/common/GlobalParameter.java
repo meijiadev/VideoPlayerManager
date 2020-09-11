@@ -24,7 +24,7 @@ import java.io.PrintStream;
 public class GlobalParameter {
     public static final String VIDEO_FOLDER= Environment.getExternalStorageDirectory().getPath()+"/"+"DownloadVideo"+"/";      //存储地址
     public static final String ROBOT_FOLDER_LOG= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRADLog"+"/";      //日志存储地址
-    public static final String ROBOT_FOLDER_DOWNLOAD= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRMapDownload"+"/"; //下载文件夹
+    public static final String ROBOT_FOLDER_DOWNLOAD= Environment.getExternalStorageDirectory().getPath()+"/"+"VideoPlayerApkDownload"+"/"; //下载文件夹
     public static final String LOCAL_AD_FILE=Environment.getExternalStorageDirectory().getPath()+"/"+"广告机参数"+"/";
     public static final String AD_CONFIG_NAME="Config.txt";
 

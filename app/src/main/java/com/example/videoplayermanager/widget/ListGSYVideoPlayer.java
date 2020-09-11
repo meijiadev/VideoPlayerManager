@@ -132,6 +132,8 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         //不给触摸亮度，如果需要，屏蔽下方代码即可
         mBrightness = false;
     }
+
+
     @Override
     protected void touchDoubleUp() {
         //super.touchDoubleUp();
@@ -205,7 +207,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         new Thread(()->{
             try {
                 Thread.sleep(200);
-                if (mUriList.size()>1)
+                if (mUriList.size()>0)
                     if (mPlayPosition==mUriList.size()-1){
                         videosIndex.currentVideosIndex(mPlayPosition,false,mUriList.get(mPlayPosition).getTitle());
                     }else if (mPlayPosition<mUriList.size()-1){
@@ -256,7 +258,6 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         }else {
             mPlayPosition=0;
         }
-        GSYVideoModel gsyVideoModel = mUriList.get(mPlayPosition);
         mSaveChangeViewTIme = 0;
         setUp(mUriList, mCache, mPlayPosition, null, mMapHeadData, false);
       /*  if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {

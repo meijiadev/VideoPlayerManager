@@ -1,6 +1,5 @@
 package com.example.videoplayermanager.protobufProcessor.dispatcher;
 
-import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.protobufProcessor.processor.NotifyCurrentVideoSeqProcessor;
 import com.example.videoplayermanager.protobufProcessor.processor.RspHeartBeatProcess;
 import com.example.videoplayermanager.protobufProcessor.processor.RspLoginProcessor;
@@ -26,7 +25,6 @@ public class ClientMessageDispatcher extends BaseMessageDispatcher {
         m_ProcessorMap.put(heartBeat.getClass().toString(),new RspHeartBeatProcess());
 
         BaseCmd.rspLogin rspLogin= BaseCmd.rspLogin.newBuilder().build();
-        Logger.e("------"+rspLogin.getClass().toString());
         m_ProcessorMap.put(rspLogin.getClass().toString(),new RspLoginProcessor());
 
         DDRADServiceCmd.rspVideoSeq rspVideoSeq= DDRADServiceCmd.rspVideoSeq.newBuilder().build();

@@ -351,7 +351,7 @@ public class MessageRoute {
                 }catch (ArrayIndexOutOfBoundsException a){
                     a.printStackTrace();
                     Logger.e("----------数组越界");
-                    return null;
+                      return null;
                 }
             }else {
                 Logger.e("Txt_Encrypt Error");
@@ -359,7 +359,6 @@ public class MessageRoute {
             }
         }
         return bytes;
-
     }
 
     /**

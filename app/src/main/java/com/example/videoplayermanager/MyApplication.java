@@ -17,7 +17,9 @@ import com.hjq.toast.ToastUtils;
 import com.hjq.toast.style.ToastWhiteStyle;
 import com.shuyu.gsyvideoplayer.cache.CacheFactory;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
+import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import cat.ereza.customactivityoncrash.config.CaocConfig;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
@@ -43,13 +45,18 @@ public class MyApplication extends Application {
         CacheFactory.setCacheManager(ProxyCacheManager.class);
         GSYVideoType.setShowType(SCREEN_TYPE_DEFAULT);
         ProxyCacheManager.instance().newProxy(context, GlobalParameter.getDownloadFile());
-        GlobalParameter.initConfigFile();
+        //GlobalParameter.initConfigFile();
         RetrofitUrlManager.getInstance().putDomain(APP_AWAIT_SHOW_DOMAIN_NAME,APP_AWAIT_SHOW_DOMAIN);
 
     }
 
 
     private void initSDK(){
+        if (BuildConfig.LOG_DEBUG){
+            CrashReport.initCrashReport(context,"d7383637be",true);
+        }else {
+            CrashReport.initCrashReport(context,"d7383637be",false);
+        }
         // EventBus 事件总线
         EventBusManager.init();
         // Crash 捕捉界面
