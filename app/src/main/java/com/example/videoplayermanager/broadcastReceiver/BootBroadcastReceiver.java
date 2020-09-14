@@ -40,14 +40,17 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
         EventBus.getDefault().register(this);
         this.context=context;
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")){
+            EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startApp));
+/*
            new Thread(()->{
                try {
-                   Thread.sleep(90000);
+                   Thread.sleep(30000);
                } catch (InterruptedException e) {
                    e.printStackTrace();
                }
                EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startApp));
            }).start();
+*/
         }else {
             Logger.e("接收的非开机广播");
         }

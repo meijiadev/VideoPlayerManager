@@ -204,6 +204,12 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
                 ((ENDownloadView) mLoadingProgressBar).start();
             }
         }
+    }
+
+
+    @Override
+    public void onPrepared() {
+        super.onPrepared();
         new Thread(()->{
             try {
                 Thread.sleep(200);
@@ -220,12 +226,7 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
                 e.printStackTrace();
             }
         }).start();
-    }
 
-
-    @Override
-    public void onPrepared() {
-        super.onPrepared();
     }
 
     @Override

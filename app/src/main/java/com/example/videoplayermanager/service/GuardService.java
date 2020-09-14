@@ -16,6 +16,7 @@ import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.NetWorkUtil;
 import com.example.videoplayermanager.other.TimeManager;
 import com.example.videoplayermanager.other.TimeUtils;
+import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
 
@@ -108,15 +109,19 @@ public class GuardService extends Service {
     @Subscribe(threadMode = ThreadMode.POSTING)
     public void onReceiveMessage(MessageEvent messageEvent){
         if (messageEvent.getType().equals(MessageEvent.Type.setAlarmTime)){
-            myTasks.clear();
-            long startPlayTime=System.currentTimeMillis();
-            TimeManager.MyTask myTask=new TimeManager.MyTask();
-            myTask.setStarTime(startPlayTime+5000);
-            myTask.setEndTime(startPlayTime+6000);
-            myTask.name=TimeManager.START_PLAY_NEXT_VIDEO_NAME;
-            myTasks.add(myTask);
-            myTaskTimeTask.setTasks(myTasks);
-            myTaskTimeTask.startLooperTask();
+            int size=myTasks.size();
+            long startPlayTime=VideoResourcesManager.getInstance().getTimeTickToPlay();
+            Logger.e("下次播放的时间："+TimeUtils.longToDate(startPlayTime)+"当前时间："+TimeUtils.longToDate(System.currentTimeMillis()));
+            if (myTasks.get(size-1).getStarTime()!= startPlayTime){
+                myTasks.clear();
+                TimeManager.MyTask myTask=new TimeManager.MyTask();
+                myTask.setStarTime(startPlayTime);
+                myTask.setEndTime(startPlayTime+100);
+                myTask.name=TimeManager.START_PLAY_NEXT_VIDEO_NAME;
+                myTasks.add(myTask);
+                myTaskTimeTask.setTasks(myTasks);
+                myTaskTimeTask.startLooperTask();
+            }
         }
     }
 

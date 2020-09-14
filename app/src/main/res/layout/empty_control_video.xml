@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/black">
 
     <FrameLayout
@@ -9,7 +10,61 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center">
-
     </FrameLayout>
+    <ImageView
+        android:id="@+id/ivWait"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/poster_one"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        />
+    <RelativeLayout
+        android:id="@+id/layoutMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="137dp"
+        android:background="#4DFFFFFF"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"
+        >
+        <TextView
+            android:id="@+id/tvFloor"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="B1"
+            android:textSize="118dp"
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="25dp"
+            android:includeFontPadding="false"
+            android:gravity="bottom"
+            android:layout_alignParentBottom="true"
+            />
+        <TextView
+            android:id="@+id/tvNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="46dp"
+            android:layout_toRightOf="@id/tvFloor"
+            android:text="108"
+            android:textColor="@android:color/black"
+            android:textSize="53dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="bottom"
+            android:includeFontPadding="false"
+            android:paddingBottom="19dp"
+            />
+        <com.itheima.roundedimageview.RoundedImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="150dp"
+            android:layout_height="88dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="25dp"
+            android:layout_marginRight="38dp"
+            android:scaleType="centerInside"
+            app:riv_corner_radius="6dp"
+            />
+    </RelativeLayout>
+
 
 </RelativeLayout>

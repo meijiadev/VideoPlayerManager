@@ -7,7 +7,6 @@ import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.google.protobuf.GeneratedMessageLite;
-import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -17,6 +16,8 @@ import java.util.List;
 import DDRADServiceProto.DDRADServiceCmd;
 import DDRCommProto.BaseCmd;
 
+import static com.example.videoplayermanager.other.MessageEvent.Type.updatePlayVideos;
+
 /**
  * desc：接收播放的视频列表
  */
@@ -25,6 +26,8 @@ public class NotifyCurrentVideoSeqProcessor extends BaseProcessor {
     public void process(Context context, BaseCmd.CommonHeader commonHeader, GeneratedMessageLite msg) {
         super.process(context, commonHeader, msg);
         DDRADServiceCmd.notifyCurrentVideoSeq notifyCurrentVideoSeq= (DDRADServiceCmd.notifyCurrentVideoSeq) msg;
+        VideoResourcesManager.getInstance().setProgramUdid(notifyCurrentVideoSeq.getProgramUdid());
+        VideoResourcesManager.getInstance().setTimeTickToPlay(notifyCurrentVideoSeq.getTimeTickToPlay());
         List<DDRADServiceCmd.VideoInfo> videoInfos=notifyCurrentVideoSeq.getVideoInfosList();
         List<VideoModel> videoModels=new ArrayList<>();
         for (int i=0;i<videoInfos.size();i++){
@@ -33,11 +36,12 @@ public class NotifyCurrentVideoSeqProcessor extends BaseProcessor {
             videoModel.setFloorNumber(videoInfos.get(i).getNumber());
             videoModel.setBusinessLogo(videoInfos.get(i).getLogo());
             videoModel.setProgramNum(videoInfos.get(i).getProgramNum());
+            videoModel.setVideoTimes(videoInfos.get(i).getDuration());
             videoModels.add(videoModel);
-            Logger.e("--------:"+videoInfos.get(i).getFloor()+";"+videoInfos.get(i).getNumber()+";"+videoInfos.get(i).getLogo()+";"+videoInfos.get(i).getBusinessInfo()+";"+i);
+            Logger.e("链接："+videoModel.getUrl()+";"+videoModel.getProgramNum());
         }
         VideoResourcesManager.getInstance().setVideoModels(videoModels);
         EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.updatePlayVideos));
-        Logger.e("接收视频播放列表！"+videoModels.size());
+        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.setAlarmTime));
     }
 }

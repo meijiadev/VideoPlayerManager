@@ -20,6 +20,7 @@ import com.example.videoplayermanager.base.BaseDialog;
 import com.example.videoplayermanager.base.BaseMvpActivity;
 import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.contract.MainContract;
+import com.example.videoplayermanager.other.EventBusManager;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.TimeUtils;
@@ -77,10 +78,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public void onReceive(MessageEvent messageEvent){
         switch (messageEvent.getType()){
             case updatePlayVideos:
+                Logger.e("--------------updatePlayVideos");
                 if (VideoResourcesManager.getInstance().getVideoModels().size()>0){
                     if (!isReceive&&isStartPlay){
                         Intent intent=new Intent(MainActivity.this,VideoActivity.class);
-                        intent.putExtra("videoPosition",0);
                         startActivity(intent);
                     }
                     isReceive=true;
@@ -91,7 +92,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 if (!isStartPlay&&isReceive){
                     Toast.makeText(MainActivity.this,"播放时间到",Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(MainActivity.this,VideoActivity.class);
-                    intent.putExtra("videoPosition",0);
                     startActivity(intent);
                 }
                 isStartPlay=true;
@@ -179,6 +179,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        EventBusManager.register(this);
+    }
 
     @Override
     protected void onStart() {
@@ -190,7 +195,13 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     protected void onStop() {
         super.onStop();
         banner.startAutoPlay();
+        EventBusManager.unregister(this);
+        if (xToast!=null){
+            xToast.cancel();
+        }
     }
+
+
 
     /**
      * 下载更新最新版本apk
@@ -213,6 +224,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         VideoPreLoader.getInstance().onDestroy();
         if (xToast!=null){
             xToast.cancel();
+            xToast=null;
         }
         ToastUtils.show("退出广告播放！");
     }
@@ -224,16 +236,17 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
      * @param
      */
     private void showXToast(){
-        xToast=new XToast(MyApplication.getInstance())
-                .setView(R.layout.xtoast_layout)
-                .setDraggable()
-                .setOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR)
-                .setAnimStyle(android.R.style.Animation_Dialog)
-                .setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP)
-                .show();
-        tvShowDownloadCounts= (TextView) xToast.findViewById(R.id.tvDownloadTimes);
-        Logger.e("显示浮窗！");
-
+        if (xToast==null){
+            xToast=new XToast(MyApplication.getInstance())
+                    .setView(R.layout.xtoast_layout)
+                    .setOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR)
+                    .setAnimStyle(android.R.style.Animation_Dialog)
+                    .setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP)
+                    .show();
+            tvShowDownloadCounts= (TextView) xToast.findViewById(R.id.tvDownloadTimes);
+            tvShowDownloadCounts.setText(0+"/"+VideoPreLoader.getInstance().getUrls().size());
+            Logger.e("显示浮窗！");
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
@@ -243,7 +256,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 showXToast();
                 break;
             case downloadIndex:
-                int hasDownload= (int) messageEvent.getData();
+                int hasDownload= (int) messageEvent.getData()+1;
                 int totalCount=VideoPreLoader.getInstance().getUrls().size();
                 tvShowDownloadCounts.setText(hasDownload+"/"+totalCount);
                 break;
@@ -252,6 +265,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 new Handler().postDelayed(()->{
                     if (xToast!=null)
                         xToast.cancel();
+                        xToast=null;
                 },1000);
                 break;
 

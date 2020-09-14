@@ -14,30 +14,31 @@ import com.example.videoplayermanager.base.BaseActivity;
 import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
-import com.example.videoplayermanager.widget.ListGSYVideoPlayer;
+import com.example.videoplayermanager.widget.VideoPlayerView;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
-import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
+
 
 import java.util.List;
 
-public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.VideosIndex {
+public class VideoActivity extends BaseActivity implements VideoPlayerView.VideoStatus {
      @BindView(R.id.videoPlayer)
-     ListGSYVideoPlayer videoPlayer;
-     @BindView(R.id.layoutMessage)
+     VideoPlayerView videoPlayer;
+ /*    @BindView(R.id.layoutMessage)
      RelativeLayout layoutMessage;
      @BindView(R.id.tvFloor)
      TextView tvFloor;
      @BindView(R.id.tvNumber)
      TextView tvNumber;
      @BindView(R.id.ivIcon)
-     ImageView ivIcon;
+     ImageView ivIcon;*/
 
-    OrientationUtils orientationUtils;
     private TcpClient tcpClient;
     private List<VideoModel> videoModels;
+
 
     @Override
     protected int getLayoutId() {
@@ -49,19 +50,16 @@ public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.Vi
         setStatusBarEnabled(true);
         tcpClient=TcpClient.getInstance(context, ClientMessageDispatcher.getInstance());
         videoModels=VideoResourcesManager.getInstance().getVideoModels();
-        videoPlayer.setVideosIndex(this::currentVideosIndex);  //注册监听播放视频的索引
+        videoPlayer.setVideoStatus(this);
     }
 
     @Override
     protected void initData() {
-        Intent intent=getIntent();
-        List<VideoModel> videoModels = VideoResourcesManager.getInstance().getVideoModels();
-        int index=intent.getIntExtra("videoPosition",0);
-
-        videoPlayer.setUp(videoModels,true,index, GlobalParameter.getDownloadFile());
-        //设置旋转
-        orientationUtils = new OrientationUtils(this, videoPlayer);
-        videoPlayer.startPlayLogic();
+        //增加封面
+        ImageView imageView = new ImageView(context);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageResource(R.mipmap.poster_one);
+        videoPlayer.setThumbImageView(imageView);
     }
 
     @Override
@@ -79,24 +77,28 @@ public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.Vi
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        videoPlayer.unRegister();
         GSYVideoManager.releaseAllVideos();
-        if (orientationUtils != null)
-            orientationUtils.releaseListener();
+
     }
 
     @Override
     public void onBackPressed() {
-        //先返回正常状态
-        if (orientationUtils.getScreenType() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            videoPlayer.getFullscreenButton().performClick();
-            return;
-        }
         //释放所有
         videoPlayer.setVideoAllCallBack(null);
         super.onBackPressed();
     }
 
     @Override
+    public void playNext() {
+        runOnUiThread(()->{
+           /* tvFloor.setText(VideoResourcesManager.getInstance().getNextVideoModel().getFloorName());
+            tvNumber.setText(VideoResourcesManager.getInstance().getNextVideoModel().getFloorNumber());
+            Glide.with(context).load(VideoResourcesManager.getInstance().getNextVideoModel().getBusinessLogo()).into(ivIcon);*/
+        });
+    }
+
+   /* @Override
     public void currentVideosIndex(int index,boolean hasNext,String name) {
         if (index<videoModels.size()){
             long timeDuration=videoPlayer.getDuration();
@@ -109,7 +111,7 @@ public class VideoActivity extends BaseActivity implements ListGSYVideoPlayer.Vi
                 Glide.with(context).load(videoModels.get(index).getBusinessLogo()).into(ivIcon);
             });
         }
+    }*/
 
 
-    }
 }

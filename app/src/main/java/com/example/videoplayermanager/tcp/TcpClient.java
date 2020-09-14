@@ -6,9 +6,11 @@ import android.content.pm.ActivityInfo;
 import android.view.Gravity;
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.base.BaseThread;
+import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.MessageRoute;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.BaseMessageDispatcher;
 import com.google.protobuf.GeneratedMessageLite;
@@ -270,14 +272,15 @@ public class TcpClient extends BaseSocketConnection {
     private String name="NULL";
     private String programNum="NULL";
     private int timeDuration;
+
     public void setIndex(int index,boolean hasNext,String name,String programNum,int timeDuration){
         this.index=index;
         this.hasNext=hasNext;
         this.name=(name.isEmpty())?"NULL":name;
         this.programNum=(programNum.isEmpty())?"NULL":programNum;
         this.timeDuration=timeDuration;
-
     }
+
 
     /**
      * 持续发送心跳
@@ -293,15 +296,18 @@ public class TcpClient extends BaseSocketConnection {
             public void run() {
                 while (isConnected&&manager!=null){
                     try {
+                        VideoModel videoModel=VideoResourcesManager.getInstance().getNextVideoModel();
+                        if (videoModel!=null){
+                            timeDuration=(int) videoModel.getVideoTimes();
+                        }
                         DDRADServiceCmd.ADHeartBeat heartBeat=DDRADServiceCmd.ADHeartBeat.newBuilder()
-                                .setIndex(index)
-                                .setHasNext(hasNext)
-                                .setVideoName(name)
-                                .setProgramNum(programNum)
                                 .setTimeDuration(timeDuration)
+                                .setLastPlayUdid(VideoResourcesManager.getInstance().getRealProgramUdip())
+                                .setLastPlayTimeTick(VideoResourcesManager.getInstance().getRealStartPlayTime())
                                 .build();
                         manager.getPulseManager().setPulseSendable(new PulseData(m_MessageRoute.serialize(header,heartBeat))).pulse();
-                        Logger.e("发送心跳包"+heartBeat.getIndex()+hasNext+"视频名字："+name);
+                        //Logger.e("发送心跳包"+heartBeat.getIndex()+hasNext+"视频名字："+name);
+                        Logger.e("发送的心跳："+VideoResourcesManager.getInstance().getTimeTickToPlay());
                         Thread.sleep(1000);
                     }catch (NullPointerException e){
                         e.printStackTrace();
@@ -345,7 +351,7 @@ public class TcpClient extends BaseSocketConnection {
         BaseCmd.reqLogin mreqLogin=BaseCmd.reqLogin.newBuilder()
                 .setUsername(account)
                 .setUserpwd(password)
-                .setType(BaseCmd.eCltType.eSellV2AndroidClient)
+                .setType(BaseCmd.eCltType.eAdClient)
                 .build();
         BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()
                 .setFromCltType(BaseCmd.eCltType.eAdClient)

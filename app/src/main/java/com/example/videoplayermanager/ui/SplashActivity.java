@@ -53,6 +53,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
      * 请求权限
      */
     private void requestPermission(){
+        Logger.e("请求权限！");
         XXPermissions.with(this)
                 .permission(permission)
                 .request(this);
@@ -100,7 +101,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     @Override
     protected void onRestart() {
         super.onRestart();
-        requestPermission();
+
     }
 
     @Override

@@ -21,6 +21,5 @@ public class RspLoginProcessor extends BaseProcessor {
         BaseCmd.rspLogin rspLogin= (BaseCmd.rspLogin) msg;
         Logger.e("登陆回复");
         ToastUtils.show("登陆成功！");
-        TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).requestVideoAddress();
     }
 }

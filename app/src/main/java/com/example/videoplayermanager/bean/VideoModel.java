@@ -7,6 +7,7 @@ public class VideoModel extends GSYVideoModel {
     private String floorName;         //楼层
     private String floorNumber;      //门牌号
     private String businessLogo;    //商家logo
+    private long videoTimes;
     public VideoModel(String url, String title) {
         super(url, title);
 
@@ -64,5 +65,13 @@ public class VideoModel extends GSYVideoModel {
 
     public String getBusinessLogo() {
         return businessLogo;
+    }
+
+    public void setVideoTimes(long videoTimes) {
+        this.videoTimes = videoTimes;
+    }
+
+    public long getVideoTimes() {
+        return videoTimes;
     }
 }

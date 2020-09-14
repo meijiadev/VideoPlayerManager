@@ -39,7 +39,7 @@ public class TimeManager implements TimeHandler<TimeManager.MyTask> {
                 break;
             case START_PLAY_NEXT_VIDEO_NAME:
                 Logger.e("-----------下次播放视频的时间："+TimeUtils.longToDate(myTask.getStarTime()));
-                EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideo));
+                EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideo,myTask.getStarTime()));
                 break;
         }
     }
@@ -53,6 +53,9 @@ public class TimeManager implements TimeHandler<TimeManager.MyTask> {
                 break;
             case START_PLAY_VIDEO_NAME:
                 EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.startPlayVideo));
+                break;
+            case START_PLAY_NEXT_VIDEO_NAME:
+                EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideo,myTask.getStarTime()));
                 break;
 
         }

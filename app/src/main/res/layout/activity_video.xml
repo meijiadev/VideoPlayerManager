@@ -8,12 +8,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.example.videoplayermanager.widget.ListGSYVideoPlayer
+        <com.example.videoplayermanager.widget.VideoPlayerView
             android:id="@+id/videoPlayer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>
-    <RelativeLayout
+  <!--  <RelativeLayout
         android:id="@+id/layoutMessage"
         android:layout_width="wrap_content"
         android:layout_height="137dp"
@@ -58,5 +58,5 @@
             android:scaleType="centerInside"
             app:riv_corner_radius="6dp"
             />
-    </RelativeLayout>
+    </RelativeLayout>-->
 </androidx.percentlayout.widget.PercentRelativeLayout>
