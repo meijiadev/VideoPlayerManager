@@ -8,11 +8,22 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.example.videoplayermanager.widget.VideoPlayerView
             android:id="@+id/videoPlayer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </FrameLayout>
+    <TextView
+        android:id="@+id/tvCurrentTime"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textSize="20dp"
+        android:text=""
+        android:gravity="right"
+        android:textColor="@color/white"
+        android:layout_marginRight="10dp"
+        />
   <!--  <RelativeLayout
         android:id="@+id/layoutMessage"
         android:layout_width="wrap_content"

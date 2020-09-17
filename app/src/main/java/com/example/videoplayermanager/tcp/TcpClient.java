@@ -307,11 +307,9 @@ public class TcpClient extends BaseSocketConnection {
                                 .build();
                         manager.getPulseManager().setPulseSendable(new PulseData(m_MessageRoute.serialize(header,heartBeat))).pulse();
                         //Logger.e("发送心跳包"+heartBeat.getIndex()+hasNext+"视频名字："+name);
-                        Logger.e("发送的心跳："+VideoResourcesManager.getInstance().getTimeTickToPlay());
+                        Logger.d("发送的心跳："+VideoResourcesManager.getInstance().getTimeTickToPlay());
                         Thread.sleep(1000);
-                    }catch (NullPointerException e){
-                        e.printStackTrace();
-                    }catch (InterruptedException e) {
+                    }catch (NullPointerException | InterruptedException e){
                         e.printStackTrace();
                     }
                 }
@@ -359,6 +357,38 @@ public class TcpClient extends BaseSocketConnection {
                 .addFlowDirection(BaseCmd.CommonHeader.eFlowDir.Forward)
                 .build();
         sendData(header,mreqLogin);
+    }
+
+    /**
+     * 通知服务器视频已经下载完
+     */
+    public void notifyService(){
+        BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()
+                .setFromCltType(BaseCmd.eCltType.eAdClient)
+                .setToCltType(BaseCmd.eCltType.eAIServer)
+                .addFlowDirection(BaseCmd.CommonHeader.eFlowDir.Forward)
+                .build();
+        DDRADServiceCmd.reqDownloadFinish reqDownloadFinish= DDRADServiceCmd.reqDownloadFinish.newBuilder()
+                .setReserved("Downloaded")
+                .build();
+        sendData(header,reqDownloadFinish);
+        Logger.i("通知服务器当前视频已下载完！");
+    }
+
+    /**
+     * 通知服务器当前视频已经播完
+     */
+    public void notifyVideoFinish(long programUdid){
+        BaseCmd.CommonHeader header=BaseCmd.CommonHeader.newBuilder()
+                .setFromCltType(BaseCmd.eCltType.eAdClient)
+                .setToCltType(BaseCmd.eCltType.eAIServer)
+                .addFlowDirection(BaseCmd.CommonHeader.eFlowDir.Forward)
+                .build();
+        DDRADServiceCmd.reqFinishPlay reqFinishPlay= DDRADServiceCmd.reqFinishPlay.newBuilder()
+                .setProgramUdid(programUdid)
+                .build();
+        sendData(header,reqFinishPlay);
+        Logger.i("通知服务器当前视频已播完！");
     }
 
 

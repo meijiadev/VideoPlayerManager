@@ -8,8 +8,8 @@ message ADHeartBeat{
 	string videoName = 3;
 	string programNum = 4;
 	int32 timeDuration = 5;
-	int64 lastPlayTimeTick = 6;  //最近一次播放的时间
-	int64 lastPlayUdid = 7;     //以发送时的绝对时间作为当前唯一ID
+	int64 lastPlayTimeTick = 6;//最近一次播放的时间
+	int64 lastPlayUdid = 7;//以发送时的绝对时间作为当前唯一ID
 }
 
 // 上位机下发到三个广告屏的视频链接列表
@@ -17,6 +17,15 @@ message notifyCurrentVideoSeq{
     repeated VideoInfo videoInfos=1;
 	int64 programUdid = 2;//以发送时的绝对时间作为当前唯一ID
 	int64 timeTickToPlay = 3;//预计开始播放的时间点
+}
+
+message reqFinishPlay
+{
+	int64 programUdid = 1;//唯一ID
+}
+message rspFinishPlay
+{
+    string reserved = 1;
 }
 
 message VideoInfo{
@@ -37,4 +46,18 @@ message reqVideoSeq{
 }
 message rspVideoSeq{
     repeated string url = 1;
+}
+
+message wrtVideoHistory
+{
+    repeated notifyCurrentVideoSeq history=1;
+}
+
+message reqDownloadFinish
+{
+    string reserved = 1;
+}
+message rspDownloadFinish
+{
+    string reserved = 1;
 }

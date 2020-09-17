@@ -111,7 +111,6 @@ public class GuardService extends Service {
         if (messageEvent.getType().equals(MessageEvent.Type.setAlarmTime)){
             int size=myTasks.size();
             long startPlayTime=VideoResourcesManager.getInstance().getTimeTickToPlay();
-            Logger.e("下次播放的时间："+TimeUtils.longToDate(startPlayTime)+"当前时间："+TimeUtils.longToDate(System.currentTimeMillis()));
             if (myTasks.get(size-1).getStarTime()!= startPlayTime){
                 myTasks.clear();
                 TimeManager.MyTask myTask=new TimeManager.MyTask();

@@ -15,6 +15,8 @@ import com.example.videoplayermanager.other.EventBusManager;
 
 import com.example.videoplayermanager.other.Logger;
 
+import org.greenrobot.eventbus.EventBus;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -138,6 +140,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
         if (mButterKnife!=null)
         mButterKnife.unbind();
         EventBusManager.unregister(this);
+        EventBus.getDefault().removeAllStickyEvents();
         ActivityStackManager.getInstance().onDestroyed(this);
         Logger.d("-------------"+this.getClass().getSimpleName());
     }

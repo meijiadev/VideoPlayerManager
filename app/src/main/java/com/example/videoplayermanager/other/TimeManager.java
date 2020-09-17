@@ -38,15 +38,14 @@ public class TimeManager implements TimeHandler<TimeManager.MyTask> {
                 EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.startPlayVideo));
                 break;
             case START_PLAY_NEXT_VIDEO_NAME:
-                Logger.e("-----------下次播放视频的时间："+TimeUtils.longToDate(myTask.getStarTime()));
-                EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideo,myTask.getStarTime()));
+                Logger.e("定时播放的时间："+TimeUtils.longToDate(myTask.getStarTime())+"当前时间："+TimeUtils.longToDate(System.currentTimeMillis()));
+                //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideo,myTask.getStarTime()));
                 break;
         }
     }
 
     @Override
     public void overdueTask(MyTask myTask) {
-        Logger.e("过时任务："+myTask.name);
         switch (myTask.name){
             case START_DOWNLOAD_1_NAME:
                 //Logger.e("定时任务："+START_DOWNLOAD_1_NAME);
@@ -55,7 +54,8 @@ public class TimeManager implements TimeHandler<TimeManager.MyTask> {
                 EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.startPlayVideo));
                 break;
             case START_PLAY_NEXT_VIDEO_NAME:
-                EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideo,myTask.getStarTime()));
+                Logger.e("过时播放的时间："+TimeUtils.longToDate(myTask.getStarTime())+"当前时间："+TimeUtils.longToDate(System.currentTimeMillis()));
+                //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideo,myTask.getStarTime()));
                 break;
 
         }

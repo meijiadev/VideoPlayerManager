@@ -33,12 +33,41 @@ public class VideoPreLoader {
      */
     private DownloadThread downloadThread;
     public class DownloadThread extends BaseThread{
+
         @Override
         public void run() {
             super.run();
             for (int i=0;i<urls.size();i++){
                 //Logger.d("下载到；"+i);
-                realPreload(urls.get(i));
+                String url=urls.get(i);
+                HttpURLConnection connection;
+                HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context, GlobalParameter.getDownloadFile());
+                String mUrl=httpProxyCacheServer.getProxyUrl(url);
+                Logger.d("---------:"+mUrl);
+                if (mUrl.contains("http")){
+                    try {
+                        URL myURL=new URL(mUrl);
+                        connection= (HttpURLConnection) myURL.openConnection();
+                        connection.connect();
+                        InputStream inputStream=connection.getInputStream();
+                        byte[]buffer=new byte[1024];
+                        int download=0;
+                        do {
+                            int numRed=inputStream.read(buffer);
+                            download+=numRed;
+                            Logger.i("读取下载进度："+download/1024/1024);
+                            if (numRed==-1){
+                                break;
+                            }
+                        }while (true);
+                        inputStream.close();
+                        Logger.e("读取下载完毕！");
+                    } catch (IOException e) {
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadFailed));
+                        downloadThread=null;
+                        return;
+                    }
+                }
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -49,6 +78,7 @@ public class VideoPreLoader {
                     return;
             }
             EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadFinish));
+            downloadThread=null;
         }
     }
 
@@ -85,33 +115,7 @@ public class VideoPreLoader {
      * @param url
      */
     private  void realPreload(String url){
-        HttpURLConnection connection;
-        HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context, GlobalParameter.getDownloadFile());
-        String mUrl=httpProxyCacheServer.getProxyUrl(url);
-        Logger.d("---------:"+mUrl);
-        if (mUrl.contains("http")){
-            try {
-                URL myURL=new URL(mUrl);
-                connection= (HttpURLConnection) myURL.openConnection();
-                connection.connect();
-                InputStream inputStream=connection.getInputStream();
-                byte[]buffer=new byte[1024];
-                int download=0;
-                do {
-                    int numRed=inputStream.read(buffer);
-                    download+=numRed;
-                    Logger.e("读取下载进度："+download/1024/1024);
-                    if (numRed==-1){
-                        break;
-                    }
-                }while (true);
-                inputStream.close();
-                Logger.e("读取下载完毕！");
-            } catch (IOException e) {
-                e.printStackTrace();
 
-            }
-        }
     }
 
     public void onDestroy(){

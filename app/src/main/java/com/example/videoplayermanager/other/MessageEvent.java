@@ -14,12 +14,14 @@ public class MessageEvent {
         startApp,             //启动APP
         setAlarmTime,         //设置下一次播放视频的时间
         startPlayNextVideo,     //播放下一个视频
+        startPlayNextVideoAtOnce, //立刻播放下一个视频
 
         updateProgress,
         apkDownloadSucceed,
         apkDownloadFailed,
         downloadIndex,         //视频已下载的个数
         downloadFinish,        //下载完成
+        downloadFailed,
     }
 
     public MessageEvent(Type type) {

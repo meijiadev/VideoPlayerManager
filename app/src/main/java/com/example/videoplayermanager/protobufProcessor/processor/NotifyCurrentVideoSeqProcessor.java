@@ -28,20 +28,21 @@ public class NotifyCurrentVideoSeqProcessor extends BaseProcessor {
         DDRADServiceCmd.notifyCurrentVideoSeq notifyCurrentVideoSeq= (DDRADServiceCmd.notifyCurrentVideoSeq) msg;
         VideoResourcesManager.getInstance().setProgramUdid(notifyCurrentVideoSeq.getProgramUdid());
         VideoResourcesManager.getInstance().setTimeTickToPlay(notifyCurrentVideoSeq.getTimeTickToPlay());
-        List<DDRADServiceCmd.VideoInfo> videoInfos=notifyCurrentVideoSeq.getVideoInfosList();
+        //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.setAlarmTime));
+        List<DDRADServiceCmd.VideoInfo> videoIfs=notifyCurrentVideoSeq.getVideoInfosList();
         List<VideoModel> videoModels=new ArrayList<>();
-        for (int i=0;i<videoInfos.size();i++){
-            VideoModel videoModel=new VideoModel(videoInfos.get(i).getUrl(),videoInfos.get(i).getName());
-            videoModel.setFloorName(videoInfos.get(i).getFloor());
-            videoModel.setFloorNumber(videoInfos.get(i).getNumber());
-            videoModel.setBusinessLogo(videoInfos.get(i).getLogo());
-            videoModel.setProgramNum(videoInfos.get(i).getProgramNum());
-            videoModel.setVideoTimes(videoInfos.get(i).getDuration());
+        for (int i=0;i<videoIfs.size();i++){
+            VideoModel videoModel=new VideoModel(videoIfs.get(i).getUrl(),videoIfs.get(i).getName());
+            videoModel.setFloorName(videoIfs.get(i).getFloor());
+            videoModel.setFloorNumber(videoIfs.get(i).getNumber());
+            videoModel.setBusinessLogo(videoIfs.get(i).getLogo());
+            videoModel.setProgramNum(videoIfs.get(i).getProgramNum());
+            videoModel.setVideoTimes(videoIfs.get(i).getDuration());
             videoModels.add(videoModel);
             Logger.e("链接："+videoModel.getUrl()+";"+videoModel.getProgramNum());
         }
         VideoResourcesManager.getInstance().setVideoModels(videoModels);
-        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.updatePlayVideos));
-        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.setAlarmTime));
+        //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.updatePlayVideos));
+        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideoAtOnce));
     }
 }

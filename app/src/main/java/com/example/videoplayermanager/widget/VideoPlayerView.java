@@ -5,34 +5,47 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.videoplayermanager.R;
+import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.EventBusManager;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
+import com.example.videoplayermanager.other.TimeUtils;
 import com.example.videoplayermanager.other.VideoResourcesManager;
+import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
+import com.example.videoplayermanager.tcp.TcpClient;
+import com.shuyu.gsyvideoplayer.GSYVideoBaseManager;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
+import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
+import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
+import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 import butterknife.BindView;
 
 
 public class VideoPlayerView extends StandardGSYVideoPlayer {
-    private VideoStatus videoStatus;
     private long nextPlayTime;
     private Context context;
-    private boolean currentVideoFinish;           //当前视频是否播完
     private long logTime1;
     private long longTime2;
-    private ImageView ivWait;
-    RelativeLayout layoutMessage;
-    TextView tvFloor;
-    TextView tvNumber;
-    ImageView ivIcon;
+    //private ImageView ivWait;
+    private RelativeLayout layoutMessage;
+    private TextView tvFloor;
+    private TextView tvNumber;
+    private ImageView ivIcon;
+    private long testTimes;
+
+
     public VideoPlayerView(Context context, Boolean fullFlag) {
         super(context, fullFlag);
     }
@@ -49,7 +62,7 @@ public class VideoPlayerView extends StandardGSYVideoPlayer {
     private void initView(Context context){
         EventBusManager.register(this);
         this.context=context;
-        ivWait=findViewById(R.id.ivWait);
+        //ivWait=findViewById(R.id.ivWait);
         layoutMessage=findViewById(R.id.layoutMessage);
         tvFloor=findViewById(R.id.tvFloor);
         tvNumber=findViewById(R.id.tvNumber);
@@ -61,26 +74,22 @@ public class VideoPlayerView extends StandardGSYVideoPlayer {
         return R.layout.empty_control_video;
     }
 
-    public void setVideoStatus(VideoStatus videoStatus) {
-        this.videoStatus = videoStatus;
-    }
+
 
     /**
-     * 开始准备播放视频（先加载再播放）
+     * 开始准备播放视频
      * @param url
      * @return
      */
     public void startPlay(String url){
-         currentVideoFinish=false;
-         layoutMessage.setVisibility(VISIBLE);
-         tvFloor.setText(VideoResourcesManager.getInstance().getNextVideoModel().getFloorName());
-         tvNumber.setText(VideoResourcesManager.getInstance().getNextVideoModel().getFloorNumber());
-         Glide.with(context).load(VideoResourcesManager.getInstance().getNextVideoModel().getBusinessLogo()).into(ivIcon);
          logTime1=System.currentTimeMillis();
-         Logger.e("准备播放视频！");
+         //Logger.e("准备播放视频！");
          setUp(url,true, GlobalParameter.getDownloadFile(),null,false);
          startPlayLogic();
+         testTimes=System.currentTimeMillis();
     }
+
+
 
     /**
      * 加载完成
@@ -88,23 +97,21 @@ public class VideoPlayerView extends StandardGSYVideoPlayer {
     @Override
     public void onPrepared() {
         super.onPrepared();
-        ivWait.setVisibility(GONE);
-        long currentTime=System.currentTimeMillis();
-        videoStatus.playNext();
-        Logger.e("-----------------------加载完成耗时："+(currentTime-logTime1));
-        //视频真正开始播放的时间
         long realStartTime;
-        if (currentTime>nextPlayTime&&nextPlayTime>0){
-            //seekTo(currentTime-nextPlayTime);
-           // realStartTime =2*currentTime-nextPlayTime;
-            realStartTime=System.currentTimeMillis();
-            Logger.e("-------------------------seek的时间："+(currentTime-nextPlayTime));
-        }else {
-            realStartTime =System.currentTimeMillis();
-        }
+        realStartTime =System.currentTimeMillis();
+        Logger.e("视频真正开始播放的时间："+TimeUtils.longToDate(realStartTime));
+        Logger.e("-----------------------加载完成耗时："+(realStartTime-logTime1));
+        //视频真正开始播放的时间
         VideoResourcesManager.getInstance().setRealProgramUdip(VideoResourcesManager.getInstance().getProgramUdid());
         VideoResourcesManager.getInstance().setRealStartPlayTime(realStartTime);
-        nextPlayTime=0;
+        String floorName= VideoResourcesManager.getInstance().getNextVideoModel().getFloorName();
+        String floorNumber=VideoResourcesManager.getInstance().getNextVideoModel().getFloorNumber();
+        String imageUrl=VideoResourcesManager.getInstance().getNextVideoModel().getBusinessLogo();
+        layoutMessage.setVisibility(VISIBLE);
+        tvFloor.setText(floorName);
+        tvNumber.setText(floorNumber);
+        Glide.with(context).load(imageUrl).into(ivIcon);
+
     }
 
     @Override
@@ -120,9 +127,6 @@ public class VideoPlayerView extends StandardGSYVideoPlayer {
     }
 
 
-
-
-
     @Override
     public void onCompletion() {
         releaseNetWorkState();
@@ -132,13 +136,10 @@ public class VideoPlayerView extends StandardGSYVideoPlayer {
     @Override
     public void onAutoCompletion() {
         layoutMessage.setVisibility(GONE);
-        ivWait.setVisibility(VISIBLE);
-        Logger.e("当前视频播放完！");
-        currentVideoFinish=true;
-        if (System.currentTimeMillis()>=nextPlayTime&&nextPlayTime>0){
-            startPlay(VideoResourcesManager.getInstance().getNextVideoModel().getUrl());
-            Logger.e("开始播放下一个视频" );
-        }
+        Logger.e("当前视频结束！");
+        long currentTime=System.currentTimeMillis();
+        Logger.e("当前时间："+TimeUtils.longToDate(currentTime)+"该视频时长："+getDuration()+"------播放该视频所需时长："+(currentTime-testTimes));
+        TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).notifyVideoFinish(VideoResourcesManager.getInstance().getProgramUdid());
         super.onAutoCompletion();
     }
 
@@ -162,14 +163,42 @@ public class VideoPlayerView extends StandardGSYVideoPlayer {
     }
 
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        Logger.e("-----------销毁该View");
+        unRegister();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onReceive(MessageEvent messageEvent){
         if (messageEvent.getType().equals(MessageEvent.Type.startPlayNextVideo)){
-            nextPlayTime= (long) messageEvent.getData();
-            Logger.e("------开始定时播放！");
+            if (nextPlayTime!=(long)messageEvent.getData()){
+                nextPlayTime= (long) messageEvent.getData();
+                String floorName= VideoResourcesManager.getInstance().getNextVideoModel().getFloorName();
+                String floorNumber=VideoResourcesManager.getInstance().getNextVideoModel().getFloorNumber();
+                String imageUrl=VideoResourcesManager.getInstance().getNextVideoModel().getBusinessLogo();
+                Logger.e("-----------开始定时播放："+ TimeUtils.longToDate(nextPlayTime)+"当前时间："+TimeUtils.longToDate(System.currentTimeMillis())+"视频时长："+VideoResourcesManager.getInstance().getNextVideoModel().getVideoTimes());
+                startPlay(VideoResourcesManager.getInstance().getNextVideoModel().getUrl());
+                layoutMessage.setVisibility(VISIBLE);
+                tvFloor.setText(floorName);
+                tvNumber.setText(floorNumber);
+                Glide.with(context).load(imageUrl).into(ivIcon);
+                Logger.e("--楼层信息:"+floorName+";"+floorNumber+";"+imageUrl);
+            }
+        }else if (messageEvent.getType().equals(MessageEvent.Type.startPlayNextVideoAtOnce)){
+            String floorName= VideoResourcesManager.getInstance().getNextVideoModel().getFloorName();
+            String floorNumber=VideoResourcesManager.getInstance().getNextVideoModel().getFloorNumber();
+            String imageUrl=VideoResourcesManager.getInstance().getNextVideoModel().getBusinessLogo();
+            long videoTimes=VideoResourcesManager.getInstance().getNextVideoModel().getVideoTimes() ;
+            Logger.e("当前时间："+TimeUtils.longToDate(System.currentTimeMillis())+"视频时长："+videoTimes);
             startPlay(VideoResourcesManager.getInstance().getNextVideoModel().getUrl());
+            //startAfterPrepared();
         }
     }
+
+
+
 
     public interface VideoStatus{
         void playNext();
