@@ -68,7 +68,7 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
             HttpProxyCacheServer proxy = getProxy(context.getApplicationContext(), cachePath);
             if (proxy != null) {
                 //此处转换了url，然后再赋值给mUrl。
-                Logger.e("----------转换之后的url:"+url);
+                Logger.i("----------转换之后的url:"+url);
                 url = proxy.getProxyUrl(url);
                 mCacheFile = (!url.startsWith("http"));
                 //注册上缓冲监听

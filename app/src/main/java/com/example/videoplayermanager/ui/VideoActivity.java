@@ -4,22 +4,16 @@ import butterknife.BindView;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.base.BaseActivity;
 import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.common.GlobalParameter;
-import com.example.videoplayermanager.other.Logger;
-import com.example.videoplayermanager.other.MessageEvent;
+import com.example.videoplayermanager.other.LogcatHelper;
 import com.example.videoplayermanager.other.TimeUtils;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
@@ -29,9 +23,7 @@ import com.example.videoplayermanager.widget.VideoPlayerViewOne;
 import com.hjq.toast.ToastUtils;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.model.VideoOptionModel;
-import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
-import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
 
 
 import java.util.ArrayList;
@@ -42,14 +34,7 @@ public class VideoActivity extends BaseActivity  {
      VideoPlayerView videoPlayer;
      @BindView(R.id.tvCurrentTime)
      TextView tvCurrentTime;
- /*    @BindView(R.id.layoutMessage)
-     RelativeLayout layoutMessage;
-     @BindView(R.id.tvFloor)
-     TextView tvFloor;
-     @BindView(R.id.tvNumber)
-     TextView tvNumber;
-     @BindView(R.id.ivIcon)
-     ImageView ivIcon;*/
+
 
     private TcpClient tcpClient;
     private List<VideoModel> videoModels;
@@ -83,6 +68,8 @@ public class VideoActivity extends BaseActivity  {
         list.add(videoOptionMode12);
         GSYVideoManager.instance().setOptionModelList(list);
         TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
+     /*   videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoModels(),true,0,GlobalParameter.getDownloadFile());
+        videoPlayer.startPlayLogic();*/
 
     }
 
@@ -121,6 +108,7 @@ public class VideoActivity extends BaseActivity  {
         GSYVideoType.disableMediaCodec();
         GSYVideoManager.releaseAllVideos();
         ToastUtils.show("退出广告播放！");
+        LogcatHelper.getInstance(context).stop();
 
     }
 

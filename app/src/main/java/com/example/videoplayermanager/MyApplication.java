@@ -8,29 +8,25 @@ import android.widget.Toast;
 
 import com.example.videoplayermanager.other.EventBusManager;
 import com.example.videoplayermanager.common.GlobalParameter;
+import com.example.videoplayermanager.other.LogcatHelper;
 import com.example.videoplayermanager.other.ProxyCacheManager;
 import com.example.videoplayermanager.ui.CrashActivity;
 import com.example.videoplayermanager.ui.SplashActivity;
-import com.google.gson.GsonBuilder;
 import com.hjq.toast.ToastInterceptor;
 import com.hjq.toast.ToastUtils;
 import com.hjq.toast.style.ToastWhiteStyle;
 import com.shuyu.gsyvideoplayer.cache.CacheFactory;
-import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
 import com.shuyu.gsyvideoplayer.player.PlayerFactory;
 import com.shuyu.gsyvideoplayer.player.SystemPlayerManager;
-import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import cat.ereza.customactivityoncrash.config.CaocConfig;
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager;
-import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
 
 import static com.example.videoplayermanager.http.Api.APP_AWAIT_SHOW_DOMAIN;
 import static com.example.videoplayermanager.http.Api.APP_AWAIT_SHOW_DOMAIN_NAME;
 import static com.shuyu.gsyvideoplayer.utils.GSYVideoType.SCREEN_MATCH_FULL;
-import static com.shuyu.gsyvideoplayer.utils.GSYVideoType.SCREEN_TYPE_DEFAULT;
 
 public class MyApplication extends Application {
 
@@ -52,7 +48,8 @@ public class MyApplication extends Application {
         ProxyCacheManager.instance().newProxy(context, GlobalParameter.getDownloadFile());
         //GlobalParameter.initConfigFile();
         RetrofitUrlManager.getInstance().putDomain(APP_AWAIT_SHOW_DOMAIN_NAME,APP_AWAIT_SHOW_DOMAIN);
-
+        //将log保存到本地
+        //LogcatHelper.getInstance(context).start();
     }
 
 
@@ -92,6 +89,7 @@ public class MyApplication extends Application {
         });
         // 吐司工具类
         ToastUtils.init(this,new ToastWhiteStyle(this));
+
     }
 
     public static MyApplication getInstance(){

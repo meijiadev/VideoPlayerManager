@@ -39,7 +39,6 @@ public class NotifyCurrentVideoSeqProcessor extends BaseProcessor {
             videoModel.setProgramNum(videoIfs.get(i).getProgramNum());
             videoModel.setVideoTimes(videoIfs.get(i).getDuration());
             videoModels.add(videoModel);
-            Logger.e("链接："+videoModel.getUrl()+";"+videoModel.getProgramNum());
         }
         VideoResourcesManager.getInstance().setVideoModels(videoModels);
         //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.updatePlayVideos));

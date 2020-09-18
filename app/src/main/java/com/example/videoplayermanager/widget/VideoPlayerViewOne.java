@@ -22,6 +22,9 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
     private List<VideoModel> mUriList;
     private long testTimes;
     private long testTimes1;
+    private long totalUseTime;
+    private long totalVideoTime;
+    private double loss;
     public VideoPlayerViewOne(Context context, Boolean fullFlag) {
         super(context, fullFlag);
     }
@@ -62,6 +65,7 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
      * @return
      */
     public boolean setUp(List<VideoModel> url, boolean cacheWithPlay, int position, File cachePath) {
+        testTimes=System.currentTimeMillis() ;
         return setUp(url, cacheWithPlay, position, cachePath, new HashMap<String, String>());
     }
 
@@ -96,16 +100,14 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
         mMapHeadData = mapHeadData;
         GSYVideoModel gsyVideoModel = new GSYVideoModel(mUriList.get(mPlayPosition).getUrl(),mUriList.get(mPlayPosition).getTitle());
         boolean set = setUp(gsyVideoModel.getUrl(), cacheWithPlay, cachePath, gsyVideoModel.getTitle(), changeState);
-        //if (mPlayPosition==0){
-            testTimes=System.currentTimeMillis();
-        //}
+        testTimes1=System.currentTimeMillis();
         return set;
     }
 
     @Override
     public void startPlayLogic() {
         super.startPlayLogic();
-        Logger.e("准备播放的时间："+TimeUtils.longToDate(System.currentTimeMillis()));
+        //Logger.e("准备播放的时间："+TimeUtils.longToDate(System.currentTimeMillis()));
     }
 
     @Override
@@ -113,7 +115,7 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
         super.onPrepared();
         long currentTime=System.currentTimeMillis();
         testTimes1=currentTime;
-        Logger.i("---------realStartTime："+ TimeUtils.longToDate(currentTime)+"VideoIndex:"+mPlayPosition+"Times:"+(currentTime-testTimes));
+        //Logger.i("---------realStartTime："+ TimeUtils.longToDate(currentTime)+"VideoIndex:"+mPlayPosition+"Times:"+(currentTime-testTimes));
     }
 
 
@@ -122,8 +124,12 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
     public void onAutoCompletion() {
         //super.onAutoCompletion();
         long currentTime=System.currentTimeMillis();
-        Logger.e("当前时间："+TimeUtils.longToDate(currentTime)+"该视频时长："+getDuration()+"------播放该视频所需时长："+(currentTime-testTimes));
-        Logger.e("该视频时长："+getDuration()+"------播放该视频所需时长："+(currentTime-testTimes1));
+        //Logger.e("当前时间："+TimeUtils.longToDate(currentTime)+"该视频时长："+getDuration()+"------播放该视频所需时长："+(currentTime-testTimes));
+        totalUseTime=currentTime-testTimes;
+        totalVideoTime=totalVideoTime+getDuration();
+        Logger.e("the Video Time："+getDuration()+"------Play Time："+(currentTime-testTimes1));
+        loss=(double) (totalUseTime-totalVideoTime)/(double) totalVideoTime;
+        Logger.e("TotalUserTime:"+totalUseTime+"; TotalVideoTime:"+totalVideoTime+"; loss:"+loss);
         if (playNext()) {
             return;
         }

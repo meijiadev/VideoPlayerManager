@@ -65,7 +65,7 @@ public class BaseDialog extends AppCompatDialog implements
 
     public BaseDialog(Context context) {
         this(context, R.style.BaseDialogStyle);
-        Logger.e("-----初始化 BaseDialog");
+        Logger.i("-----初始化 BaseDialog");
     }
 
     public BaseDialog(Context context, int themeResId) {
