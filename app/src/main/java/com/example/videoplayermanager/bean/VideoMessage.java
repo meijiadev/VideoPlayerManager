@@ -2,6 +2,9 @@ package com.example.videoplayermanager.bean;
 
 import java.util.List;
 
+/**
+ * 测试使用*
+ */
 public class VideoMessage {
 
     private List<TrailersBean> trailers;

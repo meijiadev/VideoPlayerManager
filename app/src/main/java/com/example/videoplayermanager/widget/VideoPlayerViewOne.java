@@ -2,13 +2,20 @@ package com.example.videoplayermanager.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.Toast;
 
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.bean.VideoModel;
+import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.TimeUtils;
 import com.example.videoplayermanager.other.VideoResourcesManager;
+import com.google.android.exoplayer2.SeekParameters;
+import com.shuyu.gsyvideoplayer.GSYVideoBaseManager;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
+import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
+import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 import java.io.File;
@@ -17,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import moe.codeest.enviews.ENDownloadView;
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
 
 public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
     private List<VideoModel> mUriList;
@@ -100,7 +108,6 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
         mMapHeadData = mapHeadData;
         GSYVideoModel gsyVideoModel = new GSYVideoModel(mUriList.get(mPlayPosition).getUrl(),mUriList.get(mPlayPosition).getTitle());
         boolean set = setUp(gsyVideoModel.getUrl(), cacheWithPlay, cachePath, gsyVideoModel.getTitle(), changeState);
-        testTimes1=System.currentTimeMillis();
         return set;
     }
 
@@ -115,21 +122,20 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
         super.onPrepared();
         long currentTime=System.currentTimeMillis();
         testTimes1=currentTime;
-        //Logger.i("---------realStartTime："+ TimeUtils.longToDate(currentTime)+"VideoIndex:"+mPlayPosition+"Times:"+(currentTime-testTimes));
+        Logger.i("---------realStartTime："+ TimeUtils.longToDate(currentTime)+"VideoIndex:"+mPlayPosition+"Times:"+(currentTime-testTimes1));
     }
 
 
 
     @Override
     public void onAutoCompletion() {
-        //super.onAutoCompletion();
+        super.onAutoCompletion();
         long currentTime=System.currentTimeMillis();
         //Logger.e("当前时间："+TimeUtils.longToDate(currentTime)+"该视频时长："+getDuration()+"------播放该视频所需时长："+(currentTime-testTimes));
         totalUseTime=currentTime-testTimes;
         totalVideoTime=totalVideoTime+getDuration();
-        Logger.e("the Video Time："+getDuration()+"------Play Time："+(currentTime-testTimes1));
         loss=(double) (totalUseTime-totalVideoTime)/(double) totalVideoTime;
-        Logger.e("TotalUserTime:"+totalUseTime+"; TotalVideoTime:"+totalVideoTime+"; loss:"+loss);
+        Logger.e("the Video Time："+getDuration()+"----Play Time："+(currentTime-testTimes1)+"  TotalUserTime:"+totalUseTime+"; TotalVideoTime:"+totalVideoTime+"; loss:"+loss);
         if (playNext()) {
             return;
         }
@@ -137,7 +143,7 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
 
     @Override
     public void onCompletion() {
-        //super.onCompletion();
+        super.onCompletion();
 
     }
 
@@ -156,6 +162,7 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
         mSaveChangeViewTIme = 0;
         setUp(mUriList, mCache, mPlayPosition, mCachePath, mMapHeadData, false);
         startPlayLogic();
+        //startPlayNextVideo(mUriList.get(mPlayPosition).getUrl());
         return true;
     }
 
@@ -191,6 +198,97 @@ public class VideoPlayerViewOne extends StandardGSYVideoPlayer {
         //super.touchDoubleUp();
         //不需要双击暂停
     }
+
+    private GSYVideoManager mTmpManager;
+    private long time1;
+    private void startPlayNextVideo(String url){
+        mTmpManager = GSYVideoManager.tmpInstance(gsyMediaPlayerListener);
+        mTmpManager.initContext(getContext().getApplicationContext());
+        mTmpManager.prepare(url, mMapHeadData, false, mSpeed,true,  GlobalParameter.getDownloadFile(), null);
+        testTimes1=System.currentTimeMillis();
+    }
+
+    private GSYMediaPlayerListener gsyMediaPlayerListener = new GSYMediaPlayerListener() {
+        @Override
+        public void onPrepared() {
+            if (mTmpManager != null) {
+                mTmpManager.start();
+                Logger.e("准备耗时："+(System.currentTimeMillis()-testTimes1));
+                GSYVideoBaseManager manager = GSYVideoManager.instance();
+                GSYVideoManager.changeManager(mTmpManager);
+                mTmpManager.setLastListener(manager.lastListener());
+                mTmpManager.setListener(manager.listener());
+                manager.setDisplay(null);
+                mTmpManager.setDisplay(mSurface);
+                changeUiToPlayingClear();
+                manager.releaseMediaPlayer();
+            }
+        }
+
+        @Override
+        public void onAutoCompletion() {
+
+        }
+
+        @Override
+        public void onCompletion() {
+
+        }
+
+        @Override
+        public void onBufferingUpdate(int percent) {
+
+        }
+
+        @Override
+        public void onSeekComplete() {
+
+        }
+
+        @Override
+        public void onError(int what, int extra) {
+            if (mTmpManager != null) {
+                mTmpManager.releaseMediaPlayer();
+            }
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mContext, "change Fail", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        @Override
+        public void onInfo(int what, int extra) {
+
+        }
+
+        @Override
+        public void onVideoSizeChanged() {
+
+        }
+
+        @Override
+        public void onBackFullscreen() {
+
+        }
+
+        @Override
+        public void onVideoPause() {
+
+        }
+
+        @Override
+        public void onVideoResume() {
+
+        }
+
+        @Override
+        public void onVideoResume(boolean seek) {
+
+        }
+    };
+
 
 
 }

@@ -18,8 +18,10 @@ import com.example.videoplayermanager.other.TimeUtils;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
+import com.example.videoplayermanager.widget.SmartPickVideo;
 import com.example.videoplayermanager.widget.VideoPlayerView;
 import com.example.videoplayermanager.widget.VideoPlayerViewOne;
+import com.example.videoplayermanager.widget.VideoSurfaceView;
 import com.hjq.toast.ToastUtils;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.model.VideoOptionModel;
@@ -31,13 +33,9 @@ import java.util.List;
 
 public class VideoActivity extends BaseActivity  {
      @BindView(R.id.videoPlayer)
-     VideoPlayerView videoPlayer;
+     SmartPickVideo videoPlayer;
      @BindView(R.id.tvCurrentTime)
      TextView tvCurrentTime;
-
-
-    private TcpClient tcpClient;
-    private List<VideoModel> videoModels;
 
 
     @Override
@@ -48,28 +46,24 @@ public class VideoActivity extends BaseActivity  {
     @Override
     protected void initView() {
         setStatusBarEnabled(true);
-        tcpClient=TcpClient.getInstance(context, ClientMessageDispatcher.getInstance());
-        videoModels=VideoResourcesManager.getInstance().getVideoModels();
 
     }
 
     @Override
     protected void initData() {
         List<VideoOptionModel> list=new ArrayList<>();
-        /*VideoOptionModel videoOptionModel=new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"framedrop",2);
-        list.add(videoOptionModel);*/
-       /* VideoOptionModel videoOptionMode04 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 1);//是否开启缓冲
+        VideoOptionModel videoOptionMode04 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 1);//是否开启缓冲
         list.add(videoOptionMode04);
-        VideoOptionModel videoOptionMode13 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max_cached_duration", 10);//最大缓存时长
-        list.add(videoOptionMode13);*/
-        VideoOptionModel videoOptionMode05 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);//丢帧,太卡可以尝试丢帧
+        VideoOptionModel videoOptionMode13 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-buffer-size", 1024*10);//最大缓存时长
+        list.add(videoOptionMode13);
+        VideoOptionModel videoOptionMode05 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 10);//丢帧,太卡可以尝试丢帧
         list.add(videoOptionMode05);
-        VideoOptionModel videoOptionMode12 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-fps", 25);//默认最大帧数25
+        VideoOptionModel videoOptionMode12 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-fps", 20);//默认最大帧数25
         list.add(videoOptionMode12);
         GSYVideoManager.instance().setOptionModelList(list);
         TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
-     /*   videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoModels(),true,0,GlobalParameter.getDownloadFile());
-        videoPlayer.startPlayLogic();*/
+        videoPlayer.startPlay();
+        videoPlayer.startPlayLogic();
 
     }
 
@@ -80,19 +74,20 @@ public class VideoActivity extends BaseActivity  {
         //打开硬解码
         GSYVideoType.enableMediaCodec();
         GSYVideoType.enableMediaCodecTexture();
+        GSYVideoType.setRenderType(GSYVideoType.SUFRACE);
         new TimeThread().start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        videoPlayer.onVideoPause();
+        //videoPlayer.onVideoPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        videoPlayer.onVideoResume();
+        //videoPlayer.onVideoResume();
     }
 
     @Override
@@ -115,7 +110,7 @@ public class VideoActivity extends BaseActivity  {
     @Override
     public void onBackPressed() {
         //释放所有
-        videoPlayer.setVideoAllCallBack(null);
+        //videoPlayer.setVideoAllCallBack(null);
         super.onBackPressed();
     }
 

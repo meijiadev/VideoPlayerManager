@@ -3,6 +3,8 @@ package com.example.videoplayermanager.other;
 import android.content.Context;
 import android.os.Environment;
 
+import com.example.videoplayermanager.base.BaseThread;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,7 +59,7 @@ public class LogcatHelper {
     public void start() {
         if (mLogDumper == null)
             mLogDumper = new LogDumper(String.valueOf(mPId), PATH_LOGCAT);
-        mLogDumper.start();
+            mLogDumper.start();
     }
 
     public void stop() {
@@ -67,7 +69,7 @@ public class LogcatHelper {
         }
     }
 
-    private class LogDumper extends Thread {
+    private class LogDumper extends BaseThread {
 
         private Process logcatProc;
         private BufferedReader mReader = null;
@@ -98,6 +100,7 @@ public class LogcatHelper {
             // cmds = "logcat  | grep \"(" + mPID + ")\"";//打印所有日志信息
             // cmds = "logcat -s way";//打印标签过滤信息
             cmds = "logcat *:e | grep \"(" + mPID + ")\"";
+
 
         }
 
@@ -154,7 +157,7 @@ public class LogcatHelper {
 
     }
     public  String getFileName() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String date = format.format(new Date(System.currentTimeMillis()));
         return date;// 2012年10月03日 23:41:31
     }

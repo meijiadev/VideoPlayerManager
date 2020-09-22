@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.base.BaseActivity;
 import com.example.videoplayermanager.common.GlobalParameter;
+import com.example.videoplayermanager.other.LogcatHelper;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.service.GuardService;
 import com.example.videoplayermanager.tcp.TcpClient;
@@ -45,7 +46,8 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
 
     @Override
     protected void initData() {
-
+         //将log保存到本地
+        //LogcatHelper.getInstance(context).start();
     }
 
 

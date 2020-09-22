@@ -20,6 +20,9 @@ import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
+/**
+ * 缓存管理类
+ */
 public class ProxyCacheManager implements ICacheManager, CacheListener {
     public static long DEFAULT_MAX_SIZE = 1024* 1024 *1024*11;          //缓存空间 15G
 
@@ -194,7 +197,7 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
     /**
      * 获取缓存代理服务,带文件目录的
      */
-    static HttpProxyCacheServer getProxy(Context context, File file) {
+    public static HttpProxyCacheServer getProxy(Context context, File file) {
 
         //如果为空，返回默认的
         if (file == null) {

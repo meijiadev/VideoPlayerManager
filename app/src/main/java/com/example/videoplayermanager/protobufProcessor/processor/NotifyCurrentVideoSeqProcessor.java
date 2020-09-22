@@ -16,7 +16,6 @@ import java.util.List;
 import DDRADServiceProto.DDRADServiceCmd;
 import DDRCommProto.BaseCmd;
 
-import static com.example.videoplayermanager.other.MessageEvent.Type.updatePlayVideos;
 
 /**
  * desc：接收播放的视频列表
@@ -43,5 +42,6 @@ public class NotifyCurrentVideoSeqProcessor extends BaseProcessor {
         VideoResourcesManager.getInstance().setVideoModels(videoModels);
         //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.updatePlayVideos));
         EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.startPlayNextVideoAtOnce));
+        Logger.e("接收播放列表");
     }
 }

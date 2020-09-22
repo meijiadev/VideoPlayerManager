@@ -2,6 +2,9 @@ package com.example.videoplayermanager.bean;
 
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
 
+/**
+ * 视频参数信息
+ */
 public class VideoModel extends GSYVideoModel {
     private String programNum;        //节目单号
     private String floorName;         //楼层

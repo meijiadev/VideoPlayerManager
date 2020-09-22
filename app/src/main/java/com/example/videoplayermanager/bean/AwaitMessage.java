@@ -2,6 +2,9 @@ package com.example.videoplayermanager.bean;
 
 import java.util.List;
 
+/**
+ *desc: 广告机等待界面的参数
+ */
 public class AwaitMessage
 {
     /**

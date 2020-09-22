@@ -53,6 +53,7 @@ android {
             buildConfigField("boolean", "LOG_DEBUG", "true")
         }
     }
+    
     //.proto 文件地址
     sourceSets{
         main{
@@ -155,10 +156,9 @@ dependencies {
 
     implementation 'com.tencent.bugly:crashreport:latest.release' //其中lat est.release指代最新版本号，也可以指定明确的版本号
     implementation 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号
-    //AgentWeb 是一个基于的 Android WebView ，极度容易使用以及功能强大的库
+    //AgentWeb 一个基于的 Android WebView 的库
     implementation 'com.just.agentweb:agentweb-androidx:4.1.4' // (必选)
     implementation 'com.just.agentweb:filechooser-androidx:4.1.4'// (可选)
-
     implementation 'com.youth.banner:banner:1.4.10'   //banner依赖
 
 

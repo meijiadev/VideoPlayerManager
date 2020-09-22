@@ -1,5 +1,8 @@
 package com.example.videoplayermanager.bean;
 
+/**
+ * 广告机参数配置
+ */
 public class ADConfig {
     private String IP="192.168.0.96";
     private String port="189";

@@ -27,7 +27,7 @@ public class RspVideoAddressProcessor extends BaseProcessor {
         VideoPreLoader.getInstance().setPreLoadUrls(rspVideoSeq.getUrlList());
         Logger.e("返回所有视频下载地址"+rspVideoSeq.getUrlList().size());
         EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.allPlayVideos));
-        /*List<String> urls=rspVideoSeq.getUrlList();
+       /* List<String> urls=rspVideoSeq.getUrlList();
         List<VideoModel> videoModels=new ArrayList<>();
         for (int i=0;i<urls.size();i++){
             VideoModel videoModel=new VideoModel(urls.get(i),"测试");

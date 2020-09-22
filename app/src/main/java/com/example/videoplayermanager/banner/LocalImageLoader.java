@@ -17,7 +17,6 @@ public class LocalImageLoader extends ImageLoader {
 
     @Override
     public ImageView createImageView(Context context) {
-        SimpleImageView simpleImageView=new SimpleImageView(context);
-        return simpleImageView;
+        return new SimpleImageView(context);
     }
 }

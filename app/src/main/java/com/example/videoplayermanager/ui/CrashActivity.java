@@ -1,5 +1,6 @@
 package com.example.videoplayermanager.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Environment;
 
 import com.example.videoplayermanager.R;
@@ -18,7 +19,7 @@ import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import cat.ereza.customactivityoncrash.config.CaocConfig;
 
 public class CrashActivity extends BaseActivity {
-    private CaocConfig mConfig;
+    @SuppressLint("SimpleDateFormat")
     private DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss"); //用于格式化日期，作为日志文件名的一部分
     @Override
     protected int getLayoutId() {
@@ -32,7 +33,7 @@ public class CrashActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        mConfig = CustomActivityOnCrash.getConfigFromIntent(getIntent());
+        CaocConfig mConfig = CustomActivityOnCrash.getConfigFromIntent(getIntent());
         if (mConfig == null) {
             // 这种情况永远不会发生，只要完成该活动就可以避免递归崩溃。
             finish();

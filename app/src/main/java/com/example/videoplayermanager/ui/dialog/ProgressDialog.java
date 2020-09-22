@@ -34,14 +34,10 @@ public final class ProgressDialog {
             EventBus.getDefault().register(this);
         }
 
-
-
         public Builder setTitle(String title){
             this.title=title;
             return this;
         }
-
-
         @Override
         protected void dismiss() {
             super.dismiss();

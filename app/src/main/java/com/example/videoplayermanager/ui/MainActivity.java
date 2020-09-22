@@ -67,8 +67,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     TextView tvTest;
     @BindView(R.id.banner)
     Banner banner;
-    private boolean isDownloadApk;              //是否在下载
-    private LocalImageLoader localImageLoader;
+    private boolean isDownloadApk;              //是否在下载apk
+    private boolean isDownloadVideos;          //是否在下载视频
     private List<Integer> imageResource;
 
     @Override
@@ -80,16 +80,13 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
     public void onReceive(MessageEvent messageEvent){
         switch (messageEvent.getType()){
-            /*case updatePlayVideos:
-                Logger.e( "--------------updatePlayVideos:" + ActivityStackManager.getInstance().getTopActivity().getLocalClassName());
-                if (VideoResourcesManager.getInstance().getVideoModels().size()>0){
-                    if (isDownloadFinis&&ActivityStackManager.getInstance().getTopActivity().getLocalClassName().contains("MainActivity")){
-                        Intent intent=new Intent(MainActivity.this,VideoActivity.class);
-                        startActivity(intent);
-                        Logger.e("------进入视频播放界面！");
-                    }
+            case startPlayNextVideoAtOnce:
+                isReceive=true;
+                if (!isDownloadApk&&!isDownloadVideos&&ActivityStackManager.getInstance().getTopActivity().getLocalClassName().contains("MainActivity")){
+                    Intent intent=new Intent(MainActivity.this,VideoActivity.class);
+                    startActivity(intent);
                 }
-                break;*/
+                break;
             case apkDownloadSucceed:
                 progressDialog=null;
                 File file= (File) messageEvent.getData();
@@ -143,8 +140,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     }
 
     public void useBanner(){
-        localImageLoader=new LocalImageLoader();
-        //样式
+        LocalImageLoader localImageLoader = new LocalImageLoader();
        // banner.setBannerStyle(BannerConfig.NOT_INDICATOR);
         //加载器
         banner.setImageLoader(localImageLoader);
@@ -167,9 +163,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @OnClick(R.id.tvTest)
     public void onViewClicked(View view){
         if (view.getId()==R.id.tvTest){
-            //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.setAlarmTime));
-            //Logger.e("----------------设置测试时间闹钟:"+ TimeUtils.longToDate(System.currentTimeMillis()));
-            //startActivity(WebActivity.class);
             isDownloadApk();
         }
     }
@@ -246,6 +239,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         switch (messageEvent.getType()){
             case allPlayVideos:
                 showXToast();
+                isDownloadVideos=true;
                 break;
             case downloadIndex:
                 if (xToast!=null){
@@ -261,11 +255,14 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                         xToast.cancel();
                         xToast=null;
                 },1000);
+                isDownloadVideos=false;
                 Logger.e("进入播放视频界面！");
-                if (!isDownloadApk&&ActivityStackManager.getInstance().getTopActivity().getLocalClassName().contains("MainActivity")){
+                // 视频下载完，如果当前不是出于更新apk或者当前界面是处于MainActivity 则直接进入视频播放界面
+                if (isReceive&&!isDownloadApk&&ActivityStackManager.getInstance().getTopActivity().getLocalClassName().contains("MainActivity")){
                     Intent intent=new Intent(MainActivity.this,VideoActivity.class);
                     startActivity(intent);
                 }else {
+                    //如果不是处于MainActivity
                     TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
                 }
                 break;
