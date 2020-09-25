@@ -1,10 +1,12 @@
-package com.example.videoplayermanager.other;
+package com.example.videoplayermanager.other.download;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.common.GlobalParameter;
-import com.hjq.toast.ToastUtils;
+import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.other.MessageEvent;
+import com.example.videoplayermanager.other.ProxyCacheManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -12,11 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
+
+import DDRADServiceProto.DDRADServiceCmd;
 
 /**
  * desc: 视频预加载
@@ -26,7 +27,7 @@ public class VideoPreLoader {
 
     private static VideoPreLoader videoPreLoader;
     private boolean isRunning;
-    private List<String> urls;
+    private List<DDRADServiceCmd.VideoInfo> videoInfos;
 
     /**
      * 下载线程
@@ -37,9 +38,9 @@ public class VideoPreLoader {
         @Override
         public void run() {
             super.run();
-            for (int i=0;i<urls.size();i++){
+            for (int i=0;i<videoInfos.size();i++){
                 //Logger.d("下载到；"+i);
-                String url=urls.get(i);
+                String url=videoInfos.get(i).getUrl();
                 HttpURLConnection connection;
                 HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context, GlobalParameter.getDownloadFile());
                 String mUrl=httpProxyCacheServer.getProxyUrl(url);
@@ -98,16 +99,16 @@ public class VideoPreLoader {
      * 制定下载队列中的视频
      * @param urls
      */
-    public void setPreLoadUrls(List<String> urls){
-        this.urls=urls;
+    public void setPreLoadUrls(List<DDRADServiceCmd.VideoInfo> videoInfos){
+        this.videoInfos=videoInfos;
         if (downloadThread==null){
            downloadThread=new DownloadThread();
            downloadThread.start();
         }
     }
 
-    public List<String> getUrls() {
-        return urls==null?urls=new ArrayList<>():urls;
+    public List<DDRADServiceCmd.VideoInfo> getUrls() {
+        return videoInfos==null?videoInfos=new ArrayList<>():videoInfos;
     }
 
     /**

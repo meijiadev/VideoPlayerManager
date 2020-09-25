@@ -47,7 +47,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     @Override
     protected void initData() {
          //将log保存到本地
-        //LogcatHelper.getInstance(context).start();
+        LogcatHelper.getInstance(context).start();
     }
 
 

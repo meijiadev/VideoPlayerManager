@@ -45,7 +45,7 @@ public class VideoActivity extends BaseActivity  {
 
     @Override
     protected void initData() {
-        List<VideoOptionModel> list=new ArrayList<>();
+      /*  List<VideoOptionModel> list=new ArrayList<>();
         VideoOptionModel videoOptionMode04 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 1);//是否开启缓冲
         list.add(videoOptionMode04);
         VideoOptionModel videoOptionMode13 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-buffer-size", 1024*10);//最大缓存时长
@@ -54,7 +54,7 @@ public class VideoActivity extends BaseActivity  {
         list.add(videoOptionMode05);
         VideoOptionModel videoOptionMode12 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-fps", 20);//默认最大帧数25
         list.add(videoOptionMode12);
-        GSYVideoManager.instance().setOptionModelList(list);
+        GSYVideoManager.instance().setOptionModelList(list);*/
         TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
         videoPlayer.startPlay();
         videoPlayer.startPlayLogic();

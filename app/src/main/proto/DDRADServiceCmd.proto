@@ -45,7 +45,7 @@ message reqVideoSeq{
     string whatever = 1;
 }
 message rspVideoSeq{
-    repeated string url = 1;
+    repeated VideoInfo infos = 1;
 }
 
 message wrtVideoHistory

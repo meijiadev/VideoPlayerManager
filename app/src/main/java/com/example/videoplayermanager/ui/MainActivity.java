@@ -1,8 +1,6 @@
 package com.example.videoplayermanager.ui;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 import android.content.pm.ActivityInfo;
@@ -12,22 +10,17 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.banner.LocalImageLoader;
 import com.example.videoplayermanager.base.BaseDialog;
 import com.example.videoplayermanager.base.BaseMvpActivity;
-import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.other.ActivityStackManager;
-import com.example.videoplayermanager.other.EventBusManager;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
-import com.example.videoplayermanager.other.TimeUtils;
-import com.example.videoplayermanager.other.VideoPreLoader;
-import com.example.videoplayermanager.other.VideoResourcesManager;
+import com.example.videoplayermanager.other.download.VideoPreLoader;
 import com.example.videoplayermanager.presenter.MainPresenter;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.service.DownloadServer;
@@ -36,19 +29,16 @@ import com.example.videoplayermanager.tcp.TcpClient;
 import com.example.videoplayermanager.ui.dialog.ProgressDialog;
 import com.hjq.toast.ToastUtils;
 import com.hjq.xtoast.XToast;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.core.content.FileProvider;
 import butterknife.BindView;

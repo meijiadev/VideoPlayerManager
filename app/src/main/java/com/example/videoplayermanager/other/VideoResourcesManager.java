@@ -7,13 +7,15 @@ import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import DDRADServiceProto.DDRADServiceCmd;
+
 /**
  * desc:视频资源管理
  * time:2020/08/10
  */
 public class VideoResourcesManager {
     private List<VideoModel> videoModels;             //播放的视频资源
-    private List<String> videoUrls;                      //即将下载的内容
+    private List<DDRADServiceCmd.VideoInfo> videoUrls;                      //即将下载的内容
     public static VideoResourcesManager videoResourcesManager;
     private long programUdid;
     private long timeTickToPlay;                         //预计最近播放的时间点
@@ -53,14 +55,14 @@ public class VideoResourcesManager {
         return null;
     }
 
-    public void setVideoUrls(List<String> videoUrls) {
+    public void setVideoUrls(List<DDRADServiceCmd.VideoInfo> videoUrls) {
         this.videoUrls = videoUrls;
-        for (String url:videoUrls){
-            Logger.e("下载链接："+url);
+        for (DDRADServiceCmd.VideoInfo videoInfo:videoUrls){
+            Logger.e("下载链接："+videoInfo.getUrl());
         }
     }
 
-    public List<String> getVideoUrls() {
+    public List<DDRADServiceCmd.VideoInfo> getVideoUrls() {
         return (videoUrls==null)?new ArrayList<>():videoUrls;
     }
 

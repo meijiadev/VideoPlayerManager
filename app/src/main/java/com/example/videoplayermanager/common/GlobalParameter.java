@@ -26,6 +26,7 @@ public class GlobalParameter {
     public static final String ROBOT_FOLDER_LOG= Environment.getExternalStorageDirectory().getPath()+"/"+"DDRADLog"+"/";      //日志存储地址
     public static final String ROBOT_FOLDER_DOWNLOAD= Environment.getExternalStorageDirectory().getPath()+"/"+"VideoPlayerApkDownload"+"/"; //下载文件夹
     public static final String LOCAL_AD_FILE=Environment.getExternalStorageDirectory().getPath()+"/"+"广告机参数"+"/";
+    public static final String IMAGE_LOGO_FOLDER=Environment.getExternalStorageDirectory().getPath()+"/"+"ADLogoImage"+"/";    //广告机商家图片
     public static final String AD_CONFIG_NAME="Config.txt";
 
     public static  String ACCOUNT_1="admin_ad1";
@@ -39,13 +40,15 @@ public class GlobalParameter {
     public static File getDownloadFile(){
         File dir=new File(VIDEO_FOLDER);
         if (dir.exists()){
-            //Logger.e("文件夹已存在，无须创建");
+            Logger.e("视频缓存文件夹已存在无需创建！");
         }else {
             dir.mkdirs();
-            Logger.e("文件夹创建");
+            Logger.e("视频缓存文件夹创建");
         }
         return dir;
     }
+
+
 
     /**
      * 参数文件是否存在,不存在就创建

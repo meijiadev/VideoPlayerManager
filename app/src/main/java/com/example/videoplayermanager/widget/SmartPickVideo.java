@@ -23,7 +23,6 @@ import com.example.videoplayermanager.tcp.TcpClient;
 import com.shuyu.gsyvideoplayer.GSYVideoBaseManager;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
-import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -39,7 +38,6 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     private Context context;
     private List<VideoModel> videoModels;
     private GSYVideoManager mTmpManager;
-    private long startTime;
     private long firstStartTime;
     private long totalUseTime;
     private long totalVideoTime;
@@ -131,7 +129,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     public void startPlay(){
         firstStartTime=System.currentTimeMillis();
         videoModels=VideoResourcesManager.getInstance().getVideoModels();
-        if (videoModels.size()>0){
+        if (videoModels.size()>=2){
             currentVideoModel=videoModels.get(0);
             nextPlayVideoModel=videoModels.get(1);
             setUp(currentVideoModel.getUrl());
@@ -175,7 +173,6 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     @Override
     public void onPrepared() {
         super.onPrepared();
-        startTime=System.currentTimeMillis();
 
     }
 
@@ -212,8 +209,6 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
             mTmpManager.setLastListener(manager.lastListener());
             mTmpManager.setListener(manager.listener());
             manager.setDisplay(null);
-            Debuger.printfError("**** showDisplay onSeekComplete ***** " + mSurface);
-            Debuger.printfError("**** showDisplay onSeekComplete isValid***** " + mSurface.isValid());
             mTmpManager.setDisplay(mSurface);
             manager.releaseMediaPlayer();
         }
