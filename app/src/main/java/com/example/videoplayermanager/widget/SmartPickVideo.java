@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.bean.VideoModel;
@@ -104,7 +105,8 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
                     startNextVideo();
                     prepareNextVideo(nextPlayVideoModel);
                 }else {
-                    //因为插播了一个精准视频，所以需要把之前的视频播放器释放，重新初始化
+                    Logger.e("-----------------插播精准视频重新初始化播放器--------------------");
+                    //因为插播了一个精准视频，所以需要把之前Z准备的视频播放器释放，重新初始化
                     releaseTmpManager();
                     currentVideoModel=videoModels.get(0);
                     nextPlayVideoModel=videoModels.get(1);
@@ -117,7 +119,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
                 imageUrl=currentVideoModel.getBusinessLogo();
                 tvFloor.setText(floorName);
                 tvNumber.setText(floorNumber);
-                Glide.with(context).load(imageUrl).into(ivIcon);
+                Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
             }
 
         }
@@ -134,6 +136,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
             nextPlayVideoModel=videoModels.get(1);
             setUp(currentVideoModel.getUrl());
         }
+        Logger.e("快进速度："+1.05f);
     }
 
     /**
@@ -150,8 +153,17 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         layoutMessage.setVisibility(VISIBLE);
         tvFloor.setText(floorName);
         tvNumber.setText(floorNumber);
-        Glide.with(context).load(imageUrl).into(ivIcon);
+        Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
     }
+
+    /**
+     * 设置播放速度
+     */
+    private void setSpeedPlayer(){
+        setSpeedPlaying(1.05f,true);
+    }
+
+
 
     @Override
     public void onAutoCompletion() {
@@ -173,10 +185,9 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     @Override
     public void onPrepared() {
         super.onPrepared();
+        setSpeedPlayer();
 
     }
-
-
 
     /**
      * 预先加载下一个视频
@@ -203,6 +214,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         if (mTmpManager != null) {
             isVideoPreparedPlay=false;
             mTmpManager.start();
+            //mTmpManager.seekTo(1500);
             GSYVideoBaseManager manager = GSYVideoManager.instance();
             //替换播放管理器
             GSYVideoManager.changeManager(mTmpManager);
@@ -211,6 +223,8 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
             manager.setDisplay(null);
             mTmpManager.setDisplay(mSurface);
             manager.releaseMediaPlayer();
+            setSpeedPlayer();
+
         }
 
     }

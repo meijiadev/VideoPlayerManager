@@ -13,9 +13,11 @@ import com.example.videoplayermanager.base.BaseActivity;
 import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.other.LogcatHelper;
 import com.example.videoplayermanager.other.TimeUtils;
+import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
 import com.example.videoplayermanager.widget.SmartPickVideo;
+import com.example.videoplayermanager.widget.TestVideoPlayer;
 import com.hjq.toast.ToastUtils;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.model.VideoOptionModel;
@@ -27,7 +29,7 @@ import java.util.List;
 
 public class VideoActivity extends BaseActivity  {
      @BindView(R.id.videoPlayer)
-     SmartPickVideo videoPlayer;
+     TestVideoPlayer videoPlayer;
      @BindView(R.id.tvCurrentTime)
      TextView tvCurrentTime;
 
@@ -56,8 +58,9 @@ public class VideoActivity extends BaseActivity  {
         list.add(videoOptionMode12);
         GSYVideoManager.instance().setOptionModelList(list);*/
         TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
-        videoPlayer.startPlay();
-        videoPlayer.startPlayLogic();
+        //videoPlayer.startPlay();
+        //videoPlayer.startPlayLogic();
+        videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoPath());
 
     }
 

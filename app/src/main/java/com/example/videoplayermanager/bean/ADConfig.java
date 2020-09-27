@@ -8,7 +8,8 @@ public class ADConfig {
     private String port="189";
     private String account="admin_ad1";
     private String password="admin_ad";
-
+    private int videoTime=5;
+    private float speed=1.05f;
 
     public void setAccount(String account) {
         this.account = account;
@@ -42,4 +43,19 @@ public class ADConfig {
         return password;
     }
 
+    public void setVideoTime(int videoTime) {
+        this.videoTime = videoTime;
+    }
+
+    public int getVideoTime() {
+        return videoTime;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
 }

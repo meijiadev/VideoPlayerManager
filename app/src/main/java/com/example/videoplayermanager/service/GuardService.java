@@ -61,14 +61,7 @@ public class GuardService extends Service {
         if (tcpClient.isConnected()){
             tcpClient.disConnect();
         }
-        new Thread(()->{
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            tcpClient.createConnect(GlobalParameter.IP,GlobalParameter.PORT);
-        }).start();
+        tcpClient.createConnect(GlobalParameter.IP,GlobalParameter.PORT);
         return super.onStartCommand(intent, flags, startId);
     }
 

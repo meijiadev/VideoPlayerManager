@@ -387,6 +387,7 @@ public class MessageRoute {
             e.printStackTrace();
             Logger.e("bytes为空！");
         }
+
         return null;
     }
 

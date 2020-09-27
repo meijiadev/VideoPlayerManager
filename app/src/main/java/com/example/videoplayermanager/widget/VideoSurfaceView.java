@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import DDRADServiceProto.DDRADServiceCmd;
 import androidx.annotation.NonNull;
 
 /**
@@ -193,10 +194,10 @@ public class VideoSurfaceView extends SurfaceView implements SurfaceHolder.Callb
      */
     public void getUrl(){
         HttpProxyCacheServer proxy = ProxyCacheManager.getProxy(MyApplication.myApplication, GlobalParameter.getDownloadFile());
-        List<String> videoUrls= VideoResourcesManager.getInstance().getVideoUrls();
-        for (int i=0;i<videoUrls.size();i++){
+        List<DDRADServiceCmd.VideoInfo> videoUrls= VideoResourcesManager.getInstance().getVideoUrls();
+        /*for (int i=0;i<videoUrls.size();i++){
             String url = proxy.getProxyUrl(videoUrls.get(i));
             videoListQueue.add(url);
-        }
+        }*/
     }
 }

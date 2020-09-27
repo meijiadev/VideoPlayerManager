@@ -28,6 +28,9 @@ public class GlobalParameter {
     public static final String LOCAL_AD_FILE=Environment.getExternalStorageDirectory().getPath()+"/"+"广告机参数"+"/";
     public static final String IMAGE_LOGO_FOLDER=Environment.getExternalStorageDirectory().getPath()+"/"+"ADLogoImage"+"/";    //广告机商家图片
     public static final String AD_CONFIG_NAME="Config.txt";
+    //测试视频文件夹，将视频拷贝到该文件夹下打开程序自动播放
+    public static final String VIDEO_TEST_5S_FOLDER=Environment.getExternalStorageDirectory().getPath()+"/"+"TestVideo5S"+"/";
+    public static final String VIDEO_TEST_10S_FOLDER=Environment.getExternalStorageDirectory().getPath()+"/"+"TestVideo10s"+"/";
 
     public static  String ACCOUNT_1="admin_ad1";
     public static  String ACCOUNT_2="admin_ad2";
@@ -36,6 +39,8 @@ public class GlobalParameter {
     public static  String PORT="189";
     public static  String ACCOUNT="admin_ad1";
     public static  String PASSWORD="admin_ad";
+    public static int VIDEO_TIME=5;              //视屏播放时长
+    public static float PLAY_SPEED=1;
 
     public static File getDownloadFile(){
         File dir=new File(VIDEO_FOLDER);
@@ -47,6 +52,23 @@ public class GlobalParameter {
         }
         return dir;
     }
+
+    /**
+     * 创建测试视频文件夹
+     */
+    public static void initTestFile(){
+        File dir=new File(VIDEO_TEST_5S_FOLDER);
+        if (!dir.exists()){
+            dir.mkdirs();
+            Logger.e("创建5S文件夹");
+        }
+        File dir1=new File(VIDEO_TEST_10S_FOLDER);
+        if (!dir1.exists()){
+            dir1.mkdirs();
+            Logger.e("创建10S文件夹");
+        }
+    }
+
 
 
 
@@ -78,7 +100,9 @@ public class GlobalParameter {
                     ACCOUNT=adConfig.getAccount();
                     PASSWORD=adConfig.getPassword();
                     PORT=adConfig.getPort();
-                    Logger.e(IP+";"+ACCOUNT+";"+PASSWORD+";"+PORT);
+                    VIDEO_TIME=adConfig.getVideoTime();
+                    PLAY_SPEED=adConfig.getSpeed();
+                    Logger.e(IP+";"+PORT+";"+ACCOUNT+";"+PASSWORD+";"+VIDEO_TIME+";"+PLAY_SPEED);
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -86,6 +110,11 @@ public class GlobalParameter {
         }).start();
     }
 
+    /**
+     * 读取配置参数
+     * @param strFilePath
+     * @return
+     */
     public static String ReadTxtFile(String strFilePath)
     {
         String path = strFilePath;

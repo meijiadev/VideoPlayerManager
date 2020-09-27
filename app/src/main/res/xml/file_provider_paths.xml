@@ -9,5 +9,5 @@
         name="name"
         path="/"/>
     <!--内部存储路径-->
-    <files-path name="name" path="/"/>
+    <files-path name="shared" path="shared/"/>
 </paths>

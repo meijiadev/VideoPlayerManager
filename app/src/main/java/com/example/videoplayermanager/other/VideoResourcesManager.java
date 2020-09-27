@@ -21,6 +21,7 @@ public class VideoResourcesManager {
     private long timeTickToPlay;                         //预计最近播放的时间点
     private long realStartPlayTime;                      //真正开始播放的时间
     private long realProgramUdip;
+    private List<String> videoPath;
 
 
     public static VideoResourcesManager getInstance(){
@@ -44,6 +45,13 @@ public class VideoResourcesManager {
         return (videoModels==null)?new ArrayList<>():videoModels;
     }
 
+    public void setVideoPath(List<String> videoPath) {
+        this.videoPath = videoPath;
+    }
+
+    public List<String> getVideoPath() {
+        return videoPath==null?new ArrayList<>():videoPath;
+    }
 
     public VideoModel getNextVideoModel(){
         if (videoModels!=null){

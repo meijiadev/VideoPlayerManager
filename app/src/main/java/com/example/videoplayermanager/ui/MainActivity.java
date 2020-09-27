@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -16,10 +18,12 @@ import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.banner.LocalImageLoader;
 import com.example.videoplayermanager.base.BaseDialog;
 import com.example.videoplayermanager.base.BaseMvpActivity;
+import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
+import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.other.download.VideoPreLoader;
 import com.example.videoplayermanager.presenter.MainPresenter;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
@@ -60,6 +64,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private boolean isDownloadApk;              //是否在下载apk
     private boolean isDownloadVideos;          //是否在下载视频
     private List<Integer> imageResource;
+    private List<String> pathList;             //测试视频本地连接
 
     @Override
     protected MainPresenter bindPresenter() {
@@ -127,6 +132,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         imageResource.add(R.mipmap.poster_three);
         imageResource.add(R.mipmap.poster_four);
         useBanner();
+        goTestVideoPlayer();
     }
 
     public void useBanner(){
@@ -145,6 +151,41 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         //图片加载地址
         banner.setImages(imageResource);
         banner.start();
+    }
+
+    /**
+     * 播放测试视频
+     */
+    private void goTestVideoPlayer() {
+        pathList = new ArrayList<>();
+        File videoDir;
+        String selection = MediaStore.Video.Media.DATA + " like ?";
+        String dirPath;
+        if (GlobalParameter.VIDEO_TIME == 5) {
+            dirPath = GlobalParameter.VIDEO_TEST_5S_FOLDER;
+            Logger.e("播放5秒视频！");
+        } else if (GlobalParameter.VIDEO_TIME == 10) {
+            dirPath = GlobalParameter.VIDEO_TEST_10S_FOLDER;
+            Logger.e("播放10秒视频！");
+        } else {
+            ToastUtils.show("请检查配置参数");
+            return;
+        }
+        Cursor cursor = getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,new String[]{MediaStore.Video.Media.DATA},
+                selection, new String[]{dirPath+"%"}, MediaStore.MediaColumns.DATE_MODIFIED + " DESC");
+        if (cursor != null) {
+            int dataindex = cursor.getColumnIndex(MediaStore.Video.Media.DATA);
+            while (cursor.moveToNext()) {
+                String path = cursor.getString(dataindex);
+                pathList.add(path);
+                Logger.e("----------视频数量："+pathList.size()+";"+path);
+            }
+            cursor.close();
+            if (pathList.size() > 0 && !isDownloadApk) {
+                VideoResourcesManager.getInstance().setVideoPath(pathList);
+                startActivity(VideoActivity.class);
+            }
+        }
     }
 
 

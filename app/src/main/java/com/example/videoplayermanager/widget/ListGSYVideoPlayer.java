@@ -31,7 +31,6 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
 
     protected List<VideoModel> mUriList = new ArrayList<com.example.videoplayermanager.bean.VideoModel>();
     protected int mPlayPosition;
-    protected  VideosIndex videosIndex;
 
     /**
      * 1.5.0开始加入，如果需要不同布局区分功能，需要重载
@@ -51,10 +50,6 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
     @Override
     public int getLayoutId() {
         return R.layout.empty_control_video;
-    }
-
-    public void setVideosIndex(VideosIndex videosIndex) {
-        this.videosIndex = videosIndex;
     }
 
     /**
@@ -149,30 +144,6 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         st.mUriList = sf.mUriList;
     }
 
-  /*  @Override
-    public GSYBaseVideoPlayer startWindowFullscreen(Context context, boolean actionBar, boolean statusBar) {
-        GSYBaseVideoPlayer gsyBaseVideoPlayer = super.startWindowFullscreen(context, actionBar, statusBar);
-        if (gsyBaseVideoPlayer != null) {
-            ListGSYVideoPlayer listGSYVideoPlayer = (ListGSYVideoPlayer) gsyBaseVideoPlayer;
-            GSYVideoModel gsyVideoModel = mUriList.get(mPlayPosition);
-            if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
-                listGSYVideoPlayer.mTitleTextView.setText(gsyVideoModel.getTitle());
-            }
-        }
-        return gsyBaseVideoPlayer;
-    }*/
-
-   /* @Override
-    protected void resolveNormalVideoShow(View oldF, ViewGroup vp, GSYVideoPlayer gsyVideoPlayer) {
-        if (gsyVideoPlayer != null) {
-            ListGSYVideoPlayer listGSYVideoPlayer = (ListGSYVideoPlayer) gsyVideoPlayer;
-            GSYVideoModel gsyVideoModel = mUriList.get(mPlayPosition);
-            if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
-                mTitleTextView.setText(gsyVideoModel.getTitle());
-            }
-        }
-        super.resolveNormalVideoShow(oldF, vp, gsyVideoPlayer);
-    }*/
 
     @Override
     public void onCompletion() {
@@ -210,22 +181,6 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
     @Override
     public void onPrepared() {
         super.onPrepared();
-        new Thread(()->{
-            try {
-                Thread.sleep(200);
-                if (mUriList.size()>0)
-                    if (mPlayPosition==mUriList.size()-1){
-                        videosIndex.currentVideosIndex(mPlayPosition,false,mUriList.get(mPlayPosition).getTitle());
-                    }else if (mPlayPosition<mUriList.size()-1){
-                        videosIndex.currentVideosIndex(mPlayPosition,true,mUriList.get(mPlayPosition).getTitle());
-                    }else {
-                        videosIndex.currentVideosIndex(mPlayPosition,false,mUriList.get(mPlayPosition).getTitle());
-                    }
-                Logger.e("--------当前："+mPlayPosition+";当前视频总长："+getDuration());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
 
     }
 
@@ -261,26 +216,13 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         }
         mSaveChangeViewTIme = 0;
         setUp(mUriList, mCache, mPlayPosition, null, mMapHeadData, false);
-      /*  if (!TextUtils.isEmpty(gsyVideoModel.getTitle())) {
-            mTitleTextView.setText(gsyVideoModel.getTitle());
-        }*/
         startPlayLogic();
         return true;
     }
 
 
 
-    /**
-     * 获取当前正在播放的
-     * @return
-     */
-    public int getmPlayPosition() {
-        return mPlayPosition;
-    }
 
-    // 通知当前播放第几个视频
-    public interface VideosIndex{
-        void currentVideosIndex(int index,boolean hasNext,String name);
-    }
+
 
 }

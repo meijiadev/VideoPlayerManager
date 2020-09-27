@@ -46,6 +46,8 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
 
     @Override
     protected void initData() {
+        //初始化测试视频参数
+        GlobalParameter.initTestFile();
          //将log保存到本地
         LogcatHelper.getInstance(context).start();
     }
