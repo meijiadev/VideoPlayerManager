@@ -123,9 +123,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void initData() {
-        //启动服务
+       /* //启动服务
         Intent serviceIntent=new Intent(context, GuardService.class);
-        startService(serviceIntent);
+        startService(serviceIntent);*/
         imageResource=new ArrayList<>();
         imageResource.add(R.mipmap.poster_one);
         imageResource.add(R.mipmap.poster_two);

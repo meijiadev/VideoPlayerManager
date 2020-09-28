@@ -88,6 +88,7 @@ public class TestVideoPlayer extends StandardGSYVideoPlayer {
 
     @Override
     public void onAutoCompletion() {
+        //必须注释，不然会无画面有声音
         //super.onAutoCompletion();
         totalUseTime=System.currentTimeMillis()-firstStartTime;
         totalVideoTime=getDuration()+totalVideoTime;
@@ -99,6 +100,7 @@ public class TestVideoPlayer extends StandardGSYVideoPlayer {
 
     @Override
     public void onCompletion() {
+        //必须注释，不然会无画面有声音
         //super.onCompletion();
     }
 
@@ -144,6 +146,7 @@ public class TestVideoPlayer extends StandardGSYVideoPlayer {
             setSpeedPlayer();
         }
     }
+
     private void resolveChangeUrl(boolean cacheWithPlay, File cachePath, String url) {
         if (mTmpManager != null) {
             mCache = cacheWithPlay;
