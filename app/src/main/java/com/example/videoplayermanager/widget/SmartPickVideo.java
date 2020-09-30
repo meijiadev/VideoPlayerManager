@@ -150,7 +150,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         floorName= currentVideoModel.getFloorName();
         floorNumber=currentVideoModel.getFloorNumber();
         imageUrl=currentVideoModel.getBusinessLogo();
-        layoutMessage.setVisibility(VISIBLE);
+        //layoutMessage.setVisibility(VISIBLE);
         tvFloor.setText(floorName);
         tvNumber.setText(floorNumber);
         Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);

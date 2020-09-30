@@ -21,6 +21,7 @@ import com.example.videoplayermanager.base.BaseMvpActivity;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.other.ActivityStackManager;
+import com.example.videoplayermanager.other.LogcatHelper;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.VideoResourcesManager;
@@ -123,16 +124,16 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void initData() {
-       /* //启动服务
+        //启动服务
         Intent serviceIntent=new Intent(context, GuardService.class);
-        startService(serviceIntent);*/
+        startService(serviceIntent);
         imageResource=new ArrayList<>();
         imageResource.add(R.mipmap.poster_one);
         imageResource.add(R.mipmap.poster_two);
         imageResource.add(R.mipmap.poster_three);
         imageResource.add(R.mipmap.poster_four);
         useBanner();
-        goTestVideoPlayer();
+        //goTestVideoPlayer();
     }
 
     public void useBanner(){
@@ -241,6 +242,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             xToast.cancel();
             xToast=null;
         }
+        LogcatHelper.getInstance(context).stop();
     }
 
 
@@ -270,6 +272,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         switch (messageEvent.getType()){
             case allPlayVideos:
                 showXToast();
+                ToastUtils.show("获取今日播放视频下载链接！");
                 isDownloadVideos=true;
                 break;
             case downloadIndex:

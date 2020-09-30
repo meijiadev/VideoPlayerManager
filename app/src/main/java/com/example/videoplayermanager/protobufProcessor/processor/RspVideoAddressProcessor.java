@@ -32,11 +32,11 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class RspVideoAddressProcessor extends BaseProcessor  {
-    List<DDRADServiceCmd.VideoInfo> videoInfos=new ArrayList<>();
+    List<DDRADServiceCmd.VideoInfo> videoInfos;
     @Override
     public void process(Context context, BaseCmd.CommonHeader commonHeader, GeneratedMessageLite msg) {
         super.process(context, commonHeader, msg);
-        videoInfos.clear();
+        videoInfos=new ArrayList<>();
         DDRADServiceCmd.rspVideoSeq rspVideoSeq= (DDRADServiceCmd.rspVideoSeq) msg;
         videoInfos=rspVideoSeq.getInfosList();
         VideoResourcesManager.getInstance().setVideoUrls(videoInfos);

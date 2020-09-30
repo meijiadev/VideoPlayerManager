@@ -28,7 +28,6 @@ public class VideoPreLoader {
     private static VideoPreLoader videoPreLoader;
     private boolean isRunning;
     private List<DDRADServiceCmd.VideoInfo> videoInfos;
-
     /**
      * 下载线程
      */
@@ -44,7 +43,7 @@ public class VideoPreLoader {
                 HttpURLConnection connection;
                 HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context, GlobalParameter.getDownloadFile());
                 String mUrl=httpProxyCacheServer.getProxyUrl(url);
-                Logger.d("---------:"+mUrl);
+                Logger.e("正在下载的视频链接:"+mUrl);
                 if (mUrl.contains("http")){
                     try {
                         URL myURL=new URL(mUrl);
@@ -56,7 +55,7 @@ public class VideoPreLoader {
                         do {
                             int numRed=inputStream.read(buffer);
                             download+=numRed;
-                            Logger.i("读取下载进度："+download/1024/1024);
+                            Logger.d("读取下载进度："+download/1024/1024);
                             if (numRed==-1){
                                 break;
                             }
@@ -64,6 +63,7 @@ public class VideoPreLoader {
                         inputStream.close();
                         Logger.e("读取下载完毕！");
                     } catch (IOException e) {
+                        Logger.e("--------------------下载出错-----------------:"+e.getLocalizedMessage());
                         EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadFailed));
                         downloadThread=null;
                         return;
@@ -97,13 +97,14 @@ public class VideoPreLoader {
 
     /**
      * 制定下载队列中的视频
-     * @param urls
+     * @param
      */
     public void setPreLoadUrls(List<DDRADServiceCmd.VideoInfo> videoInfos){
         this.videoInfos=videoInfos;
         if (downloadThread==null){
            downloadThread=new DownloadThread();
            downloadThread.start();
+           Logger.e("启动视频下载线程！");
         }
     }
 

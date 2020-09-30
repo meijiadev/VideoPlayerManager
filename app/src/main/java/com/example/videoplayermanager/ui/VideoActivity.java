@@ -29,7 +29,7 @@ import java.util.List;
 
 public class VideoActivity extends BaseActivity  {
      @BindView(R.id.videoPlayer)
-     TestVideoPlayer videoPlayer;
+     SmartPickVideo videoPlayer;
      @BindView(R.id.tvCurrentTime)
      TextView tvCurrentTime;
 
@@ -58,9 +58,9 @@ public class VideoActivity extends BaseActivity  {
         list.add(videoOptionMode12);
         GSYVideoManager.instance().setOptionModelList(list);*/
         TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
-        //videoPlayer.startPlay();
-        //videoPlayer.startPlayLogic();
-        videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoPath());
+        videoPlayer.startPlay();
+        videoPlayer.startPlayLogic();
+        //videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoPath());
 
     }
 
@@ -100,7 +100,6 @@ public class VideoActivity extends BaseActivity  {
         GSYVideoType.disableMediaCodec();
         GSYVideoManager.releaseAllVideos();
         ToastUtils.show("退出广告播放！");
-        LogcatHelper.getInstance(context).stop();
 
     }
 
