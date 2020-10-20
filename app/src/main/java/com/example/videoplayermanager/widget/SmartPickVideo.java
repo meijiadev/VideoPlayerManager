@@ -21,6 +21,7 @@ import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
+import com.hjq.toast.ToastUtils;
 import com.shuyu.gsyvideoplayer.GSYVideoBaseManager;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
@@ -39,6 +40,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     private Context context;
     private List<VideoModel> videoModels;
     private GSYVideoManager mTmpManager;
+    private float playSpeed=1.0f;        //播放速度 默认1.0
     private long firstStartTime;
     private long totalUseTime;
     private long totalVideoTime;
@@ -136,7 +138,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
             nextPlayVideoModel=videoModels.get(1);
             setUp(currentVideoModel.getUrl());
         }
-        Logger.e("快进速度："+1.05f);
+        Logger.e("快进速度："+playSpeed);
     }
 
     /**
@@ -160,7 +162,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
      * 设置播放速度
      */
     private void setSpeedPlayer(){
-        setSpeedPlaying(1.05f,true);
+        setSpeedPlaying(playSpeed,true);
     }
 
 
@@ -188,6 +190,15 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         setSpeedPlayer();
 
     }
+
+    @Override
+    public void onError(int what, int extra) {
+        super.onError(what, extra);
+        Logger.e("-------------:onError");
+        ToastUtils.show("onError");
+    }
+
+
 
     /**
      * 预先加载下一个视频

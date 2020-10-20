@@ -9,13 +9,17 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.example.videoplayermanager.MyApplication;
+import com.example.videoplayermanager.bean.VideoInfo;
 import com.example.videoplayermanager.common.FileUtil;
+import com.example.videoplayermanager.other.ListUtil;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.download.DownLoadCallBack;
 import com.example.videoplayermanager.other.download.DownLoadImageService;
 import com.example.videoplayermanager.other.download.VideoPreLoader;
 import com.example.videoplayermanager.other.VideoResourcesManager;
+import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
+import com.example.videoplayermanager.tcp.TcpClient;
 import com.google.protobuf.GeneratedMessageLite;
 import org.greenrobot.eventbus.EventBus;
 import java.io.File;
@@ -32,29 +36,38 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class RspVideoAddressProcessor extends BaseProcessor  {
-    List<DDRADServiceCmd.VideoInfo> videoInfos;
+    List<VideoInfo> videoInfos;
     @Override
     public void process(Context context, BaseCmd.CommonHeader commonHeader, GeneratedMessageLite msg) {
         super.process(context, commonHeader, msg);
         videoInfos=new ArrayList<>();
         DDRADServiceCmd.rspVideoSeq rspVideoSeq= (DDRADServiceCmd.rspVideoSeq) msg;
-        videoInfos=rspVideoSeq.getInfosList();
-        VideoResourcesManager.getInstance().setVideoUrls(videoInfos);
-        VideoPreLoader.getInstance().setPreLoadUrls(videoInfos);
+        for (DDRADServiceCmd.VideoInfo videoInfo:rspVideoSeq.getInfosList()){
+            VideoInfo videoInfo1=new VideoInfo();
+            videoInfo1.setUrl(videoInfo.getUrl());
+            videoInfo1.setAdType(videoInfo.getAdType());
+            videoInfo1.setBusinessInfo(videoInfo.getBusinessInfo());
+            videoInfo1.setDuration(videoInfo.getDuration());
+            videoInfo1.setFloor(videoInfo.getFloor());
+            videoInfo1.setLogo(videoInfo.getLogo());
+            videoInfo1.setName(videoInfo.getName());
+            videoInfo1.setNumber(videoInfo.getNumber());
+            videoInfo1.setProgramNum(videoInfo.getProgramNum());
+            videoInfo1.setPutMode(videoInfo.getPutMode());
+            videoInfos.add(videoInfo1);
+        }
         Logger.e("返回所有视频下载地址"+videoInfos.size());
-        EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.allPlayVideos));
-        for (int i=0;i<videoInfos.size();i++){
-            downloadImageLogo(i);
+        if (!ListUtil.isListEqual(VideoResourcesManager.getInstance().getVideoUrls(),videoInfos)){
+            Logger.e("准备下载列表视频！");
+            VideoPreLoader.getInstance().setPreLoadUrls(videoInfos);
+            EventBus.getDefault().postSticky(new MessageEvent(MessageEvent.Type.allPlayVideos));
+            for (int i=0;i<videoInfos.size();i++){
+                downloadImageLogo(i);
+            }
+        }else {
+            Logger.e("列表和本地视频一样！");
+            TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).notifyService();
         }
-
-       /* List<String> urls=rspVideoSeq.getUrlList();
-        List<VideoModel> videoModels=new ArrayList<>();
-        for (int i=0;i<urls.size();i++){
-            VideoModel videoModel=new VideoModel(urls.get(i),"测试");
-            videoModels.add(videoModel);
-        }
-        VideoResourcesManager.getInstance().setVideoModels(videoModels);*/
-
     }
 
     /**

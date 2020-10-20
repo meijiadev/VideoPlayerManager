@@ -19,6 +19,13 @@ message notifyCurrentVideoSeq{
 	int64 timeTickToPlay = 3;//预计开始播放的时间点
 }
 
+message notifyDownloadProgress
+{
+	int32 totalNum = 1;    //当前一共下载文件数
+	int32 currentNum = 2;  //当前正在下载第几个文件
+	float currentProgress =3; //当前文件下载进度 0 -> 1
+}
+
 message reqFinishPlay
 {
 	int64 programUdid = 1;//唯一ID
@@ -44,6 +51,7 @@ message VideoInfo{
 message reqVideoSeq{
     string whatever = 1;
 }
+
 message rspVideoSeq{
     repeated VideoInfo infos = 1;
 }

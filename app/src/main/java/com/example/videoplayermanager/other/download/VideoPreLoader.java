@@ -3,10 +3,12 @@ package com.example.videoplayermanager.other.download;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.base.BaseThread;
+import com.example.videoplayermanager.bean.VideoInfo;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.ProxyCacheManager;
+import com.example.videoplayermanager.other.VideoResourcesManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -27,7 +29,7 @@ public class VideoPreLoader {
 
     private static VideoPreLoader videoPreLoader;
     private boolean isRunning;
-    private List<DDRADServiceCmd.VideoInfo> videoInfos;
+    private List<VideoInfo> videoInfos;
     /**
      * 下载线程
      */
@@ -79,6 +81,7 @@ public class VideoPreLoader {
                     return;
             }
             EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadFinish));
+            VideoResourcesManager.getInstance().setVideoUrls(videoInfos);
             downloadThread=null;
         }
     }
@@ -99,7 +102,7 @@ public class VideoPreLoader {
      * 制定下载队列中的视频
      * @param
      */
-    public void setPreLoadUrls(List<DDRADServiceCmd.VideoInfo> videoInfos){
+    public void setPreLoadUrls(List<VideoInfo> videoInfos){
         this.videoInfos=videoInfos;
         if (downloadThread==null){
            downloadThread=new DownloadThread();
@@ -108,7 +111,7 @@ public class VideoPreLoader {
         }
     }
 
-    public List<DDRADServiceCmd.VideoInfo> getUrls() {
+    public List<VideoInfo> getUrls() {
         return videoInfos==null?videoInfos=new ArrayList<>():videoInfos;
     }
 

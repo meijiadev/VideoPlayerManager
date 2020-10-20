@@ -9,6 +9,7 @@ import android.view.SurfaceView;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.videoplayermanager.MyApplication;
+import com.example.videoplayermanager.bean.VideoInfo;
 import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.Logger;
@@ -194,7 +195,7 @@ public class VideoSurfaceView extends SurfaceView implements SurfaceHolder.Callb
      */
     public void getUrl(){
         HttpProxyCacheServer proxy = ProxyCacheManager.getProxy(MyApplication.myApplication, GlobalParameter.getDownloadFile());
-        List<DDRADServiceCmd.VideoInfo> videoUrls= VideoResourcesManager.getInstance().getVideoUrls();
+        List<VideoInfo> videoUrls= VideoResourcesManager.getInstance().getVideoUrls();
         /*for (int i=0;i<videoUrls.size();i++){
             String url = proxy.getProxyUrl(videoUrls.get(i));
             videoListQueue.add(url);

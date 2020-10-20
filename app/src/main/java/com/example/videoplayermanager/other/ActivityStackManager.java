@@ -86,6 +86,7 @@ public final class ActivityStackManager {
     public void onCreated(Activity activity) {
         mCurrentTag = getObjectTag(activity);
         mActivitySet.put(getObjectTag(activity), activity);
+        Logger.e("---------:"+mCurrentTag);
     }
 
     /**

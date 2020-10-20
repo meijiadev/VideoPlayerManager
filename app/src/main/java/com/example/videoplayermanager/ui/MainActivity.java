@@ -79,6 +79,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             case startPlayNextVideoAtOnce:
                 isReceive=true;
                 if (!isDownloadApk&&!isDownloadVideos&&ActivityStackManager.getInstance().getTopActivity().getLocalClassName().contains("MainActivity")){
+                    Logger.e("-----启动VideoActivity");
                     Intent intent=new Intent(MainActivity.this,VideoActivity.class);
                     startActivity(intent);
                 }
@@ -236,6 +237,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        VideoResourcesManager.getInstance().setVideoUrls(new ArrayList<>());
         TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).disConnect();
         VideoPreLoader.getInstance().onDestroy();
         if (xToast!=null){
@@ -290,13 +292,14 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                         xToast=null;
                 },1000);
                 isDownloadVideos=false;
-                Logger.e("进入播放视频界面！");
                 // 视频下载完，如果当前不是出于更新apk或者当前界面是处于MainActivity 则直接进入视频播放界面
+                Logger.e("当前栈顶activity："+ActivityStackManager.getInstance().getTopActivity().getLocalClassName());
                 if (isReceive&&!isDownloadApk&&ActivityStackManager.getInstance().getTopActivity().getLocalClassName().contains("MainActivity")){
+                    Logger.e("--------启动VideoActivity");
                     Intent intent=new Intent(MainActivity.this,VideoActivity.class);
                     startActivity(intent);
                 }else {
-                    //如果不是处于MainActivity
+                    //如果不是处于MainActivity或者处于未接受到播放列表的情况下
                     TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
                 }
                 break;

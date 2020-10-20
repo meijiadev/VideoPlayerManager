@@ -19,6 +19,7 @@ public class MessageEvent {
         downloadIndex,         //视频已下载的个数
         downloadFinish,        //下载完成
         downloadFailed,
+        downloadProgressService,   //服务器下载视频的当前进度
     }
 
     public MessageEvent(Type type) {

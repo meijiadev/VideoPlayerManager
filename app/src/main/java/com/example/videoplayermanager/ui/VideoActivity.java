@@ -1,11 +1,14 @@
 package com.example.videoplayermanager.ui;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 import android.annotation.SuppressLint;
+import android.app.smdt.SmdtManager;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.videoplayermanager.R;
@@ -32,6 +35,8 @@ public class VideoActivity extends BaseActivity  {
      SmartPickVideo videoPlayer;
      @BindView(R.id.tvCurrentTime)
      TextView tvCurrentTime;
+     private SmdtManager smdtManager;
+     private boolean isLive;      //屏幕是否亮起
 
 
     @Override
@@ -61,7 +66,26 @@ public class VideoActivity extends BaseActivity  {
         videoPlayer.startPlay();
         videoPlayer.startPlayLogic();
         //videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoPath());
+        smdtManager=SmdtManager.create(context);
 
+    }
+
+    @OnClick(R.id.tvCurrentTime)
+    public void onClickViewed(View v){
+        if (v.getId()==R.id.tvCurrentTime){
+            if (isLive){
+                //关闭背光
+                if (smdtManager!=null)
+                smdtManager.smdtSetLcdBackLight(0);
+                isLive=false;
+                ToastUtils.show("关闭背光！");
+            }else {
+                if (smdtManager!=null)
+                smdtManager.smdtSetLcdBackLight(1);
+                isLive=true;
+                ToastUtils.show("开启背光！");
+            }
+        }
     }
 
 

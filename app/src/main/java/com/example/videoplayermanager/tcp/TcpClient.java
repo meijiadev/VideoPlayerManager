@@ -373,7 +373,7 @@ public class TcpClient extends BaseSocketConnection {
                 .setReserved("Downloaded")
                 .build();
         sendData(header,reqDownloadFinish);
-        Logger.i("通知服务器当前视频已下载完！");
+        Logger.e("通知服务器当前视频已下载完！");
     }
 
     /**

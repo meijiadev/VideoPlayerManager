@@ -1,5 +1,6 @@
 package com.example.videoplayermanager.other;
 
+import com.example.videoplayermanager.bean.VideoInfo;
 import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.widget.ListGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
@@ -15,7 +16,7 @@ import DDRADServiceProto.DDRADServiceCmd;
  */
 public class VideoResourcesManager {
     private List<VideoModel> videoModels;             //播放的视频资源
-    private List<DDRADServiceCmd.VideoInfo> videoUrls;                      //即将下载的内容
+    private List<VideoInfo> videoUrls;                      //即将下载的内容
     public static VideoResourcesManager videoResourcesManager;
     private long programUdid;
     private long timeTickToPlay;                         //预计最近播放的时间点
@@ -63,14 +64,14 @@ public class VideoResourcesManager {
         return null;
     }
 
-    public void setVideoUrls(List<DDRADServiceCmd.VideoInfo> videoUrls) {
+    public void setVideoUrls(List<VideoInfo> videoUrls) {
         this.videoUrls = videoUrls;
-        for (DDRADServiceCmd.VideoInfo videoInfo:videoUrls){
+        for (VideoInfo videoInfo:videoUrls){
             Logger.e("下载链接："+videoInfo.getUrl());
         }
     }
 
-    public List<DDRADServiceCmd.VideoInfo> getVideoUrls() {
+    public List<VideoInfo> getVideoUrls() {
         return (videoUrls==null)?new ArrayList<>():videoUrls;
     }
 
