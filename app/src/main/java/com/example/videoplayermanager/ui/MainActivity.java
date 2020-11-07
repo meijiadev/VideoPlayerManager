@@ -1,6 +1,7 @@
 package com.example.videoplayermanager.ui;
 
 import android.annotation.SuppressLint;
+import android.app.smdt.SmdtManager;
 import android.content.Intent;
 
 import android.content.pm.ActivityInfo;
@@ -13,6 +14,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.videoplayermanager.BuildConfig;
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.banner.LocalImageLoader;
@@ -24,6 +26,7 @@ import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.LogcatHelper;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
+import com.example.videoplayermanager.other.NetWorkUtil;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.other.download.VideoPreLoader;
 import com.example.videoplayermanager.presenter.MainPresenter;
@@ -66,6 +69,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private boolean isDownloadVideos;          //是否在下载视频
     private List<Integer> imageResource;
     private List<String> pathList;             //测试视频本地连接
+
 
     @Override
     protected MainPresenter bindPresenter() {
@@ -135,6 +139,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         imageResource.add(R.mipmap.poster_four);
         useBanner();
         //goTestVideoPlayer();
+
     }
 
     public void useBanner(){
@@ -153,6 +158,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         //图片加载地址
         banner.setImages(imageResource);
         banner.start();
+        Logger.e("版本时间："+ BuildConfig.BUILD_TIME);
     }
 
     /**

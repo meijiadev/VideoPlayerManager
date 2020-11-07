@@ -2,14 +2,13 @@ package com.example.videoplayermanager.protobufProcessor.dispatcher;
 
 import com.example.videoplayermanager.protobufProcessor.processor.NotifyCurrentVideoSeqProcessor;
 import com.example.videoplayermanager.protobufProcessor.processor.NotifyDownloadProgressProcessor;
+import com.example.videoplayermanager.protobufProcessor.processor.NotifyScreenActionProcessor;
 import com.example.videoplayermanager.protobufProcessor.processor.RspHeartBeatProcess;
 import com.example.videoplayermanager.protobufProcessor.processor.RspLoginProcessor;
 import com.example.videoplayermanager.protobufProcessor.processor.RspVideoAddressProcessor;
 
 import DDRADServiceProto.DDRADServiceCmd;
 import DDRCommProto.BaseCmd;
-
-
 
 public class ClientMessageDispatcher extends BaseMessageDispatcher {
     static ClientMessageDispatcher clientMessageDispatcher;
@@ -36,6 +35,9 @@ public class ClientMessageDispatcher extends BaseMessageDispatcher {
 
         DDRADServiceCmd.notifyDownloadProgress notifyDownloadProgress= DDRADServiceCmd.notifyDownloadProgress.newBuilder().build();
         m_ProcessorMap.put(notifyDownloadProgress.getClass().toString(),new NotifyDownloadProgressProcessor());
+
+        DDRADServiceCmd.notifyScreenAction notifyScreenAction=DDRADServiceCmd.notifyScreenAction.newBuilder().build();
+        m_ProcessorMap.put(notifyScreenAction.getClass().toString(),new NotifyScreenActionProcessor());
 
 
 

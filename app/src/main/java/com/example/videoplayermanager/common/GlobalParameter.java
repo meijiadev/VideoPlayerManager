@@ -45,7 +45,7 @@ public class GlobalParameter {
     public static File getDownloadFile(){
         File dir=new File(VIDEO_FOLDER);
         if (dir.exists()){
-            Logger.e("视频缓存文件夹已存在无需创建！");
+            //Logger.e("视频缓存文件夹已存在无需创建！");
         }else {
             dir.mkdirs();
             Logger.e("视频缓存文件夹创建");

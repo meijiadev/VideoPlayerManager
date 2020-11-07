@@ -36,29 +36,40 @@ message rspFinishPlay
 }
 
 message VideoInfo{
-    string name=1; 	        // 视频的名字 =md5 +.mp4
+    string name=1; 	        // 视频的名字
 	int32 putMode = 2;      // 投放模式
     string businessInfo=3;  // 商家信息
-	int32 adType = 4;       // 节目类型
+	int32 adType = 4;       // 节目类型   0 默认视频 1 刊例   2 精准
 	string url=5;           // 视频地址
 	string floor=6;         // 商家楼层
 	string number=7;        // 商家号码
 	string logo=8;          // 商家logo地址	
 	string programNum=9;    // 节目单号
 	int32 duration=10;      // 视频时长 
+	string md5=11;    // MD5
 }
 
 message reqVideoSeq{
     string whatever = 1;
 }
-
 message rspVideoSeq{
     repeated VideoInfo infos = 1;
 }
-
+message wrtVideoHistoryItem
+{
+	notifyCurrentVideoSeq videoInfo = 1;  //视频内容
+	repeated string facePathList = 2;    //当前视频拍到的人脸路径
+	int32 totalFaceCount=3;//当前共检测出的人脸个数（检测出不一定都会保存）
+}
 message wrtVideoHistory
 {
-    repeated notifyCurrentVideoSeq history=1;
+    repeated wrtVideoHistoryItem history=1;
+}
+message wrtVideoHistoryHour
+{
+	int32 hour=1;            
+	string daytime=2;
+    wrtVideoHistory history=3;
 }
 
 message reqDownloadFinish
@@ -68,4 +79,15 @@ message reqDownloadFinish
 message rspDownloadFinish
 {
     string reserved = 1;
+}
+
+
+enum eScreenAction {
+	Sleep = 0;    //休眠
+	Awake = 1;   //唤醒
+}
+
+message notifyScreenAction
+{
+	eScreenAction action = 1;  //见eScreenAction
 }

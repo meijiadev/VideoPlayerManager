@@ -47,27 +47,15 @@ public class VideoActivity extends BaseActivity  {
     @Override
     protected void initView() {
         setStatusBarEnabled(true);
-
     }
 
     @Override
     protected void initData() {
-      /*  List<VideoOptionModel> list=new ArrayList<>();
-        VideoOptionModel videoOptionMode04 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 1);//是否开启缓冲
-        list.add(videoOptionMode04);
-        VideoOptionModel videoOptionMode13 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-buffer-size", 1024*10);//最大缓存时长
-        list.add(videoOptionMode13);
-        VideoOptionModel videoOptionMode05 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 10);//丢帧,太卡可以尝试丢帧
-        list.add(videoOptionMode05);
-        VideoOptionModel videoOptionMode12 = new VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-fps", 20);//默认最大帧数25
-        list.add(videoOptionMode12);
-        GSYVideoManager.instance().setOptionModelList(list);*/
         TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
         videoPlayer.startPlay();
         videoPlayer.startPlayLogic();
         //videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoPath());
         smdtManager=SmdtManager.create(context);
-
     }
 
     @OnClick(R.id.tvCurrentTime)
@@ -85,6 +73,7 @@ public class VideoActivity extends BaseActivity  {
                 isLive=true;
                 ToastUtils.show("开启背光！");
             }
+
         }
     }
 
@@ -124,7 +113,6 @@ public class VideoActivity extends BaseActivity  {
         GSYVideoType.disableMediaCodec();
         GSYVideoManager.releaseAllVideos();
         ToastUtils.show("退出广告播放！");
-
     }
 
     @Override
@@ -146,7 +134,7 @@ public class VideoActivity extends BaseActivity  {
             super.run();
             while (isRunning){
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

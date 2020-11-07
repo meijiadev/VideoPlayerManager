@@ -98,7 +98,7 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
                     (context.getApplicationContext()).getAbsolutePath();
             FileUtils.deleteFiles(new File(path));
         } else {
-            FileNameGenerator md5FileNameGenerator = new Md5FileNameGenerator();
+            FileNameGenerator md5FileNameGenerator = new MyFileNameGenerator();
             if (ProxyCacheManager.fileNameGenerator != null) {
                 md5FileNameGenerator = ProxyCacheManager.fileNameGenerator;
             }
@@ -163,7 +163,7 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
         builder.cacheDirectory(file);
         builder.maxCacheFilesCount(100);
         builder.headerInjector(userAgentHeadersInjector);
-        builder.fileNameGenerator(new Md5FileNameGenerator());
+        builder.fileNameGenerator(new MyFileNameGenerator());
         if (fileNameGenerator != null) {
             builder.fileNameGenerator(fileNameGenerator);
         }

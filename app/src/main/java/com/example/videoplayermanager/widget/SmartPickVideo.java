@@ -13,11 +13,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.R;
+import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.bean.VideoModel;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.other.EventBusManager;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
+import com.example.videoplayermanager.other.SpUtil;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
@@ -57,6 +59,8 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     private String floorName;                    //楼层
     private String floorNumber;                  //门牌号
     private String imageUrl;                    // logo链接
+    private volatile boolean isRunning;                 //是否运行
+    private boolean isReceived;                           //是否获取播放列表
 
     /**
      * 1.5.0开始加入，如果需要不同布局区分功能，需要重载
@@ -89,6 +93,8 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         tvFloor=findViewById(R.id.tvFloor);
         tvNumber=findViewById(R.id.tvNumber);
         ivIcon=findViewById(R.id.ivIcon);
+        isRunning=true;
+        new CheckThread().start();
     }
 
     @Override
@@ -122,6 +128,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
                 tvFloor.setText(floorName);
                 tvNumber.setText(floorNumber);
                 Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
+                isReceived=true;
             }
 
         }
@@ -174,7 +181,29 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         totalUseTime=System.currentTimeMillis()-firstStartTime;
         loss=(double) (totalUseTime-totalVideoTime)/(double)totalVideoTime;
         Logger.e("时长："+totalVideoTime+"耗时："+totalUseTime+"损耗比："+loss);
+        SpUtil.getInstance(context).putLong(SpUtil.CURRENT_VIDEO_FINISH,System.currentTimeMillis());
+        isReceived=false;
         TcpClient.getInstance(MyApplication.context, ClientMessageDispatcher.getInstance()).notifyVideoFinish(VideoResourcesManager.getInstance().getProgramUdid());
+
+    }
+
+
+    public class CheckThread extends BaseThread{
+        @Override
+        public void run() {
+            super.run();
+            while (isRunning){
+               if (!isReceived&&System.currentTimeMillis()-SpUtil.getInstance(context).getLong(SpUtil.CURRENT_VIDEO_FINISH)>10000){
+                   TcpClient.getInstance(MyApplication.context, ClientMessageDispatcher.getInstance()).notifyVideoFinish(VideoResourcesManager.getInstance().getProgramUdid());
+                   Logger.e("--------超过10s未收到播放列表,当前服务列表状况："+TcpClient.tcpClient.isConnected());
+               }
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -194,8 +223,9 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     @Override
     public void onError(int what, int extra) {
         super.onError(what, extra);
-        Logger.e("-------------:onError");
-        ToastUtils.show("onError");
+        Logger.e("-------------播放器onError");
+
+
     }
 
 
@@ -357,6 +387,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
      * 取消订阅
      */
     public void unRegister(){
+        isRunning=false;
         EventBusManager.unregister(this);
     }
 

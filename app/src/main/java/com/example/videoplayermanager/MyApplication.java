@@ -48,7 +48,6 @@ public class MyApplication extends Application {
         CacheFactory.setCacheManager(ProxyCacheManager.class);
         GSYVideoType.setShowType(SCREEN_MATCH_FULL);
         ProxyCacheManager.instance().newProxy(context, GlobalParameter.getDownloadFile());
-        //GlobalParameter.initConfigFile();
         RetrofitUrlManager.getInstance().putDomain(APP_AWAIT_SHOW_DOMAIN_NAME,APP_AWAIT_SHOW_DOMAIN);
 
     }

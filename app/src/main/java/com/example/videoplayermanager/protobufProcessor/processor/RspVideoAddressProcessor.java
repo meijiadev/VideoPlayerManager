@@ -54,6 +54,7 @@ public class RspVideoAddressProcessor extends BaseProcessor  {
             videoInfo1.setNumber(videoInfo.getNumber());
             videoInfo1.setProgramNum(videoInfo.getProgramNum());
             videoInfo1.setPutMode(videoInfo.getPutMode());
+            videoInfo1.setMd5(videoInfo.getMd5());
             videoInfos.add(videoInfo1);
         }
         Logger.e("返回所有视频下载地址"+videoInfos.size());

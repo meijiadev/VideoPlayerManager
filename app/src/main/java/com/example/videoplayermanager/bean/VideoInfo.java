@@ -16,6 +16,7 @@ public class VideoInfo {
     private String logo;
     private String programNum;
     private int duration;
+    private String md5;         //视频MD5值
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -27,10 +28,18 @@ public class VideoInfo {
             return false;
         }
         VideoInfo videoInfo= (VideoInfo) obj;
-        if (this.url.equals(videoInfo.url)&&this.logo.equals(videoInfo.logo)){
+        if (this.url.equals(videoInfo.url)&&this.logo.equals(videoInfo.logo)&&this.md5.equals(videoInfo.md5)){
             return true;
         }
         return false;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
+
+    public String getMd5() {
+        return md5;
     }
 
     public void setName(String name) {

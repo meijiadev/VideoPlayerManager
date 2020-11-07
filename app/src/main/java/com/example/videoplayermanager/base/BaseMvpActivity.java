@@ -64,7 +64,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
      * 沉浸式状态栏（已适配 ）
      */
     private  void initState() {
-        Logger.e("启动沉浸式状态栏");
+        Logger.i("启动沉浸式状态栏");
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

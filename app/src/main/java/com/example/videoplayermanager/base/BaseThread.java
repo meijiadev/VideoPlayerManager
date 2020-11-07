@@ -14,7 +14,7 @@ public class BaseThread extends Thread {
 
     @Override
     public synchronized void start() {
-        Logger.e("线程启动："+this.getClass().toString());
+        Logger.i("线程启动："+this.getClass().toString());
         super.start();
     }
 

@@ -5,13 +5,19 @@ import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.bean.VideoInfo;
 import com.example.videoplayermanager.common.GlobalParameter;
+import com.example.videoplayermanager.other.ActivityStackManager;
 import com.example.videoplayermanager.other.Logger;
+import com.example.videoplayermanager.other.MD5Utils;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.ProxyCacheManager;
 import com.example.videoplayermanager.other.VideoResourcesManager;
+import com.hjq.toast.ToastUtils;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
+import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -71,12 +77,39 @@ public class VideoPreLoader {
                         return;
                     }
                 }
+                //通过url解析出视频文件的尾部信息  如：xxxxxx.mp4
+                String videoName=getVideoName(url);
+                //获取视频文件
+                File file=new File(GlobalParameter.getDownloadFile().getPath()+"/"+videoName);
                 try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
+                    //生成新的Md5值
+                    String newMd5=MD5Utils.getFileMD5String(file);
+                    //获取该完整视频MD5值
+                    String oldMd5=videoInfos.get(i).getMd5();
+                    Logger.e("-------新MD5值："+newMd5+"原始视频Md5："+oldMd5);
+                    //校验文件完整性
+                    if (oldMd5.isEmpty()){
+                        Logger.e("--------Md5值为空此视频不校验！");
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
+                        ToastUtils.show("Md5值为空此视频不校验！");
+                    }else if (oldMd5.equals(newMd5)){
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
+                    }else {
+                      /*  //主线程清除缓存
+                        ActivityStackManager.getInstance().getTopActivity().runOnUiThread(()->{
+                            GSYVideoManager.instance().clearCache(ActivityStackManager.getInstance().getTopActivity(),GlobalParameter.getDownloadFile(),url);
+                        });
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        i--;*/
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-                EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
                 if (!isRunning)
                     return;
             }
@@ -84,6 +117,18 @@ public class VideoPreLoader {
             VideoResourcesManager.getInstance().setVideoUrls(videoInfos);
             downloadThread=null;
         }
+    }
+
+
+
+
+    /**
+     * 获取视频的名字
+     * @return
+     */
+    private String getVideoName(String url){
+        String[]strs=url.split("/");
+        return strs[strs.length-1];
     }
 
 

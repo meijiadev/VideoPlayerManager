@@ -20,6 +20,7 @@ public class MessageEvent {
         downloadFinish,        //下载完成
         downloadFailed,
         downloadProgressService,   //服务器下载视频的当前进度
+        notifyScreenAction,        //控制屏幕状态
     }
 
     public MessageEvent(Type type) {
