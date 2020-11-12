@@ -16,7 +16,7 @@ public class NotifyDownloadProgressProcessor extends BaseProcessor {
     public void process(Context context, BaseCmd.CommonHeader commonHeader, GeneratedMessageLite msg) {
         super.process(context, commonHeader, msg);
         DDRADServiceCmd.notifyDownloadProgress notifyDownloadProgress= (DDRADServiceCmd.notifyDownloadProgress) msg;
-        Logger.e("---："+notifyDownloadProgress.getTotalNum()+";"+notifyDownloadProgress.getCurrentNum()+";"+notifyDownloadProgress.getCurrentProgress());
+        Logger.e("---视频总数："+notifyDownloadProgress.getTotalNum()+"---当前下载"+notifyDownloadProgress.getCurrentNum()+"---当前下载进度："+notifyDownloadProgress.getCurrentProgress());
         EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadProgressService,notifyDownloadProgress));
     }
 }

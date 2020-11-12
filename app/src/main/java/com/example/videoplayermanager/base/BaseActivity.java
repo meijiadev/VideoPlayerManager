@@ -103,6 +103,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        ActivityStackManager.getInstance().onResume(this);
         Logger.d("-------------"+this.getClass().getSimpleName());
     }
 

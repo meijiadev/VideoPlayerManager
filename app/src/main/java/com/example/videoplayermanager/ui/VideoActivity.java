@@ -11,10 +11,12 @@ import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.base.BaseActivity;
 import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.other.LogcatHelper;
+import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.TimeUtils;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
@@ -26,6 +28,9 @@ import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.model.VideoOptionModel;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +53,18 @@ public class VideoActivity extends BaseActivity  {
     protected void initView() {
         setStatusBarEnabled(true);
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onReceive(MessageEvent messageEvent){
+        if (messageEvent.getType().equals(MessageEvent.Type.playOnError)){
+            finish();
+            TcpClient.getInstance(MyApplication.context, ClientMessageDispatcher.getInstance()).notifyVideoFinish(VideoResourcesManager.getInstance().getProgramUdid());
+        }
+    }
 
     @Override
     protected void initData() {
         TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
         videoPlayer.startPlay();
-        videoPlayer.startPlayLogic();
         //videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoPath());
         smdtManager=SmdtManager.create(context);
     }
@@ -85,7 +96,7 @@ public class VideoActivity extends BaseActivity  {
         GSYVideoType.enableMediaCodec();
         GSYVideoType.enableMediaCodecTexture();
         GSYVideoType.setRenderType(GSYVideoType.SUFRACE);
-        new TimeThread().start();
+        //new TimeThread().start();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.videoplayermanager.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.smdt.SmdtManager;
 import android.content.Intent;
 
@@ -37,6 +38,7 @@ import com.example.videoplayermanager.tcp.TcpClient;
 import com.example.videoplayermanager.ui.dialog.ProgressDialog;
 import com.hjq.toast.ToastUtils;
 import com.hjq.xtoast.XToast;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
@@ -45,9 +47,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import DDRADServiceProto.DDRADServiceCmd;
 import androidx.core.content.FileProvider;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -69,6 +73,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private boolean isDownloadVideos;          //是否在下载视频
     private List<Integer> imageResource;
     private List<String> pathList;             //测试视频本地连接
+    private TcpClient tcpClient;
 
 
     @Override
@@ -82,8 +87,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         switch (messageEvent.getType()){
             case startPlayNextVideoAtOnce:
                 isReceive=true;
+                Activity activity=ActivityStackManager.getInstance().getTopActivity();
+                if (activity==null)
+                    activity=this;
                 if (!isDownloadApk&&!isDownloadVideos&&ActivityStackManager.getInstance().getTopActivity().getLocalClassName().contains("MainActivity")){
-                    Logger.e("-----启动VideoActivity");
+                    Logger.e("-----startPlayNextVideoAtOnce启动VideoActivity");
                     Intent intent=new Intent(MainActivity.this,VideoActivity.class);
                     startActivity(intent);
                 }
@@ -129,9 +137,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void initData() {
-        //启动服务
-        Intent serviceIntent=new Intent(context, GuardService.class);
-        startService(serviceIntent);
+        tcpClient=TcpClient.getInstance(MyApplication.context,ClientMessageDispatcher.getInstance());
+        if (tcpClient.isConnected()){
+            tcpClient.disConnect();
+        }
+        tcpClient.createConnect(GlobalParameter.IP,GlobalParameter.PORT);
         imageResource=new ArrayList<>();
         imageResource.add(R.mipmap.poster_one);
         imageResource.add(R.mipmap.poster_two);
@@ -139,6 +149,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         imageResource.add(R.mipmap.poster_four);
         useBanner();
         //goTestVideoPlayer();
+        Logger.e("------------当前版本时间------------："+BuildConfig.BUILD_TIME);
 
     }
 
@@ -158,7 +169,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         //图片加载地址
         banner.setImages(imageResource);
         banner.start();
-        Logger.e("版本时间："+ BuildConfig.BUILD_TIME);
     }
 
     /**
@@ -199,10 +209,14 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
 
 
-    @OnClick(R.id.tvTest)
+    @OnClick({R.id.tvTest,R.id.tvClear})
     public void onViewClicked(View view){
         if (view.getId()==R.id.tvTest){
             isDownloadApk();
+        }else if (view.getId()==R.id.tvClear){
+            ToastUtils.show("正在清空所有缓存文件");
+            GSYVideoManager.instance().clearDefaultCache(MyApplication.context,GlobalParameter.getDownloadFile(),null);
+            Logger.e("清空所有缓存视频！");
         }
     }
 
@@ -242,21 +256,20 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        VideoResourcesManager.getInstance().setVideoUrls(new ArrayList<>());
         TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).disConnect();
+        VideoResourcesManager.getInstance().setVideoUrls(new ArrayList<>());
         VideoPreLoader.getInstance().onDestroy();
-        if (xToast!=null){
-            xToast.cancel();
-            xToast=null;
-        }
+        destroyXToast();
         LogcatHelper.getInstance(context).stop();
+        Logger.e("---------------onDestroy-----------------");
+        ToastUtils.show("退出广告播放管理器");
+        super.onDestroy();
     }
 
 
-    private TextView tvShowDownloadCounts;
+    private TextView tvShowDownloadCounts,tvText;
     /**
-     * 全局浮窗
+     * 全局下载视频浮窗
      * @param
      */
     @SuppressLint("SetTextI18n")
@@ -269,8 +282,19 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     .setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP)
                     .show();
             tvShowDownloadCounts= (TextView) xToast.findViewById(R.id.tvDownloadTimes);
-            tvShowDownloadCounts.setText(0+"/"+VideoPreLoader.getInstance().getUrls().size());
+            tvText=(TextView)xToast.findViewById(R.id.tvHasDownload);
             Logger.e("显示浮窗！");
+        }
+    }
+
+    /**
+     * 销毁弹窗
+     */
+    private void destroyXToast(){
+        if (xToast!=null){
+            xToast.cancel();
+            xToast=null;
+            Logger.e("销毁提示浮窗！");
         }
     }
 
@@ -279,8 +303,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public void updateVideos(MessageEvent messageEvent){
         switch (messageEvent.getType()){
             case allPlayVideos:
+                destroyXToast();
                 showXToast();
-                ToastUtils.show("获取今日播放视频下载链接！");
+                tvShowDownloadCounts.setText(0+"/"+VideoPreLoader.getInstance().getUrls().size());
+                Logger.e("获取今日播放视频下载链接！");
                 isDownloadVideos=true;
                 break;
             case downloadIndex:
@@ -292,16 +318,16 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 break;
             case downloadFinish:
                 ToastUtils.show("已全部下载！");
-                new Handler().postDelayed(()->{
-                    if (xToast!=null)
-                        xToast.cancel();
-                        xToast=null;
-                },1000);
+                new Handler().postDelayed(this::destroyXToast,1000);
                 isDownloadVideos=false;
                 // 视频下载完，如果当前不是出于更新apk或者当前界面是处于MainActivity 则直接进入视频播放界面
-                Logger.e("当前栈顶activity："+ActivityStackManager.getInstance().getTopActivity().getLocalClassName());
-                if (isReceive&&!isDownloadApk&&ActivityStackManager.getInstance().getTopActivity().getLocalClassName().contains("MainActivity")){
-                    Logger.e("--------启动VideoActivity");
+                Activity activity=ActivityStackManager.getInstance().getTopActivity();
+                if (activity==null){
+                    activity=this;
+                }
+                Logger.e("当前栈顶activity："+activity.getLocalClassName());
+                if (isReceive&&!isDownloadApk&&activity.getLocalClassName().contains("MainActivity")){
+                    Logger.e("--------downloadFinish启动VideoActivity");
                     Intent intent=new Intent(MainActivity.this,VideoActivity.class);
                     startActivity(intent);
                 }else {
@@ -310,13 +336,23 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 }
                 break;
             case downloadFailed:
-                new Handler().postDelayed(()->{
-                    if (xToast!=null)
-                        xToast.cancel();
-                    xToast=null;
-                },1000);
+                new Handler().postDelayed(this::destroyXToast,1000);
                 ToastUtils.show("下载出错，请检查当前网络！");
                 TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).requestVideoAddress();
+                break;
+            case downloadProgressService:
+                DDRADServiceCmd.notifyDownloadProgress notifyDownloadProgress= (DDRADServiceCmd.notifyDownloadProgress) messageEvent.getData();
+                int total=notifyDownloadProgress.getTotalNum();
+                int currentNum=notifyDownloadProgress.getCurrentNum();
+                float currentProgress=notifyDownloadProgress.getCurrentProgress();
+                if (total==currentNum&&currentProgress==1.0f){
+                    destroyXToast();
+                }else {
+                    showXToast();
+                    tvText.setVisibility(View.GONE);
+                    int value=(int)(currentProgress*100);
+                    tvShowDownloadCounts.setText("总文件数："+total+" 当前下载："+currentNum+" 当前进度："+value+"%");
+                }
                 break;
         }
     }

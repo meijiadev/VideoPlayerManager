@@ -29,6 +29,7 @@ import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -61,6 +62,8 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     private String imageUrl;                    // logo链接
     private volatile boolean isRunning;                 //是否运行
     private boolean isReceived;                           //是否获取播放列表
+    //private boolean hasError;                            //出现播放错误
+    private long receiveVideoTime=-10000;
 
     /**
      * 1.5.0开始加入，如果需要不同布局区分功能，需要重载
@@ -87,6 +90,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     }
 
     private void initView(){
+        SpUtil.getInstance(context).putLong(SpUtil.CURRENT_VIDEO_FINISH,-100000);
         EventBusManager.register(this);
         mainThreadHandler = new Handler();
         layoutMessage=findViewById(R.id.layoutMessage);
@@ -105,32 +109,38 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onReceive(MessageEvent messageEvent){
         if (messageEvent.getType().equals(MessageEvent.Type.startPlayNextVideoAtOnce)){
+            Logger.e("接收视频列表！");
             videoModels= VideoResourcesManager.getInstance().getVideoModels();
-            if (videoModels.size()==2){
-                if (videoModels.get(0).getUrl().equals(nextPlayVideoModel.getUrl())){
-                    currentVideoModel=videoModels.get(0);
-                    nextPlayVideoModel=videoModels.get(1);
-                    startNextVideo();
-                    prepareNextVideo(nextPlayVideoModel);
-                }else {
-                    Logger.e("-----------------插播精准视频重新初始化播放器--------------------");
-                    //因为插播了一个精准视频，所以需要把之前Z准备的视频播放器释放，重新初始化
-                    releaseTmpManager();
-                    currentVideoModel=videoModels.get(0);
-                    nextPlayVideoModel=videoModels.get(1);
-                    //下一个播放的是精准视频，临时设置播放器，设置完直接播放
-                    isVideoPreparedPlay=true;
-                    prepareNextVideo(currentVideoModel);
+            //防止很短时间内收到
+            if (System.currentTimeMillis()-receiveVideoTime>5000){
+                receiveVideoTime=System.currentTimeMillis();
+                if (videoModels.size()==2){
+                    if (videoModels.get(0).getUrl().equals(nextPlayVideoModel.getUrl())){
+                        currentVideoModel=videoModels.get(0);
+                        nextPlayVideoModel=videoModels.get(1);
+                        Logger.e("-----------------播放正常视频--------------"+currentVideoModel.getUrl()+";"+nextPlayVideoModel.getUrl());
+                        startNextVideo();
+                        prepareNextVideo(nextPlayVideoModel);
+                    }else {
+                        Logger.e("-----------------插播精准视频重新初始化播放器--------------------");
+                        //因为插播了一个精准视频，所以需要把之前Z准备的视频播放器释放，重新初始化
+                        releaseTmpManager();
+                        currentVideoModel=videoModels.get(0);
+                        nextPlayVideoModel=videoModels.get(1);
+                        //下一个播放的是精准视频，临时设置播放器，设置完直接播放
+                        isVideoPreparedPlay=true;
+                        prepareNextVideo(currentVideoModel);
+                    }
+                    floorName= currentVideoModel.getFloorName();
+                    floorNumber=currentVideoModel.getFloorNumber();
+                    imageUrl=currentVideoModel.getBusinessLogo();
+                    tvFloor.setText(floorName);
+                    tvNumber.setText(floorNumber);
+                    Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
+                    isReceived=true;
                 }
-                floorName= currentVideoModel.getFloorName();
-                floorNumber=currentVideoModel.getFloorNumber();
-                imageUrl=currentVideoModel.getBusinessLogo();
-                tvFloor.setText(floorName);
-                tvNumber.setText(floorNumber);
-                Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
-                isReceived=true;
-            }
 
+            }
         }
     }
 
@@ -140,12 +150,13 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     public void startPlay(){
         firstStartTime=System.currentTimeMillis();
         videoModels=VideoResourcesManager.getInstance().getVideoModels();
-        if (videoModels.size()>=2){
+        if (videoModels.size()==2){
             currentVideoModel=videoModels.get(0);
             nextPlayVideoModel=videoModels.get(1);
             setUp(currentVideoModel.getUrl());
         }
         Logger.e("快进速度："+playSpeed);
+        startPlayLogic();
     }
 
     /**
@@ -193,12 +204,15 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         public void run() {
             super.run();
             while (isRunning){
-               if (!isReceived&&System.currentTimeMillis()-SpUtil.getInstance(context).getLong(SpUtil.CURRENT_VIDEO_FINISH)>10000){
-                   TcpClient.getInstance(MyApplication.context, ClientMessageDispatcher.getInstance()).notifyVideoFinish(VideoResourcesManager.getInstance().getProgramUdid());
-                   Logger.e("--------超过10s未收到播放列表,当前服务列表状况："+TcpClient.tcpClient.isConnected());
-               }
+                if (SpUtil.getInstance(context).getLong(SpUtil.CURRENT_VIDEO_FINISH)>0){
+                    if (!isReceived&&System.currentTimeMillis()-SpUtil.getInstance(context).getLong(SpUtil.CURRENT_VIDEO_FINISH)>15000){
+                        TcpClient.getInstance(MyApplication.context, ClientMessageDispatcher.getInstance()).notifyVideoFinish(VideoResourcesManager.getInstance().getProgramUdid());
+                        Logger.e("--------超过10s未收到播放列表,当前服务列表状况："+TcpClient.tcpClient.isConnected());
+                    }
+                }
                 try {
-                    Thread.sleep(2000);
+                    //十秒钟判断一次是否收到播放列表
+                    Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -223,8 +237,8 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     @Override
     public void onError(int what, int extra) {
         super.onError(what, extra);
-        Logger.e("-------------播放器onError");
-
+        Logger.e("-------------播放器onError:"+currentVideoModel.getUrl());
+        //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.playOnError));
 
     }
 
@@ -265,7 +279,6 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
             mTmpManager.setDisplay(mSurface);
             manager.releaseMediaPlayer();
             setSpeedPlayer();
-
         }
 
     }
@@ -319,7 +332,8 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mContext, "change Fail", Toast.LENGTH_LONG).show();
+                    Logger.e("-------------播放器onError:"+currentVideoModel.getUrl());
+                    //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.playOnError));
                 }
             });
         }

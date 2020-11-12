@@ -21,6 +21,7 @@ public class MessageEvent {
         downloadFailed,
         downloadProgressService,   //服务器下载视频的当前进度
         notifyScreenAction,        //控制屏幕状态
+        playOnError,              //播放出错
     }
 
     public MessageEvent(Type type) {

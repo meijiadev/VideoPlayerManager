@@ -98,11 +98,11 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
                     (context.getApplicationContext()).getAbsolutePath();
             FileUtils.deleteFiles(new File(path));
         } else {
-            FileNameGenerator md5FileNameGenerator = new MyFileNameGenerator();
+            FileNameGenerator myFileNameGenerator = new MyFileNameGenerator();
             if (ProxyCacheManager.fileNameGenerator != null) {
-                md5FileNameGenerator = ProxyCacheManager.fileNameGenerator;
+                myFileNameGenerator = ProxyCacheManager.fileNameGenerator;
             }
-            String name = md5FileNameGenerator.generate(url);
+            String name = myFileNameGenerator.generate(url);
             if (cachePath != null) {
                 String tmpPath = cachePath.getAbsolutePath() + File.separator + name + ".download";
                 String path = cachePath.getAbsolutePath() + File.separator + name;

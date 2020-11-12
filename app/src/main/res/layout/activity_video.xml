@@ -23,6 +23,7 @@
         android:gravity="right"
         android:textColor="@color/white"
         android:layout_marginRight="10dp"
+        android:visibility="gone"
         />
   <!--  <RelativeLayout
         android:id="@+id/layoutMessage"

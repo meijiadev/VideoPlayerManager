@@ -112,6 +112,7 @@ public abstract class BaseMvpActivity<P extends IBasePresenter> extends AppCompa
     @Override
     protected void onResume() {
         super.onResume();
+        ActivityStackManager.getInstance().onResume(this);
         Logger.d("-------------"+this.getClass().getSimpleName());
     }
 

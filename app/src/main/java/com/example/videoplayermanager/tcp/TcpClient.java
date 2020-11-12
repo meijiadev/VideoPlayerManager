@@ -389,7 +389,7 @@ public class TcpClient extends BaseSocketConnection {
                 .setProgramUdid(programUdid)
                 .build();
         sendData(header,reqFinishPlay);
-        Logger.i("通知服务器当前视频已播完！");
+        Logger.e("通知服务器当前视频已播完！");
     }
 
 

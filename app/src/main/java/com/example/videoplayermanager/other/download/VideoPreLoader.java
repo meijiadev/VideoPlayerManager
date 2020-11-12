@@ -95,7 +95,7 @@ public class VideoPreLoader {
                     }else if (oldMd5.equals(newMd5)){
                         EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
                     }else {
-                      /*  //主线程清除缓存
+                        //主线程清除缓存
                         ActivityStackManager.getInstance().getTopActivity().runOnUiThread(()->{
                             GSYVideoManager.instance().clearCache(ActivityStackManager.getInstance().getTopActivity(),GlobalParameter.getDownloadFile(),url);
                         });
@@ -104,8 +104,8 @@ public class VideoPreLoader {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        i--;*/
-                        EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
+                        i--;
+                        //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
