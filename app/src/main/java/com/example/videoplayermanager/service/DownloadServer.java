@@ -61,9 +61,7 @@ public class DownloadServer extends Service {
                     long contentLength=responseBody.contentLength();
                     InputStream inputStream=responseBody.byteStream();
                     File directory=new File(GlobalParameter.ROBOT_FOLDER_DOWNLOAD);
-                    if (directory.exists()){
-                        //  Logger.e("文件夹已存在，无须创建");
-                    }else {
+                    if (!directory.exists()){
                         Logger.e("创建文件");
                         directory.mkdirs();
                     }

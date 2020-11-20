@@ -16,6 +16,7 @@ import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.download.DownLoadCallBack;
 import com.example.videoplayermanager.other.download.DownLoadImageService;
+import com.example.videoplayermanager.other.download.GlideApp;
 import com.example.videoplayermanager.other.download.VideoPreLoader;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
@@ -79,12 +80,13 @@ public class RspVideoAddressProcessor extends BaseProcessor  {
             @Override
             public void run() {
                 try {
+                    Logger.e("下载地址:"+videoInfos.get(position).getLogo());
                     final Context context = MyApplication.context;
-                    FutureTarget<File> target = Glide.with(context)
+                    FutureTarget<File> target = GlideApp.with(context)
                             .load(videoInfos.get(position).getLogo())
                             .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
                     final File imageFile = target.get();
-                    Logger.e("--------缓存的地址："+imageFile.getAbsolutePath());
+                    Logger.e("------缓存的地址："+imageFile.getAbsolutePath());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

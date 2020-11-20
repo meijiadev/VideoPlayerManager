@@ -78,7 +78,7 @@ public class LogcatHelper {
         private String mPID;
         private FileOutputStream out = null;
 
-        public LogDumper(String pid, String dir) {
+        public  LogDumper(String pid, String dir) {
             mPID = pid;
             try {
                 out = new FileOutputStream(new File(dir, "log-"

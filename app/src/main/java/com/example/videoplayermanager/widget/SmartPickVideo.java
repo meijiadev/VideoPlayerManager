@@ -1,6 +1,7 @@
 package com.example.videoplayermanager.widget;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Surface;
@@ -94,9 +95,12 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         EventBusManager.register(this);
         mainThreadHandler = new Handler();
         layoutMessage=findViewById(R.id.layoutMessage);
+        Typeface typeface=Typeface.createFromAsset(context.getAssets(),"fonts/FjallaOne-Regular.ttf");
         tvFloor=findViewById(R.id.tvFloor);
         tvNumber=findViewById(R.id.tvNumber);
         ivIcon=findViewById(R.id.ivIcon);
+        tvFloor.setTypeface(typeface);
+        tvNumber.setTypeface(typeface);
         isRunning=true;
         new CheckThread().start();
     }
@@ -134,6 +138,12 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
                     floorName= currentVideoModel.getFloorName();
                     floorNumber=currentVideoModel.getFloorNumber();
                     imageUrl=currentVideoModel.getBusinessLogo();
+                    if (imageUrl.isEmpty()){
+                        Logger.e("-------------缺少商家logo----------");
+                        layoutMessage.setVisibility(GONE);
+                    }else {
+                        layoutMessage.setVisibility(VISIBLE);
+                    }
                     tvFloor.setText(floorName);
                     tvNumber.setText(floorNumber);
                     Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
@@ -170,7 +180,12 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         floorName= currentVideoModel.getFloorName();
         floorNumber=currentVideoModel.getFloorNumber();
         imageUrl=currentVideoModel.getBusinessLogo();
-        //layoutMessage.setVisibility(VISIBLE);
+        if (imageUrl.isEmpty()){
+            layoutMessage.setVisibility(GONE);
+            Logger.e("-------------缺少商家logo----------");
+        }else {
+            layoutMessage.setVisibility(VISIBLE);
+        }
         tvFloor.setText(floorName);
         tvNumber.setText(floorNumber);
         Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
