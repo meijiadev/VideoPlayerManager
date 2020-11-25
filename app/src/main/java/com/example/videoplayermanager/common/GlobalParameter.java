@@ -92,6 +92,7 @@ public class GlobalParameter {
                     txtFile.createNewFile();
                     ADConfig adConfig=new ADConfig();
                     String jsonMessage=gson.toJson(adConfig);
+                    //将fileOutputStream包装成字符串写入器
                     PrintStream printStream=new PrintStream(new FileOutputStream(txtFile));
                     printStream.println(jsonMessage);
                 }else {
@@ -132,7 +133,9 @@ public class GlobalParameter {
                 InputStream instream = new FileInputStream(file);
                 if (instream != null)
                 {
+                    //字节读取流
                     InputStreamReader inputreader = new InputStreamReader(instream);
+                    //字符串读取
                     BufferedReader buffreader = new BufferedReader(inputreader);
                     String line;
                     //分行读取
