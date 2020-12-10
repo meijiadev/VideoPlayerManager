@@ -13,7 +13,6 @@ public class VideoModel extends GSYVideoModel {
     private long videoTimes;
     public VideoModel(String url, String title) {
         super(url, title);
-
     }
 
 

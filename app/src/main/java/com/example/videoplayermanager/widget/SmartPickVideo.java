@@ -22,6 +22,7 @@ import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.SpUtil;
 import com.example.videoplayermanager.other.VideoResourcesManager;
+import com.example.videoplayermanager.other.download.GlideApp;
 import com.example.videoplayermanager.protobufProcessor.dispatcher.ClientMessageDispatcher;
 import com.example.videoplayermanager.tcp.TcpClient;
 import com.hjq.toast.ToastUtils;
@@ -113,7 +114,6 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onReceive(MessageEvent messageEvent){
         if (messageEvent.getType().equals(MessageEvent.Type.startPlayNextVideoAtOnce)){
-            Logger.e("接收视频列表！");
             videoModels= VideoResourcesManager.getInstance().getVideoModels();
             //防止很短时间内收到
             if (System.currentTimeMillis()-receiveVideoTime>5000){
@@ -122,31 +122,31 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
                     if (videoModels.get(0).getUrl().equals(nextPlayVideoModel.getUrl())){
                         currentVideoModel=videoModels.get(0);
                         nextPlayVideoModel=videoModels.get(1);
-                        Logger.e("-----------------播放正常视频--------------"+currentVideoModel.getUrl()+";"+nextPlayVideoModel.getUrl());
+                        Logger.e("-----------------播放正常视频--------------");
                         startNextVideo();
                         prepareNextVideo(nextPlayVideoModel);
                     }else {
-                        Logger.e("-----------------插播精准视频重新初始化播放器--------------------");
                         //因为插播了一个精准视频，所以需要把之前Z准备的视频播放器释放，重新初始化
                         releaseTmpManager();
                         currentVideoModel=videoModels.get(0);
                         nextPlayVideoModel=videoModels.get(1);
                         //下一个播放的是精准视频，临时设置播放器，设置完直接播放
+                        Logger.e("-----------------插播精准视频重新初始化播放器--------------------");
                         isVideoPreparedPlay=true;
                         prepareNextVideo(currentVideoModel);
                     }
                     floorName= currentVideoModel.getFloorName();
                     floorNumber=currentVideoModel.getFloorNumber();
                     imageUrl=currentVideoModel.getBusinessLogo();
-                    if (imageUrl.isEmpty()){
-                        Logger.e("-------------缺少商家logo----------");
+                    if (imageUrl.isEmpty()||floorName.isEmpty()||floorNumber.isEmpty()){
+                        Logger.e("-------------缺少商家信息----------");
                         layoutMessage.setVisibility(GONE);
                     }else {
                         layoutMessage.setVisibility(VISIBLE);
                     }
                     tvFloor.setText(floorName);
                     tvNumber.setText(floorNumber);
-                    Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
+                    GlideApp.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
                     isReceived=true;
                 }
 
@@ -188,7 +188,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         }
         tvFloor.setText(floorName);
         tvNumber.setText(floorNumber);
-        Glide.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
+        GlideApp.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
     }
 
     /**

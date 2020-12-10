@@ -25,7 +25,7 @@
         android:layout_height="137dp"
         android:background="#B3FFFFFF"
         android:layout_alignParentBottom="true"
-        android:visibility="visible"
+        android:visibility="gone"
         >
         <TextView
             android:id="@+id/tvFloor"
