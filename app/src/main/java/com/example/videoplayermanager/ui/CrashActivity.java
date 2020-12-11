@@ -46,7 +46,7 @@ public class CrashActivity extends BaseActivity {
 
     /**
      * errorMessage
-     * @param errorMessage
+     * @param  errorMessage
      * @return
      */
     private String saveCrashInfo2File(String errorMessage){
@@ -56,14 +56,14 @@ public class CrashActivity extends BaseActivity {
         }else {
             Logger.e("创建文件");
             dir.mkdirs();
-        }
+         }
         StringBuffer sb=new StringBuffer();
         sb.append(errorMessage);
         //存到文件
         String time=dateFormat.format(new Date());
         String fileName = "crash-" + time + ".txt";
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            try {
+            try {    
                 Logger.e("建立log文件");
                 File path = new File(GlobalParameter.ROBOT_FOLDER_LOG);
                 FileOutputStream fos = new FileOutputStream(path +"/"+ fileName);
