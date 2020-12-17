@@ -165,6 +165,7 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
             nextPlayVideoModel=videoModels.get(1);
             setUp(currentVideoModel.getUrl());
         }
+        playSpeed=GlobalParameter.PLAY_SPEED;
         Logger.e("快进速度："+playSpeed);
         startPlayLogic();
     }

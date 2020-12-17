@@ -9,7 +9,7 @@ public class ADConfig {
     private String account="admin_ad1";
     private String password="admin_ad";
     private int videoTime=5;
-    private float speed=1.05f;
+    private float speed=1.0f;
     private long currentVideoFinish;     //当前视频播放完得时间戳
 
     public void setAccount(String account) {
