@@ -18,9 +18,21 @@ public class TimeUtils {
         return time;
     }
 
+    /**
+     * 时间戳转固定格式的时间
+     * @return
+     */
+    public static String longToDate1(long longTime){
+        SimpleDateFormat dff = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        String time=dff.format(longTime);
+        return time;
+    }
+
+
+
 
     /**
-     * 获取当前时分
+     * 获取当前时分秒
      * @return
      */
     public static String getCurrentTime1(){
@@ -29,6 +41,28 @@ public class TimeUtils {
         String ee = dff.format(new Date());
        // Logger.e("-----当前时间："+ee);
         return ee;
+    }
+
+    public static String getCurrentTime(){
+        SimpleDateFormat dff = new SimpleDateFormat("HH:mm");
+        dff.setTimeZone(TimeZone.getTimeZone("GMT+08"));
+        String ee = dff.format(new Date());
+        // Logger.e("-----当前时间："+ee);
+        return ee;
+    }
+
+    /**
+     * 如果时间1早于时间2则返回true
+     * @param time1
+     * @param time2
+     * @return
+     * @throws ParseException
+     */
+    public static boolean compareTime(String time1,String time2) throws ParseException {
+        SimpleDateFormat dff = new SimpleDateFormat("HH:mm");
+        Date a=dff.parse(time1);
+        Date b=dff.parse(time2);
+        return a.before(b);
     }
 
     /**

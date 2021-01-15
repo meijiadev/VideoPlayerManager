@@ -17,6 +17,13 @@
         app:layout_constraintTop_toTopOf="parent"
         />
     <TextView
+        android:id="@+id/tvTest2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    <TextView
         android:id="@+id/tvClear"
         android:layout_width="100dp"
         android:layout_height="100dp"

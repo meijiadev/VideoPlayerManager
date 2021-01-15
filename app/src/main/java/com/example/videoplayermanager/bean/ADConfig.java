@@ -10,7 +10,25 @@ public class ADConfig {
     private String password="admin_ad";
     private int videoTime=5;
     private float speed=1.0f;
-    private long currentVideoFinish;     //当前视频播放完得时间戳
+    private String startWorkTime="00:00";
+    private String endWorkTime="00:00";
+
+
+    public void setStartWorkTime(String startWorkTime) {
+        this.startWorkTime = startWorkTime;
+    }
+
+    public String getStartWorkTime() {
+        return startWorkTime;
+    }
+
+    public void setEndWorkTime(String endWorkTime) {
+        this.endWorkTime = endWorkTime;
+    }
+
+    public String getEndWorkTime() {
+        return endWorkTime;
+    }
 
     public void setAccount(String account) {
         this.account = account;

@@ -101,7 +101,6 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         tvNumber=findViewById(R.id.tvNumber);
         ivIcon=findViewById(R.id.ivIcon);
         tvFloor.setTypeface(typeface);
-        tvNumber.setTypeface(typeface);
         isRunning=true;
         new CheckThread().start();
     }
@@ -143,10 +142,10 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
                         layoutMessage.setVisibility(GONE);
                     }else {
                         layoutMessage.setVisibility(VISIBLE);
+                        tvFloor.setText(floorName);
+                        tvNumber.setText(floorNumber);
+                        GlideApp.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
                     }
-                    tvFloor.setText(floorName);
-                    tvNumber.setText(floorNumber);
-                    GlideApp.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
                     isReceived=true;
                 }
 
@@ -181,15 +180,15 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
         floorName= currentVideoModel.getFloorName();
         floorNumber=currentVideoModel.getFloorNumber();
         imageUrl=currentVideoModel.getBusinessLogo();
-        if (imageUrl.isEmpty()){
+        if (imageUrl.isEmpty()||floorName.isEmpty()||floorNumber.isEmpty()){
             layoutMessage.setVisibility(GONE);
             Logger.e("-------------缺少商家logo----------");
         }else {
             layoutMessage.setVisibility(VISIBLE);
+            tvFloor.setText(floorName);
+            tvNumber.setText(floorNumber);
+            GlideApp.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
         }
-        tvFloor.setText(floorName);
-        tvNumber.setText(floorNumber);
-        GlideApp.with(context).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.RESOURCE).into(ivIcon);
     }
 
     /**

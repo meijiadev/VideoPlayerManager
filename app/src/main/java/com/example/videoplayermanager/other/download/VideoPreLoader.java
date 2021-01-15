@@ -51,8 +51,22 @@ public class VideoPreLoader {
                 HttpURLConnection connection;
                 HttpProxyCacheServer httpProxyCacheServer= ProxyCacheManager.getProxy(MyApplication.context, GlobalParameter.getDownloadFile());
                 String mUrl=httpProxyCacheServer.getProxyUrl(url);
-                Logger.e("正在下载的视频链接:"+mUrl);
+                //Logger.e("正在下载的视频链接:"+url+";"+mUrl+";"+httpProxyCacheServer.isCached(url));
                 if (mUrl.contains("http")){
+                    Logger.e("正在下载的视频链接:"+url+";"+mUrl+";"+ProxyCacheManager.isNotDownloadUp(url));
+                    if (ProxyCacheManager.isNotDownloadUp(url)){
+                        //主线程清除缓存
+                        ActivityStackManager.getInstance().getTopActivity().runOnUiThread(()->{
+                            GSYVideoManager.instance().clearCache(ActivityStackManager.getInstance().getTopActivity(),GlobalParameter.getDownloadFile(),url);
+                        });
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        i--;
+                        continue;
+                    }
                     try {
                         URL myURL=new URL(mUrl);
                         connection= (HttpURLConnection) myURL.openConnection();
@@ -86,7 +100,7 @@ public class VideoPreLoader {
                     String newMd5=MD5Utils.getFileMD5String(file);
                     //获取该完整视频MD5值
                     String oldMd5=videoInfos.get(i).getMd5();
-                    Logger.e("-------新MD5值："+newMd5+"原始视频Md5："+oldMd5);
+                    //Logger.e("-------新MD5值："+newMd5+"原始视频Md5："+oldMd5);
                     //校验文件完整性
                     if (oldMd5.isEmpty()){
                         Logger.e("--------Md5值为空此视频不校验！");
@@ -100,11 +114,12 @@ public class VideoPreLoader {
                             GSYVideoManager.instance().clearCache(ActivityStackManager.getInstance().getTopActivity(),GlobalParameter.getDownloadFile(),url);
                         });
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(100);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         i--;
+                        continue;
                         //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.downloadIndex,i));
                     }
                 } catch (IOException e) {

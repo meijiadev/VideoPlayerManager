@@ -8,6 +8,7 @@ import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.danikula.videocache.file.FileNameGenerator;
 import com.danikula.videocache.file.Md5FileNameGenerator;
+import com.example.videoplayermanager.common.GlobalParameter;
 import com.shuyu.gsyvideoplayer.cache.ICacheManager;
 import com.shuyu.gsyvideoplayer.cache.ProxyCacheUserAgentHeadersInjector;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
@@ -58,7 +59,14 @@ public class ProxyCacheManager implements ICacheManager, CacheListener {
         }
     }
 
-
+    /**
+     * 并未下载完
+     * @return
+     */
+    public static boolean isNotDownloadUp(String url){
+        File file=new File(GlobalParameter.getDownloadFile(), new MyFileNameGenerator().generate(url)+".download");
+        return file.exists();
+    }
 
     @Override
     public void doCacheLogic(Context context, IMediaPlayer mediaPlayer, String originUrl, Map<String, String> header, File cachePath) {

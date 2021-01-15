@@ -162,5 +162,7 @@ dependencies {
     implementation 'com.just.agentweb:filechooser-androidx:4.1.4'// (可选)
     implementation 'com.youth.banner:banner:1.4.10'   //banner依赖
 
+    implementation 'androidx.work:work-runtime:2.2.0'
+
 
 }

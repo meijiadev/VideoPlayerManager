@@ -80,13 +80,13 @@ public class RspVideoAddressProcessor extends BaseProcessor  {
             @Override
             public void run() {
                 try {
-                    Logger.e("下载地址:"+videoInfos.get(position).getLogo());
+                    //Logger.e("下载地址:"+videoInfos.get(position).getLogo());
                     final Context context = MyApplication.context;
                     FutureTarget<File> target = GlideApp.with(context)
                             .load(videoInfos.get(position).getLogo())
                             .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
                     final File imageFile = target.get();
-                    Logger.e("------缓存的地址："+imageFile.getAbsolutePath());
+                    //Logger.e("------缓存的地址："+imageFile.getAbsolutePath());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

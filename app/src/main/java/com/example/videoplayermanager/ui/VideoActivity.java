@@ -38,10 +38,7 @@ import java.util.List;
 public class VideoActivity extends BaseActivity  {
      @BindView(R.id.videoPlayer)
      SmartPickVideo videoPlayer;
-     @BindView(R.id.tvCurrentTime)
-     TextView tvCurrentTime;
      private SmdtManager smdtManager;
-     private boolean isLive;      //屏幕是否亮起
 
 
     @Override
@@ -66,25 +63,15 @@ public class VideoActivity extends BaseActivity  {
         TcpClient.getInstance(context,ClientMessageDispatcher.getInstance()).notifyService();
         videoPlayer.startPlay();
         //videoPlayer.setUp(VideoResourcesManager.getInstance().getVideoPath());
-        smdtManager=SmdtManager.create(context);
+        smdtManager=SmdtManager.create(MyApplication.context);
     }
 
     @OnClick(R.id.tvCurrentTime)
     public void onClickViewed(View v){
         if (v.getId()==R.id.tvCurrentTime){
-            if (isLive){
-                //关闭背光
-                if (smdtManager!=null)
-                smdtManager.smdtSetLcdBackLight(0);
-                isLive=false;
-                ToastUtils.show("关闭背光！");
-            }else {
-                if (smdtManager!=null)
+            ToastUtils.show("点亮屏幕！");
+            if (smdtManager!=null)
                 smdtManager.smdtSetLcdBackLight(1);
-                isLive=true;
-                ToastUtils.show("开启背光！");
-            }
-
         }
     }
 
@@ -114,7 +101,6 @@ public class VideoActivity extends BaseActivity  {
     @Override
     protected void onStop() {
         super.onStop();
-        isRunning=false;
     }
 
     @Override
@@ -133,41 +119,5 @@ public class VideoActivity extends BaseActivity  {
         super.onBackPressed();
     }
 
-
-
-    private boolean isRunning;
-    public  class TimeThread extends BaseThread {
-        public TimeThread(){
-            isRunning=true;
-        }
-        @Override
-        public void run() {
-            super.run();
-            while (isRunning){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Message message=new Message();
-                message.what=1;
-                mHandler.sendMessage(message);
-            }
-        }
-    }
-    //在主线程里面处理消息并更新UI界面
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 1) {
-                long sysTime = System.currentTimeMillis();//获取系统时间
-                if (tvCurrentTime!=null){
-                    tvCurrentTime.setText(TimeUtils.longToDate(sysTime));
-                }
-            }
-        }
-    };
 
 }

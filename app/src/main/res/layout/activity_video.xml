@@ -16,14 +16,9 @@
     </FrameLayout>
     <TextView
         android:id="@+id/tvCurrentTime"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:textSize="20dp"
-        android:text=""
-        android:gravity="right"
-        android:textColor="@color/white"
-        android:layout_marginRight="10dp"
-        android:visibility="gone"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
         />
   <!--  <RelativeLayout
         android:id="@+id/layoutMessage"

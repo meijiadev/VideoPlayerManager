@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.example.videoplayermanager.R;
 import com.example.videoplayermanager.banner.LocalImageLoader;
 import com.example.videoplayermanager.base.BaseDialog;
 import com.example.videoplayermanager.base.BaseMvpActivity;
+import com.example.videoplayermanager.base.BaseThread;
 import com.example.videoplayermanager.common.GlobalParameter;
 import com.example.videoplayermanager.contract.MainContract;
 import com.example.videoplayermanager.other.ActivityStackManager;
@@ -28,6 +30,7 @@ import com.example.videoplayermanager.other.LogcatHelper;
 import com.example.videoplayermanager.other.Logger;
 import com.example.videoplayermanager.other.MessageEvent;
 import com.example.videoplayermanager.other.NetWorkUtil;
+import com.example.videoplayermanager.other.TimeUtils;
 import com.example.videoplayermanager.other.VideoResourcesManager;
 import com.example.videoplayermanager.other.download.VideoPreLoader;
 import com.example.videoplayermanager.presenter.MainPresenter;
@@ -48,6 +51,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,6 +78,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private List<Integer> imageResource;
     private List<String> pathList;             //测试视频本地连接
     private TcpClient tcpClient;
+    private SmdtManager smdtManager ;
+    private boolean isCharging;             //是否在充电
 
 
     @Override
@@ -117,6 +123,15 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 progressDialog=null;
                 ToastUtils.show("下载失败!");
                 break;
+            case notifyScreenAction:
+                int value= (int) messageEvent.getData();
+                if (value == 0) {
+                    isCharging=true;
+                }else if (value ==1){
+                    isCharging=false;
+                }
+                break;
+
         }
     }
 
@@ -137,6 +152,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void initData() {
+
         tcpClient=TcpClient.getInstance(MyApplication.context,ClientMessageDispatcher.getInstance());
         if (tcpClient.isConnected()){
             tcpClient.disConnect();
@@ -150,6 +166,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         useBanner();
         //goTestVideoPlayer();
         Logger.e("------------当前版本时间------------："+BuildConfig.BUILD_TIME);
+        new TimeThread().start();
 
     }
 
@@ -209,7 +226,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
 
 
-    @OnClick({R.id.tvTest,R.id.tvClear})
+    @OnClick({R.id.tvTest,R.id.tvClear,R.id.tvTest2})
     public void onViewClicked(View view){
         if (view.getId()==R.id.tvTest){
             isDownloadApk();
@@ -217,6 +234,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             ToastUtils.show("正在清空所有缓存文件");
             GSYVideoManager.instance().clearDefaultCache(MyApplication.context,GlobalParameter.getDownloadFile(),null);
             Logger.e("清空所有缓存视频！");
+        }else if(view.getId()==R.id.tvTest2){
+            ToastUtils.show("点亮屏幕！");
+            smdtManager = SmdtManager.create(MyApplication.context);
+            smdtManager.smdtSetLcdBackLight(1);
         }
     }
 
@@ -256,6 +277,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     protected void onDestroy() {
+        isRunning=false;
         TcpClient.getInstance(context, ClientMessageDispatcher.getInstance()).disConnect();
         VideoResourcesManager.getInstance().setVideoUrls(new ArrayList<>());
         VideoPreLoader.getInstance().onDestroy();
@@ -263,6 +285,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         LogcatHelper.getInstance(context).stop();
         Logger.e("---------------onDestroy-----------------");
         ToastUtils.show("退出广告播放管理器");
+        if (smdtManager == null) {
+            smdtManager.smdtSetLcdBackLight(1);
+            Logger.e("退出播放程序前，让屏幕点亮");
+        }
         super.onDestroy();
     }
 
@@ -297,6 +323,59 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             Logger.e("销毁提示浮窗！");
         }
     }
+
+    private boolean isRunning;
+
+    public  class TimeThread extends BaseThread {
+        public TimeThread(){
+            isRunning=true;
+            smdtManager = SmdtManager.create(MyApplication.context);
+        }
+        @Override
+        public void run() {
+            super.run();
+            while (isRunning){
+                String currentTime= TimeUtils.getCurrentTime();
+                if (!isCharging){
+                    try {
+                        //如果当前时间大于工作起始时间并且在工作结束时间前面则让屏幕点亮
+                        if(!GlobalParameter.START_WORK_TIME.equals("00:00")){
+                            if(TimeUtils.compareTime(GlobalParameter.START_WORK_TIME,GlobalParameter.END_WORK_TIME)){
+                                if (TimeUtils.compareTime(GlobalParameter.START_WORK_TIME,currentTime)&&TimeUtils.compareTime(currentTime,GlobalParameter.END_WORK_TIME)){
+                                    Logger.e("工作时间----"+currentTime);
+                                    smdtManager.smdtSetLcdBackLight(1);
+                                }
+                                if (TimeUtils.compareTime(GlobalParameter.END_WORK_TIME,currentTime)|TimeUtils.compareTime(currentTime,GlobalParameter.START_WORK_TIME)){
+                                    Logger.e("休息时间----"+currentTime);
+                                    smdtManager.smdtSetLcdBackLight(0);
+                                }
+                            }else {
+                                if (TimeUtils.compareTime(GlobalParameter.END_WORK_TIME,currentTime)&&TimeUtils.compareTime(currentTime,GlobalParameter.START_WORK_TIME)){
+                                    Logger.e("休息时间----"+currentTime);
+                                    smdtManager.smdtSetLcdBackLight(0);
+                                }
+                                if (TimeUtils.compareTime(GlobalParameter.START_WORK_TIME,currentTime)|TimeUtils.compareTime(currentTime,GlobalParameter.END_WORK_TIME)){
+                                    Logger.e("工作时间----"+currentTime);
+                                    smdtManager.smdtSetLcdBackLight(01);
+                                }
+                            }
+                        }else{
+                            Logger.e("未设置休眠唤醒时间！");
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     @SuppressLint("SetTextI18n")
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)

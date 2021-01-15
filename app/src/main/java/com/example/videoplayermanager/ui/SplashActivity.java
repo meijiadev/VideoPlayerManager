@@ -46,10 +46,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
 
     @Override
     protected void initData() {
-        //初始化测试视频参数
-        GlobalParameter.initTestFile();
-         //将log保存到本地
-        LogcatHelper.getInstance(context).start();
+
     }
 
 
@@ -73,6 +70,11 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     public void hasPermission(List<String> granted, boolean isAll) {
         Logger.d("权限请求成功");
         GlobalParameter.initConfigFile();
+        //初始化测试视频参数
+        GlobalParameter.initTestFile();
+        //将log保存到本地
+        LogcatHelper.getInstance(context).start();
+        //startService(new Intent(SplashActivity.this,GuardService.class));
         if (isAll){
             startActivityFinish(MainActivity.class);
         }

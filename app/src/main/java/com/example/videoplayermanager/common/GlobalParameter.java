@@ -1,7 +1,9 @@
 package com.example.videoplayermanager.common;
 
+import android.app.smdt.SmdtManager;
 import android.os.Environment;
 
+import com.example.videoplayermanager.MyApplication;
 import com.example.videoplayermanager.bean.ADConfig;
 import com.example.videoplayermanager.other.Logger;
 import com.google.gson.Gson;
@@ -41,6 +43,8 @@ public class GlobalParameter {
     public static  String PASSWORD="admin_ad";
     public static int VIDEO_TIME=5;              //视屏播放时长
     public static float PLAY_SPEED=1;
+    public static String START_WORK_TIME="00:00";       // 开始播放的时间
+    public static String END_WORK_TIME="00:00";         // 结束工作时间
 
     public static File getDownloadFile(){
         File dir=new File(VIDEO_FOLDER);
@@ -91,6 +95,7 @@ public class GlobalParameter {
                 if (!txtFile.exists()){
                     txtFile.createNewFile();
                     ADConfig adConfig=new ADConfig();
+                    adConfig.setAccount(ACCOUNT);
                     String jsonMessage=gson.toJson(adConfig);
                     //将fileOutputStream包装成字符串写入器
                     PrintStream printStream=new PrintStream(new FileOutputStream(txtFile));
@@ -103,13 +108,21 @@ public class GlobalParameter {
                     PORT=adConfig.getPort();
                     VIDEO_TIME=adConfig.getVideoTime();
                     PLAY_SPEED=adConfig.getSpeed();
-                    Logger.e(IP+";"+PORT+";"+ACCOUNT+";"+PASSWORD+";"+VIDEO_TIME+";"+PLAY_SPEED);
+                    START_WORK_TIME=adConfig.getStartWorkTime();
+                    END_WORK_TIME=adConfig.getEndWorkTime();
+                    Logger.e(IP+";"+PORT+";"+ACCOUNT+";"+PASSWORD+";"+VIDEO_TIME+";"+PLAY_SPEED+";"+START_WORK_TIME+";"+END_WORK_TIME);
+                    if (END_WORK_TIME.equals("00:00")){
+                        txtFile.delete();
+                        initConfigFile();
+                    }
                 }
             }catch (Exception e){
                 e.printStackTrace();
             }
         }).start();
     }
+
+
 
     /**
      * 读取配置参数
