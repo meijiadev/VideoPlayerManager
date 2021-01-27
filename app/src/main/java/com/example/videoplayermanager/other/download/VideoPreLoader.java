@@ -55,6 +55,7 @@ public class VideoPreLoader {
                 if (mUrl.contains("http")){
                     Logger.e("正在下载的视频链接:"+url+";"+mUrl+";"+ProxyCacheManager.isNotDownloadUp(url));
                     if (ProxyCacheManager.isNotDownloadUp(url)){
+                        Logger.e("当前视频并未下载完成！");
                         //主线程清除缓存
                         ActivityStackManager.getInstance().getTopActivity().runOnUiThread(()->{
                             GSYVideoManager.instance().clearCache(ActivityStackManager.getInstance().getTopActivity(),GlobalParameter.getDownloadFile(),url);

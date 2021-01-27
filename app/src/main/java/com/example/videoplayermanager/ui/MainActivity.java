@@ -285,7 +285,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         LogcatHelper.getInstance(context).stop();
         Logger.e("---------------onDestroy-----------------");
         ToastUtils.show("退出广告播放管理器");
-        if (smdtManager == null) {
+        if (smdtManager != null) {
             smdtManager.smdtSetLcdBackLight(1);
             Logger.e("退出播放程序前，让屏幕点亮");
         }

@@ -84,7 +84,17 @@ public class TimeUtils {
         SimpleDateFormat dff = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dff.setTimeZone(TimeZone.getTimeZone("GMT+08"));
         String ee = dff.format(new Date());
+        return ee;
+    }
 
+    /**
+     * 获取当前年月日时分
+     * @return
+     */
+    public static String getCurrentTime4(){
+        SimpleDateFormat dff = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        dff.setTimeZone(TimeZone.getTimeZone("GMT+08"));
+        String ee = dff.format(new Date());
         return ee;
     }
 

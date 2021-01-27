@@ -22,11 +22,12 @@ public class LogcatHelper {
     private static String PATH_LOGCAT;
     private LogDumper mLogDumper = null;
     private int mPId;
+    private String cmdStartTime;           //程序开启时间
+    private String fileCreateTime;         //写入时间
+    private long lFileCreateTime;          // 文件创建时间
 
     /**
-     *
      * 初始化目录
-     *
      * */
     public void init(Context context) {
         if (Environment.getExternalStorageState().equals(
@@ -41,8 +42,8 @@ public class LogcatHelper {
         if (!file.exists()) {
             file.mkdirs();
         }
-
     }
+
 
     public static LogcatHelper getInstance(Context context) {
         if (INSTANCE == null) {
@@ -53,24 +54,30 @@ public class LogcatHelper {
 
     private LogcatHelper(Context context) {
         init(context);
+        cmdStartTime=TimeUtils.getCurrentTime4();
         mPId = android.os.Process.myPid();
     }
 
     public void start() {
-        if (mLogDumper == null)
-            mLogDumper = new LogDumper(String.valueOf(mPId), PATH_LOGCAT);
+        if (mLogDumper == null){
+            mLogDumper = new LogDumper(String.valueOf(mPId));
+            mLogDumper.createFile();
             mLogDumper.start();
+        }
     }
 
     public void stop() {
         if (mLogDumper != null) {
             mLogDumper.stopLogs();
             mLogDumper = null;
+            INSTANCE=null;
         }
     }
 
+    /**
+     * log输出线程
+     */
     private class LogDumper extends BaseThread {
-
         private Process logcatProc;
         private BufferedReader mReader = null;
         private boolean mRunning = true;
@@ -78,30 +85,32 @@ public class LogcatHelper {
         private String mPID;
         private FileOutputStream out = null;
 
-        public  LogDumper(String pid, String dir) {
+        public  LogDumper(String pid) {
             mPID = pid;
-            try {
-                out = new FileOutputStream(new File(dir, "log-"
-                        + getFileName() + ".log"));
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
             /**
              *
              * 日志等级：*:v , *:d , *:w , *:e , *:f , *:s
-             *
              * 显示当前mPID程序的 E和W等级的日志.
-             *
              * */
-
             // cmds = "logcat *:e *:w | grep \"(" + mPID + ")\"";
             // cmds = "logcat  | grep \"(" + mPID + ")\"";//打印所有日志信息
             // cmds = "logcat -s way";//打印标签过滤信息
             cmds = "logcat *:e | grep \"(" + mPID + ")\"";
+        }
 
-
+        /**
+         * 创建文件输出流
+         *
+         */
+        public void createFile(){
+            try {
+                fileCreateTime=TimeUtils.getCurrentTime4();
+                lFileCreateTime=System.currentTimeMillis();
+                out = new FileOutputStream(new File(PATH_LOGCAT, getFileName() + ".log"));
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
         public void stopLogs() {
@@ -116,6 +125,9 @@ public class LogcatHelper {
                         logcatProc.getInputStream()), 1024);
                 String line = null;
                 while (mRunning && (line = mReader.readLine()) != null) {
+                    if (System.currentTimeMillis()-lFileCreateTime>(20*60*1000)){
+                        createFile();
+                    }
                     if (!mRunning) {
                         break;
                     }
@@ -156,9 +168,13 @@ public class LogcatHelper {
         }
 
     }
+
+    /**
+     * 生成文件名
+     * @return
+     */
     public  String getFileName() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String date = format.format(new Date(System.currentTimeMillis()));
-        return date;// 2012年10月03日 23:41:31
+        String fileName="AppStartTime:"+cmdStartTime+"-logCreate:"+fileCreateTime;
+        return fileName;// 2012年10月03日 23:41:31
     }
 }

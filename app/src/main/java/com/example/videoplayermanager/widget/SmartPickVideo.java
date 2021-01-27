@@ -251,9 +251,12 @@ public class SmartPickVideo extends StandardGSYVideoPlayer {
 
     @Override
     public void onError(int what, int extra) {
-        super.onError(what, extra);
+        //super.onError(what, extra);
         Logger.e("-------------播放器onError:"+currentVideoModel.getUrl());
-        //EventBus.getDefault().post(new MessageEvent(MessageEvent.Type.playOnError));
+        if (mTmpManager != null) {
+            mTmpManager.releaseMediaPlayer();
+
+        }
 
     }
 
